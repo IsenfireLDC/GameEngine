@@ -7,11 +7,6 @@
 #ifndef _ENTITY_HPP_
 #define _ENTITY_HPP_
 
-#ifdef ERROR
-#define _ENTITY_HPP_ERROR ERROR
-#undef ERROR
-#endif
-
 /*	Types		*/
 class Entity;
 
@@ -22,11 +17,11 @@ typedef struct {
 } Coord;
 
 enum class EntityType {
-	ERROR,
-	NONE,
-	CONTROLLABLE,
+	Error,
+	None,
+	Controllable,
 	NPC,
-	BARRIER
+	Barrier
 };
 
 class Entity {
@@ -86,11 +81,5 @@ private:
 	//List of all entities
 	Entity** entities;
 };
-
-
-#ifdef _ENTITY_HPP_ERROR
-#define ERROR _ENTITY_HPP_ERROR
-#undef _ENTITY_HPP_ERROR
-#endif
 
 #endif
