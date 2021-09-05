@@ -8,6 +8,8 @@
  */
 
 //includes
+#include "entity.hpp"
+
 #include <windows.h>
 #include <iostream>
 #include <conio.h>

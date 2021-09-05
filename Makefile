@@ -1,5 +1,7 @@
+FILES=main.cpp
+
 all:
-	g++ TerminalGame.cpp -o Build/TerminalGame.exe
+	g++ $(FILES) -o Build/TerminalEngine.exe
 
 run:
-	winpty ./Build/TerminalGame.exe
+	winpty ./Build/TerminalEngine.exe
