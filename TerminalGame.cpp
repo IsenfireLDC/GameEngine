@@ -11,17 +11,28 @@
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
-#include <random>
-#include <ctime>
+//#include <random>
+//#include <ctime>
 
-int main() {
+void getKBCodes() {
 	int kb_code = 0;
+
+	std::cout << "Hit a key" << std::endl;
 
 	while(true) {
 		if(kbhit()) {
+			std::cout << "Key hit: ";
 			kb_code = getch();
 
-			std::cout << "Key hit: " << kb_code << std::endl;
+			std::cout << kb_code << std::endl << std::flush;
+
+			//Break after hitting escape
+			if (kb_code == 27) break;
 		}
+		Sleep(100);
 	}
+}
+
+int main() {
+	getKBCodes();
 }
