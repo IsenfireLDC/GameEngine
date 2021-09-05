@@ -28,7 +28,10 @@ class Entity {
 public:
 	//Constructors
 	Entity();
-	Entity(EntityType, Coord, Coord);
+	Entity(EntityType, Coord);
+
+	//Constants
+	const static Coord origin;
 
 	//Setters
 	void setType(EntityType);
