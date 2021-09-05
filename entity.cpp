@@ -27,7 +27,7 @@ Entity::Entity(EntityType type, Coord pos) {
 	this->prev = pos;
 };
 
-Entity::origin = (Coord){1,1};
+const Coord Entity::origin = (Coord){1,1};
 
 /*
  * Setter for entity type

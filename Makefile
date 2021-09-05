@@ -1,4 +1,4 @@
-FILES=main.cpp
+FILES=main.cpp entity.cpp
 
 all:
 	g++ $(FILES) -o Build/TerminalEngine.exe
