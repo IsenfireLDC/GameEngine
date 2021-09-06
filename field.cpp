@@ -75,3 +75,16 @@ void Field::setYSize(int ySize) {
 void Field::setXScale(int xScale) {
 	this->xScale = xScale;
 };
+
+/*
+ * Determines if the given coordinates are out of bounds for this field
+ */
+bool Field::isOutOfBounds(Coord pos) const {
+	//Check lower bound
+	if(pos.x < 0 || pos.y < 0) return true;
+
+	//Check upper bound
+	if(pos.x * this->xScale > this->xSize || pos.y > this->ySize) return true;
+
+	return false;
+};

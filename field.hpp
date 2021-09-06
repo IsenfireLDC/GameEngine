@@ -7,6 +7,8 @@
 #ifndef _FIELD_HPP_
 #define _FIELD_HPP_
 
+#include "pos.hpp"
+
 class Field {
 public:
 	//Exposed Constants
@@ -28,6 +30,9 @@ public:
 	void setXSize(int);
 	void setYSize(int);
 	void setXScale(int);
+
+	//Queries
+	bool isOutOfBounds(Coord) const;
 
 private:
 	int xSize;
