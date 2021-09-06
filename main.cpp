@@ -33,8 +33,30 @@ void getKBCodes() {
 		}
 		Sleep(100);
 	}
-}
+};
 
 int main() {
-	getKBCodes();
+	//Create default entity
+	Entity* entity = new Entity();
+
+	//Create default field
+	Field* field = new Field();
+
+	//Create entity manager
+	EntityManager manager = EntityManager(field);
+
+	manager.addEntity(entity);
+
+	Coord testCoord = {2,5};
+	manager.moveEntity(entity, testCoord);
+
+	if(manager.getEntityAt(testCoord) != nullptr) {
+		std::cout << "Moved entity succesfully" << std::endl;
+		return 0;
+	} else {
+		std::cout << "Failed to move entity" << std::endl;
+		return 1;
+	};
+
+
 }

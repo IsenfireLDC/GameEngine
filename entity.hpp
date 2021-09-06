@@ -57,7 +57,7 @@ class EntityManager {
 public:
 	//Constructors
 	EntityManager();
-	EntityManager(Field*, int);
+	EntityManager(Field*);
 
 	//Constants
 	const static int defaultListSize = 10;

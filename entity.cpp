@@ -6,6 +6,8 @@
 
 #include "entity.hpp"
 
+#include <iostream>
+
 
 /****	     EntityManager	****/
 
@@ -101,16 +103,16 @@ void Entity::onHitBy(Entity* entity) {};
  */
 EntityManager::EntityManager() {
 	this->field = new Field();
-	this->entities = std::vector<Entity*>(EntityManager::defaultListSize);
+	this->entities = std::vector<Entity*>();
 };
 
 /*
  * Constructor for new entity manager
  */
-EntityManager::EntityManager(Field* field, int listSize) {
+EntityManager::EntityManager(Field* field) {
 	this->field = field;
 
-	this->entities = std::vector<Entity*>(listSize);
+	this->entities = std::vector<Entity*>();
 };
 
 /*
@@ -132,7 +134,7 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
  * Returns false if an entity already exists in the same location
  */
 bool EntityManager::addEntity(Entity* entity) {
-	if(this->canPlaceAt(entity->getPosition())) return false;
+	if(entity == nullptr || this->canPlaceAt(entity->getPosition())) return false;
 
 	this->entities.push_back(entity);
 
@@ -145,7 +147,7 @@ bool EntityManager::addEntity(Entity* entity) {
  * Returns false if an entity is already there
  */
 bool EntityManager::moveEntity(Entity* entity, Coord pos) {
-	if(this->canPlaceAt(pos)) return false;
+	if(entity == nullptr || this->canPlaceAt(pos)) return false;
 
 	//Call entity's move method
 	entity->move(pos);
