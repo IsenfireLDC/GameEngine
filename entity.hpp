@@ -7,15 +7,12 @@
 #ifndef _ENTITY_HPP_
 #define _ENTITY_HPP_
 
+#include <vector>
+
+#include "field.hpp"
+#include "pos.hpp"
+
 /*	Types		*/
-class Entity;
-
-
-typedef struct {
-	int x;
-	int y;
-} Coord;
-
 enum class EntityType {
 	Error,
 	None,
@@ -60,29 +57,27 @@ class EntityManager {
 public:
 	//Constructors
 	EntityManager();
-	EntityManager(int, int);
-
-	//Destructor
-	~EntityManager();
+	EntityManager(Field*, int);
 
 	//Constants
+	const static int defaultListSize = 10;
 	const int defaultXSize = 51;
 	const int defaultYSize = 21;
 
-	//Getter
+	//Get information
 	Entity* getEntityAt(Coord) const;
 
-	//Setter
+	//Add/remove from list
 	bool addEntity(Entity*);
 
-	//Action
+	//Take action
 	bool moveEntity(Entity*, Coord);
 
 private:
-	void reallocateEntityList(int);
+	bool canPlaceAt(Coord) const;
 
-	//List of all entities
-	Entity** entities;
+	Field* field;
+	std::vector<Entity*> entities;
 };
 
 #endif

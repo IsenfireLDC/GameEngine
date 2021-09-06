@@ -6,6 +6,9 @@
 
 #include "entity.hpp"
 
+
+/****	     EntityManager	****/
+
 /*
  * Constructor for default entity (type=None, pos=origin)
  */
@@ -82,9 +85,83 @@ void Entity::onMove() {};
 /*
  * Handler for hitting another entity
  */
-void onHit(Entity* entity) {};
+void Entity::onHit(Entity* entity) {};
 
 /*
  * Handler for getting hit
  */
-void onHitBy(Entity* entity) {};
+void Entity::onHitBy(Entity* entity) {};
+
+
+
+/****	     EntityManager	****/
+
+/*
+ * Constructor for default entity manager
+ */
+EntityManager::EntityManager() {
+	this->field = new Field();
+	this->entities = std::vector<Entity*>(EntityManager::defaultListSize);
+};
+
+/*
+ * Constructor for new entity manager
+ */
+EntityManager::EntityManager(Field* field, int listSize) {
+	this->field = field;
+
+	this->entities = std::vector<Entity*>(listSize);
+};
+
+/*
+ * Finds first entity at given coordinates (1 max at coords)
+ *
+ * Returns null pointer if no entity found
+ */
+Entity* EntityManager::getEntityAt(Coord pos) const {
+	for(Entity* entity : this->entities)
+		if(pos == entity->getPosition())
+			return entity;
+
+	return nullptr;
+};
+
+/*
+ * Add an entity to the entity manager
+ *
+ * Returns false if an entity already exists in the same location
+ */
+bool EntityManager::addEntity(Entity* entity) {
+	if(this->canPlaceAt(entity->getPosition())) return false;
+
+	this->entities.push_back(entity);
+
+	return true;
+};
+
+/*
+ * Attempt to move an entity to a new coordinate
+ *
+ * Returns false if an entity is already there
+ */
+bool EntityManager::moveEntity(Entity* entity, Coord pos) {
+	if(this->canPlaceAt(pos)) return false;
+
+	//Call entity's move method
+	entity->move(pos);
+
+	return true;
+};
+
+/*
+ * Determines if an entity exists at a given location
+ */
+bool EntityManager::canPlaceAt(Coord pos) const {
+	if(this->field->isOutOfBounds(pos)) return false;
+
+	for(Entity* entity : this->entities)
+		if(pos == entity->getPosition())
+			return true;
+
+	return false;
+};
