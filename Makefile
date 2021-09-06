@@ -1,16 +1,23 @@
 # Makefile for TerminalEngine
 #
 
-OBJECTS=$(patsubst %.cpp, %.o, $(wildcard *.cpp))
+OUT_DIR=bin/
+
+OBJECTS=$(patsubst %.cpp, $(OUT_DIR)%.o, $(wildcard *.cpp))
+OUTFILE=$(OUT_DIR)TerminalEngine.exe
 
 all: $(OBJECTS)
-	g++ $(OBJECTS) -o Build/TerminalEngine.exe
+	g++ $(OBJECTS) -o $(OUTFILE)
 
-%.o : %.cpp
+$(OUT_DIR)%.o : %.cpp
 	g++ -c $< -o $@
+
+
+clean:
+	rm $(OBJECTS) $(OUTFILE)
 
 
 
 #Section to run program using winpty
 run:
-	winpty ./Build/TerminalEngine.exe
+	winpty $(OUTFILE)
