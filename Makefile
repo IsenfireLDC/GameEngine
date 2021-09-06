@@ -3,6 +3,8 @@
 
 OUT_DIR=bin/
 
+DEBUG=-ggdb -g3
+
 OBJECTS=$(patsubst %.cpp, $(OUT_DIR)%.o, $(wildcard *.cpp))
 OUTFILE=$(OUT_DIR)TerminalEngine.exe
 
