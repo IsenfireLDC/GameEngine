@@ -14,6 +14,16 @@ struct Coord {
 	int x;
 	int y;
 
+	Coord() {
+		this->x = 0;
+		this->y = 0;
+	};
+
+	Coord(int x, int y) {
+		this->x = x;
+		this->y = y;
+	};
+
 	bool operator==(Coord a) {
 		return this->x == a.x && this->y == a.y;
 	};
@@ -27,6 +37,11 @@ struct Coord {
 struct Rect {
 	Coord c1;
 	Coord c2;
+
+	Rect() {
+		this->c1 = Coord();
+		this->c2 = Coord();
+	};
 
 	Rect(Coord c1, Coord c2) {
 		this->c1 = c1;
