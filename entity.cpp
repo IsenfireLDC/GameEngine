@@ -143,7 +143,7 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
 };
 
 /*
- * Get array containing all entities
+ * Get const pointer to array containing all entities
  */
 Entity *const * EntityManager::getEntities() const {
 	return this->entities.data();
@@ -187,7 +187,7 @@ bool EntityManager::moveEntity(Entity* entity, Coord pos) {
  * Determines if an entity exists at a given location
  */
 bool EntityManager::canPlaceAt(Coord pos) const {
-	if(this->field->isOutOfBounds(pos)) return false;
+	if(!this->field->isInBounds(pos)) return false;
 
 	for(Entity* entity : this->entities)
 		if(pos == entity->getPosition())
