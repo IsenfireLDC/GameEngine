@@ -8,9 +8,12 @@
 #define _ENTITY_HPP_
 
 #include <vector>
+#include <iostream>
 
 #include "field.hpp"
 #include "pos.hpp"
+
+#include "model.hpp"
 
 /*	Types		*/
 enum class EntityType {
@@ -34,11 +37,13 @@ public:
 	void setType(EntityType);
 	void move(Coord);
 	void moveBack();
+	void setModel(Model*);
 
 	//Getters
 	EntityType getType() const;
 	Coord getPosition() const;
 	Coord getLastPosition() const;
+	Model* getModel() const;
 
 	//Actions
 	void onMove();
@@ -47,10 +52,20 @@ public:
 	//Responses
 	void onHitBy(Entity*);
 
+	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
+		out << "Entity";
+		if(entity.getModel() != nullptr) out << "(" << entity.getModel() << ")";
+		out << " of type " << (int)entity.type;
+		out << " at" << entity.curr;
+		return out;
+	};
+
 private:
 	EntityType type;
 	Coord curr;
 	Coord prev;
+
+	Model* model;
 };
 
 class EntityManager {
@@ -66,6 +81,8 @@ public:
 
 	//Get information
 	Entity* getEntityAt(Coord) const;
+	Entity *const * getEntities() const;
+	int size() const;
 
 	//Add/remove from list
 	bool addEntity(Entity*);

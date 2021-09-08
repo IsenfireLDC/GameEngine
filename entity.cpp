@@ -59,6 +59,13 @@ void Entity::moveBack() {
 };
 
 /*
+ * Setter for entity model
+ */
+void Entity::setModel(Model *model) {
+	this->model = model;
+};
+
+/*
  * Getter for entity type
  */
 EntityType Entity::getType() const {
@@ -77,6 +84,13 @@ Coord Entity::getPosition() const {
  */
 Coord Entity::getLastPosition() const {
 	return this->prev;
+};
+
+/*
+ * Getter for model
+ */
+Model* Entity::getModel() const {
+	return this->model;
 };
 
 /*
@@ -126,6 +140,20 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
 			return entity;
 
 	return nullptr;
+};
+
+/*
+ * Get array containing all entities
+ */
+Entity *const * EntityManager::getEntities() const {
+	return this->entities.data();
+};
+
+/*
+ * Get size of entities list
+ */
+int EntityManager::size() const {
+	return this->entities.size();
 };
 
 /*
