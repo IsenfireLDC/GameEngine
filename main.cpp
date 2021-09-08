@@ -52,11 +52,16 @@ int main() {
 
 	if(manager.getEntityAt(testCoord) != nullptr) {
 		std::cout << "Moved entity succesfully" << std::endl;
-		return 0;
 	} else {
 		std::cout << "Failed to move entity" << std::endl;
-		return 1;
 	};
 
+	Entity *const * entityList = manager.getEntities();
 
+	std::cout << "Printing entities" << std::endl;
+	for(int i = 0; i < manager.size(); ++i) {
+		std::cout << "\t" << *entityList[i] << std::endl;
+	};
+
+	return 0;
 }
