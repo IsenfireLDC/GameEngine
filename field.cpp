@@ -6,46 +6,42 @@
 
 #include "field.hpp"
 
+#include "pos.hpp"
+
+const Rect Field::defaultArea = Rect(Coord(1,1), Coord(51,21));
+
 /*
  * Constructor for default field
  */
 Field::Field() {
-	this->xSize = Field::defaultXSize;
-	this->ySize = Field::defaultYSize;
+	this->area = new Rect[1];
+	*this->area = Field::defaultArea;
+	this->nRect = 1;
+
 	this->xScale = Field::defaultXScale;
+	this->yScale = Field::defaultYScale;
 };
 
 /*
- * Constructor for new field with default xScale
+ * Constructor for new field with default scale
  */
-Field::Field(int xSize, int ySize) {
-	this->xSize = xSize;
-	this->ySize = ySize;
+Field::Field(Rect *area, int nRect) {
+	this->area = area;
+	this->nRect = nRect;
 
 	this->xScale = Field::defaultXScale;
+	this->yScale = Field::defaultYScale;
 };
 
 /*
  * Constructor for new field
  */
-Field::Field(int xSize, int ySize, int xScale) {
-	this->xSize = xSize;
-	this->ySize = ySize;
+Field::Field(Rect *area, int nRect, int xScale, int yScale) {
+	this->area = area;
+	this->nRect = nRect;
+
 	this->xScale = xScale;
-};
-
-/*
- * Getter for xSize
- */
-int Field::getXSize() const {
-	return this->xSize;
-};
-
-/*
- * Getter for ySize
- */
-int Field::getYSize() const {
-	return this->ySize;
+	this->yScale = yScale;
 };
 
 /*
@@ -56,17 +52,10 @@ int Field::getXScale() const {
 };
 
 /*
- * Setter for xSize
+ * Getter for yScale
  */
-void Field::setXSize(int xSize) {
-	this->xSize = xSize;
-};
-
-/*
- * Setter for ySize
- */
-void Field::setYSize(int ySize) {
-	this->ySize = ySize;
+int Field::getYScale() const {
+	return this->yScale;
 };
 
 /*
@@ -77,14 +66,18 @@ void Field::setXScale(int xScale) {
 };
 
 /*
+ * Setter for yScale
+ */
+void Field::setYScale(int yScale) {
+	this->yScale = yScale;
+};
+
+/*
  * Determines if the given coordinates are out of bounds for this field
  */
-bool Field::isOutOfBounds(Coord pos) const {
-	//Check lower bound
-	if(pos.x < 0 || pos.y < 0) return true;
-
-	//Check upper bound
-	if(pos.x * this->xScale > this->xSize || pos.y > this->ySize) return true;
+bool Field::isInBounds(Coord pos) const {
+	for(int i = 0; i < this->nRect; ++i)
+		if(area[i].isInBounds(pos)) return true;
 
 	return false;
 };

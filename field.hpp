@@ -12,32 +12,32 @@
 class Field {
 public:
 	//Exposed Constants
-	static const int defaultXSize = 51;
-	static const int defaultYSize = 21;
 	static const int defaultXScale = 2;
+	static const int defaultYScale = 1;
+	static const Rect defaultArea;
 
 	//Constructors
 	Field();
-	Field(int, int);
-	Field(int, int, int);
+	Field(Rect*, int);
+	Field(Rect*, int, int, int);
 
 	//Getters
-	int getXSize() const;
-	int getYSize() const;
 	int getXScale() const;
+	int getYScale() const;
 
 	//Setters
-	void setXSize(int);
-	void setYSize(int);
 	void setXScale(int);
+	void setYScale(int);
 
 	//Queries
-	bool isOutOfBounds(Coord) const;
+	bool isInBounds(Coord) const;
 
 private:
-	int xSize;
-	int ySize;
+	Rect *area;
+	int nRect;
+
 	int xScale;
+	int yScale;
 };
 
 #endif
