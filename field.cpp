@@ -77,7 +77,7 @@ void Field::setYScale(int yScale) {
  */
 bool Field::isInBounds(Coord pos) const {
 	for(int i = 0; i < this->nRect; ++i)
-		if(area[i].isInBounds(pos)) return true;
+		if(area[i].contains(pos)) return true;
 
 	return false;
 };
