@@ -10,6 +10,13 @@
 #include <iostream>
 #include <vector>
 
+
+enum class ModelType {
+	None,
+	Dynamic,
+	Static
+};
+
 typedef int Color;
 struct Model {
 	char model;
