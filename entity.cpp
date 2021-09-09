@@ -15,7 +15,6 @@
  * Constructor for default entity (type=None, pos=origin)
  */
 Entity::Entity() {
-	this->type = EntityType::None;
 	this->curr = Entity::origin;
 	this->prev = Entity::origin;
 	this->collision = new Collider(new Rect()); //No collision (0 x 0 rect)
@@ -24,11 +23,9 @@ Entity::Entity() {
 /*
  * Constructor for new entity with default collision
  *
- * EntityType type	: Type enum for new entity
  * Coord pos		: Position struct for new entity
  */
-Entity::Entity(EntityType type, Coord pos) {
-	this->type = type;
+Entity::Entity(Coord pos) {
 	this->curr = pos;
 	this->prev = pos;
 	this->collision = Entity::dCollision;
@@ -37,12 +34,10 @@ Entity::Entity(EntityType type, Coord pos) {
 /*
  * Constructor for new entity
  *
- * EntityType type	: Type enum for new entity
  * Coord pos		: Position struct for new entity
  * Rect collision	: Collision area for entity
  */
-Entity::Entity(EntityType type, Coord pos, const Collider *collision) {
-	this->type = type;
+Entity::Entity(Coord pos, const Collider *collision) {
 	this->curr = pos;
 	this->prev = pos;
 	this->collision = collision;
@@ -50,13 +45,6 @@ Entity::Entity(EntityType type, Coord pos, const Collider *collision) {
 
 const Coord Entity::origin = Coord(1,1);
 const Collider *Entity::dCollision = new Collider(new Rect(Coord(0,0), Coord(1,1)));
-
-/*
- * Setter for entity type
- */
-void Entity::setType(EntityType type) {
-	this->type = type;
-};
 
 /*
  * Setter for entity position
@@ -87,13 +75,6 @@ void Entity::setCollision(const Collider *collision) {
  */
 void Entity::setModel(Model *model) {
 	this->model = model;
-};
-
-/*
- * Getter for entity type
- */
-EntityType Entity::getType() const {
-	return this->type;
 };
 
 /*

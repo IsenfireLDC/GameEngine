@@ -16,27 +16,18 @@
 #include "model.hpp"
 
 /*	Types		*/
-enum class EntityType {
-	Error,
-	None,
-	Controllable,
-	NPC,
-	Barrier
-};
-
 class Entity {
 public:
 	//Constructors
 	Entity();
-	Entity(EntityType, Coord);
-	Entity(EntityType, Coord, const Collider*);
+	Entity(Coord);
+	Entity(Coord, const Collider*);
 
 	//Constants
 	const static Coord origin;
 	const static Collider *dCollision;
 
 	//Setters
-	void setType(EntityType);
 	void move(Coord);
 	void moveBack();
 	void setCollision(const Collider*);
@@ -44,7 +35,6 @@ public:
 	void setModel(Model*);
 
 	//Getters
-	EntityType getType() const;
 	Coord getPosition() const;
 	const Collider* getCollision() const;
 
@@ -64,13 +54,11 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << "Entity";
 		if(entity.getModel() != nullptr) out << "(" << entity.getModel() << ")";
-		out << " of type " << (int)entity.type;
 		out << " at" << entity.curr;
 		return out;
 	};
 
 private:
-	EntityType type;
 	Coord curr;
 	Coord prev;
 
