@@ -18,10 +18,11 @@ Entity::Entity() {
 	this->type = EntityType::None;
 	this->curr = Entity::origin;
 	this->prev = Entity::origin;
+	this->collision = new Collider(new Rect()); //No collision (0 x 0 rect)
 };
 
 /*
- * Constructor for new entity
+ * Constructor for new entity with default collision
  *
  * EntityType type	: Type enum for new entity
  * Coord pos		: Position struct for new entity
@@ -30,9 +31,25 @@ Entity::Entity(EntityType type, Coord pos) {
 	this->type = type;
 	this->curr = pos;
 	this->prev = pos;
+	this->collision = Entity::dCollision;
 };
 
-const Coord Entity::origin = (Coord){1,1};
+/*
+ * Constructor for new entity
+ *
+ * EntityType type	: Type enum for new entity
+ * Coord pos		: Position struct for new entity
+ * Rect collision	: Collision area for entity
+ */
+Entity::Entity(EntityType type, Coord pos, const Collider *collision) {
+	this->type = type;
+	this->curr = pos;
+	this->prev = pos;
+	this->collision = collision;
+};
+
+const Coord Entity::origin = Coord(1,1);
+const Collider *Entity::dCollision = new Collider(new Rect(Coord(0,0), Coord(1,1)));
 
 /*
  * Setter for entity type
@@ -59,6 +76,13 @@ void Entity::moveBack() {
 };
 
 /*
+ * Setter for collision
+ */
+void Entity::setCollision(const Collider *collision) {
+	this->collision = collision;
+};
+
+/*
  * Setter for entity model
  */
 void Entity::setModel(Model *model) {
@@ -80,10 +104,10 @@ Coord Entity::getPosition() const {
 };
 
 /*
- * Getter for previous entity position
+ * Getter for collision
  */
-Coord Entity::getLastPosition() const {
-	return this->prev;
+const Collider* Entity::getCollision() const {
+	return this->collision;
 };
 
 /*
@@ -107,6 +131,20 @@ void Entity::onHit(Entity* entity) {};
  * Handler for getting hit
  */
 void Entity::onHitBy(Entity* entity) {};
+
+/*
+ * Coord collision query
+ */
+bool Entity::collidesWith(Coord c) {
+	return this->collision->contains(c);
+};
+
+/*
+ * Entity collision query
+ */
+bool Entity::collidesWith(const Entity* entity) {
+	return this->collision->overlaps(entity->getCollision());
+};
 
 
 

@@ -105,7 +105,7 @@ public:
 		return false;
 	};
 
-	bool overlaps(Collider *c) const {
+	bool overlaps(const Collider *c) const {
 		for(int i = 0; i < c->nRects; ++i)
 			if(this->overlaps(c->rects[i])) return true;
 

@@ -29,20 +29,25 @@ public:
 	//Constructors
 	Entity();
 	Entity(EntityType, Coord);
+	Entity(EntityType, Coord, const Collider*);
 
 	//Constants
 	const static Coord origin;
+	const static Collider *dCollision;
 
 	//Setters
 	void setType(EntityType);
 	void move(Coord);
 	void moveBack();
+	void setCollision(const Collider*);
+
 	void setModel(Model*);
 
 	//Getters
 	EntityType getType() const;
 	Coord getPosition() const;
-	Coord getLastPosition() const;
+	const Collider* getCollision() const;
+
 	Model* getModel() const;
 
 	//Actions
@@ -51,6 +56,10 @@ public:
 
 	//Responses
 	void onHitBy(Entity*);
+
+	//Queries
+	bool collidesWith(Coord);
+	bool collidesWith(const Entity*);
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << "Entity";
@@ -65,6 +74,8 @@ private:
 	Coord curr;
 	Coord prev;
 
+	const Collider *collision;
+
 	Model* model;
 };
 
@@ -75,7 +86,6 @@ public:
 	EntityManager(Field*);
 
 	//Constants
-	const static int defaultListSize = 10;
 	const int defaultXSize = 51;
 	const int defaultYSize = 21;
 
