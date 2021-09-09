@@ -14,26 +14,52 @@
 
 #include <vector>
 
+/*
+ * Handles level and models
+ */
 class Scene {
 public:
+	//Constructors
 	Scene();
 	Scene(Field*);
-	Scene(Field*, Coord*);
+	Scene(Field*, ModelManager*);
 
-	Field* getField() const;
-	Coord* getBorder() const;
-
-	void setField(Field*);
-	void setBorder(Coord*, int);
+	//Register models
+	void registerBorder(Model*);
+	void registerBackground(Model*);
+	void registerOOB(Model*);
 
 private:
-	Field* field;
-	Coord* border;
-	EntityManager entities;
+	Field *field;
+	ModelManager *models;
 
-	char mBorder;
-	char mBackground;
-	char mOutOfBounds;
+	Model *mBorder;
+	Model *mBackground;
+	Model *mOutOfBounds;
+};
+
+/*
+ * Handles drawing output and passing back input
+ */
+class Window {
+public:
+	//Constructors
+	Window();
+	Window(Scene*);
+	Window(Scene*, EntityManager*);
+
+	//Getters
+	Scene* getScene() const;
+
+	//Setters
+	void setScene(Scene*);
+
+	//Rendering
+	void render(Coord);
+
+private:
+	Scene *scene;
+	EntityManager *entities;
 };
 
 #endif
