@@ -14,24 +14,18 @@
 class Field {
 public:
 	//Exposed Constants
-	static const int defaultXScale = 2;
-	static const int defaultYScale = 1;
-	static const Area defaultArea;
+	static const Coord defaultScale;
 
 	//Constructors
 	Field();
-	Field(const Area*);
-	Field(Area*, int, int);
+	Field(Coord);
+	Field(Coord, Coord);
 
 	//Getters
 	Coord getScale() const;
-	Coord getOrigin() const;
-	int getXScale() const;
-	int getYScale() const;
 
 	//Setters
-	void setXScale(int);
-	void setYScale(int);
+	void setScale(Coord);
 
 	//Queries
 	bool contains(Coord) const;
@@ -42,8 +36,7 @@ public:
 private:
 	const Area* a;
 
-	int xScale;
-	int yScale;
+	Coord scale;
 };
 
 #endif

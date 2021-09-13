@@ -8,79 +8,62 @@
 
 #include "pos.hpp"
 
-const Area Field::defaultArea = Area();
+const Coord Field::defaultScale = Coord(2,1);
 
 /*
  * Constructor for default field
  */
 Field::Field() {
-	this->area = &Field::defaultArea;
-	this->nRect = 1;
+	this->area = Area()
 
-	this->xScale = Field::defaultXScale;
-	this->yScale = Field::defaultYScale;
+	this->scale = Field::defaultScale;
 };
 
 /*
  * Constructor for new field with default scale
  */
-Field::Field(const Area *area, int nRect) {
-	this->area = area;
-	this->nRect = nRect;
+Field::Field(Coord corner) {
+	this->area = Area(Coord(0, 0), corner);
 
-	this->xScale = Field::defaultXScale;
-	this->yScale = Field::defaultYScale;
+	this->scale = Field::defaultScale;
 };
 
 /*
  * Constructor for new field
+ *
+ * Coord corner	: Coord of far corner
+ * Coord scale	: Render coord of (1,1)
  */
-Field::Field(const Area *area, int nRect, int xScale, int yScale) {
-	this->area = area;
-	this->nRect = nRect;
+Field::Field(Coord corner, Coord scale) {
+	this->area = Area(Coord(0,0), corner);
 
-	this->xScale = xScale;
-	this->yScale = yScale;
+	this->scale = scale;
 };
 
 /*
- * Getter for xScale
+ * Getter for scale
  */
-int Field::getXScale() const {
-	return this->xScale;
-};
-
-/*
- * Getter for yScale
- */
-int Field::getYScale() const {
-	return this->yScale;
+Coord Field::getScale() const {
+	return this->scale;
 };
 
 /*
  * Setter for xScale
  */
-void Field::setXScale(int xScale) {
-	this->xScale = xScale;
-};
-
-/*
- * Setter for yScale
- */
-void Field::setYScale(int yScale) {
-	this->yScale = yScale;
+void Field::setScale(Coord scale) {
+	this->scale = scale;
 };
 
 /*
  * Determines if the given coordinates are out of bounds for this field
  */
 bool Field::contains(Coord pos) const {
-	return this->area->contains(pos);
+	return this->area.contains(pos);
 };
 
 /*
  * Uses the x and y scales to get the transform of a Coord
  */
 Coord Field::transform(Coord pos) const {
-	return Coord(pos.x*this->xScale, pos.y*this->yScale);
+	return pos * scale;
 };
