@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 
+#include "area.hpp"
 #include "field.hpp"
 #include "pos.hpp"
 

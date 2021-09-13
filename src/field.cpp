@@ -8,14 +8,13 @@
 
 #include "pos.hpp"
 
-const Rect Field::defaultArea = Rect(Coord(1,1), Coord(51,21));
+const Area Field::defaultArea = Area();
 
 /*
  * Constructor for default field
  */
 Field::Field() {
-	this->area = new Rect[1];
-	*this->area = Field::defaultArea;
+	this->area = &Field::defaultArea;
 	this->nRect = 1;
 
 	this->xScale = Field::defaultXScale;
@@ -25,7 +24,7 @@ Field::Field() {
 /*
  * Constructor for new field with default scale
  */
-Field::Field(Rect *area, int nRect) {
+Field::Field(const Area *area, int nRect) {
 	this->area = area;
 	this->nRect = nRect;
 
@@ -36,7 +35,7 @@ Field::Field(Rect *area, int nRect) {
 /*
  * Constructor for new field
  */
-Field::Field(Rect *area, int nRect, int xScale, int yScale) {
+Field::Field(const Area *area, int nRect, int xScale, int yScale) {
 	this->area = area;
 	this->nRect = nRect;
 
@@ -75,9 +74,13 @@ void Field::setYScale(int yScale) {
 /*
  * Determines if the given coordinates are out of bounds for this field
  */
-bool Field::isInBounds(Coord pos) const {
-	for(int i = 0; i < this->nRect; ++i)
-		if(area[i].contains(pos)) return true;
+bool Field::contains(Coord pos) const {
+	return this->area->contains(pos);
+};
 
-	return false;
+/*
+ * Uses the x and y scales to get the transform of a Coord
+ */
+Coord Field::transform(Coord pos) const {
+	return Coord(pos.x*this->xScale, pos.y*this->yScale);
 };
