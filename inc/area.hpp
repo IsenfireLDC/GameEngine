@@ -29,38 +29,13 @@ class Area {
 public:
 	//Constructor
 	Area();
-	Area(Rect*);
-
-	//Destructor
-	virtual ~Area();
+	Area(Rect);
 
 	//Queries
 	virtual bool contains(Coord) const;
 
-protected:
-	Rect *area;
-	int nParts = 1;
-};
-
-class MultiArea : public Area {
-public:
-	//Constructors
-	MultiArea();
-	MultiArea(Rect*, int);
-};
-
-class Collider : public Area {
-public:
-	//Constructors
-	Collider();
-	Collider(Rect*);
-	Collider(Rect*, int);
-
-	//Getter
-	const Rect* getRects() const;
-
-	//Queries
-	bool collidesWith(const Collider*) const;
+private:
+	Rect area;
 };
 
 #endif
