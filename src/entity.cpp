@@ -17,7 +17,6 @@
 Entity::Entity() {
 	this->curr = Entity::origin;
 	this->prev = Entity::origin;
-	this->collision = new Collider(new Rect()); //No collision (0 x 0 rect)
 };
 
 /*
@@ -28,7 +27,6 @@ Entity::Entity() {
 Entity::Entity(Coord pos) {
 	this->curr = pos;
 	this->prev = pos;
-	this->collision = Entity::dCollision;
 };
 
 const Coord Entity::origin = Coord(1,1);
@@ -39,8 +37,6 @@ const Coord Entity::origin = Coord(1,1);
 void Entity::move(Coord pos) {
 	this->prev = this->curr;
 	this->curr = pos;
-
-	this->onMove();
 };
 
 /*
@@ -70,21 +66,6 @@ Coord Entity::getPosition() const {
 Model* Entity::getModel() const {
 	return this->model;
 };
-
-/*
- * Handler for actions on move
- */
-void Entity::onMove() {};
-
-/*
- * Handler for hitting another entity
- */
-void Entity::onHit(Entity* entity) {};
-
-/*
- * Handler for getting hit
- */
-void Entity::onHitBy(Entity* entity) {};
 
 /*
  * Coord collision query
@@ -137,15 +118,8 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
 /*
  * Get const pointer to array containing all entities
  */
-Entity *const * EntityManager::getEntities() const {
-	return this->entities.data();
-};
-
-/*
- * Get size of entities list
- */
-int EntityManager::size() const {
-	return this->entities.size();
+std::vector<Entity*> EntityManager::getEntities() const {
+	return this->entities;
 };
 
 /*
@@ -179,7 +153,7 @@ bool EntityManager::moveEntity(Entity* entity, Coord pos) {
  * Determines if an entity exists at a given location
  */
 bool EntityManager::canPlaceAt(Coord pos) const {
-	if(!this->field->isInBounds(pos)) return false;
+	if(!this->field->contains(pos)) return false;
 
 	for(Entity* entity : this->entities)
 		if(pos == entity->getPosition())

@@ -37,13 +37,6 @@ public:
 
 	Model* getModel() const;
 
-	//Actions
-	void onMove();
-	void onHit(Entity*);
-
-	//Responses
-	void onHitBy(Entity*);
-
 	//Queries
 	bool collidesWith(Coord);
 	bool collidesWith(const Entity*);
@@ -68,14 +61,9 @@ public:
 	EntityManager();
 	EntityManager(Field*);
 
-	//Constants
-	const int defaultXSize = 51;
-	const int defaultYSize = 21;
-
 	//Get information
 	Entity* getEntityAt(Coord) const;
-	Entity *const * getEntities() const;
-	int size() const;
+	std::vector<Entity*> getEntities() const;
 
 	//Add/remove from list
 	bool addEntity(Entity*);
