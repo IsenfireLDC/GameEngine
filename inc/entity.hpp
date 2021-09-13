@@ -22,22 +22,18 @@ public:
 	//Constructors
 	Entity();
 	Entity(Coord);
-	Entity(Coord, const Collider*);
 
 	//Constants
 	const static Coord origin;
-	const static Collider *dCollision;
 
 	//Setters
 	void move(Coord);
 	void moveBack();
-	void setCollision(const Collider*);
 
 	void setModel(Model*);
 
 	//Getters
 	Coord getPosition() const;
-	const Collider* getCollision() const;
 
 	Model* getModel() const;
 
@@ -62,8 +58,6 @@ public:
 private:
 	Coord curr;
 	Coord prev;
-
-	const Collider *collision;
 
 	Model* model;
 };
