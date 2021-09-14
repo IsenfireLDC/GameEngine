@@ -56,7 +56,7 @@ void Entity::setModel(Model *model) {
 /*
  * Getter for entity position
  */
-Coord Entity::getPosition() const {
+Coord Entity::getPos() const {
 	return this->curr;
 };
 
@@ -78,7 +78,7 @@ bool Entity::collidesWith(Coord c) {
  * Entity collision query
  */
 bool Entity::collidesWith(const Entity* entity) {
-	return this->curr == entity->getPosition();
+	return this->curr == entity->getPos();
 };
 
 
@@ -109,7 +109,7 @@ EntityManager::EntityManager(Field* field) {
  */
 Entity* EntityManager::getEntityAt(Coord pos) const {
 	for(Entity* entity : this->entities)
-		if(pos == entity->getPosition())
+		if(pos == entity->getPos())
 			return entity;
 
 	return nullptr;
@@ -128,7 +128,7 @@ std::vector<Entity*> EntityManager::getEntities() const {
  * Returns false if an entity already exists in the same location
  */
 bool EntityManager::addEntity(Entity* entity) {
-	if(entity == nullptr || this->canPlaceAt(entity->getPosition())) return false;
+	if(entity == nullptr || this->canPlaceAt(entity->getPos())) return false;
 
 	this->entities.push_back(entity);
 
@@ -156,7 +156,7 @@ bool EntityManager::canPlaceAt(Coord pos) const {
 	if(!this->field->contains(pos)) return false;
 
 	for(Entity* entity : this->entities)
-		if(pos == entity->getPosition())
+		if(pos == entity->getPos())
 			return true;
 
 	return false;

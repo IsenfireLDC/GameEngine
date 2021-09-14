@@ -33,7 +33,7 @@ public:
 	void setModel(Model*);
 
 	//Getters
-	Coord getPosition() const;
+	Coord getPos() const;
 
 	Model* getModel() const;
 

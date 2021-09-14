@@ -17,8 +17,8 @@ enum Input::Key : int {
 	Right = sKey|77
 };
 
-static void aMove(Entity *entity, int input) {
-	Coord ePos = entity->getPosition();
+static void aMove(Entity *target, int input) {
+	Coord ePos = target->getPos();
 
 	switch (input) {
 		case Input::Key::W:
@@ -39,7 +39,7 @@ static void aMove(Entity *entity, int input) {
 			break;
 	};
 
-	entity->move(ePos);
+	target->move(ePos);
 };
 
 Action MoveAction = aMove;
@@ -59,9 +59,9 @@ const Action Input::getAction(int input) const {
 	return this->ActionMap.at(input);
 };
 
-void Input::callAction(Entity *entity, int input) const {
+void Input::callAction(Entity *target, int input) const {
 	Action a = this->ActionMap.at(input);
-	a(entity, input);
+	a(target, input);
 };
 
 void Input::addActionMapping(int input, Action action) {

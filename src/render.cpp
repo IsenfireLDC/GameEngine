@@ -58,7 +58,7 @@ void Window::render() const {
 	//Entities
 	std::vector<Entity*> entityList = this->entities->getEntities();
 	for(unsigned int i = 0; i < entityList.size(); ++i) {
-		setPos(this->field->transform(entityList[i]->getPosition()));
+		setPos(this->field->transform(entityList[i]->getPos()));
 		renderModel(entityList[i]->getModel());
 	};
 
