@@ -21,6 +21,13 @@ Area::Area(Rect area) {
 };
 
 /*
+ * Getter for rect
+ */
+Rect Area::getRect() const {
+	return this->area;
+};
+
+/*
  * Determines if this Area contains the given Coord
  */
 bool Area::contains(Coord c) const {

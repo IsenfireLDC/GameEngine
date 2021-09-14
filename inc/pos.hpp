@@ -8,18 +8,18 @@
 #define _POS_HPP_
 
 #include <iostream>
-#include <utility>
+#include <windows.h>
 
 struct Coord {
-	int x;
-	int y;
+	short x;
+	short y;
 
 	Coord() {
 		this->x = 0;
 		this->y = 0;
 	};
 
-	Coord(int x, int y) {
+	Coord(short x, short y) {
 		this->x = x;
 		this->y = y;
 	};
@@ -28,17 +28,16 @@ struct Coord {
 		return this->x == a.x && this->y == a.y;
 	};
 
-	Coord operator*(const Coord& c1, const Coord& c2) {
-		Coord out = c1;
-		out.x *= c2.x;
-		out.y *= c2.y;
-		return out;
-	};
+	operator COORD() const { return (COORD){this->x, this->y}; };
 
 	friend std::ostream& operator<<(std::ostream &out, const Coord &coord) {
 		out << "(" << coord.x << ", " << coord.y << ")";
 		return out;
 	};
 };
+
+Coord operator+(const Coord&, const Coord&);
+Coord operator*(const Coord&, const Coord&);
+
 
 #endif

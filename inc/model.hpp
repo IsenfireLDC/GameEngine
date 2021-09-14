@@ -11,7 +11,7 @@
 #include <vector>
 
 
-typedef int Color;
+typedef char Color;
 struct Model {
 	char model;
 	Color color;

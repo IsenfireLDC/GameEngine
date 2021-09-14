@@ -8,6 +8,7 @@
  */
 
 //includes
+#include "render.hpp"
 #include "entity.hpp"
 
 #include <windows.h>
@@ -36,30 +37,46 @@ void getKBCodes() {
 };
 
 int main() {
-	//Create default entity
-	Entity* entity = new Entity();
+	//Create entity
+	Entity entity = Entity(Entity::origin);
+	Model mEntity = Model('~', 0b1010);
+	entity.setModel(&mEntity);
 
-	//Create default field
-	Field* field = new Field();
+	//Create field
+	Field field = Field(Coord(25, 20), Coord(2,1));
 
 	//Create entity manager
-	EntityManager manager = EntityManager(field);
+	EntityManager manager = EntityManager(&field);
 
-	manager.addEntity(entity);
+	//Create window
+	Window window = Window(&field, &manager);
 
+	//Add entity to manager
+	manager.addEntity(&entity);
+
+	//Render window
+	window.render();
+
+	//Attempt to move entity
 	Coord testCoord = {2,5};
-	manager.moveEntity(entity, testCoord);
+	manager.moveEntity(&entity, testCoord);
 
 	if(manager.getEntityAt(testCoord) != nullptr) {
-		std::cout << "Moved entity succesfully" << std::endl;
+		window.setMsg("Moved entity succesfully");
 	} else {
-		std::cout << "Failed to move entity" << std::endl;
+		window.setMsg("Failed to move entity");
 	};
 
-	Entity *const * entityList = manager.getEntities();
+	Sleep(1000);
+
+	//Render window
+	window.render();
+
+	//Print out list of entities
+	std::vector<Entity*> entityList = manager.getEntities();
 
 	std::cout << "Printing entities" << std::endl;
-	for(int i = 0; i < manager.size(); ++i) {
+	for(unsigned int i = 0; i < entityList.size(); ++i) {
 		std::cout << "\t" << *entityList[i] << std::endl;
 	};
 

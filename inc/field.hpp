@@ -23,6 +23,7 @@ public:
 
 	//Getters
 	Coord getScale() const;
+	const Area* getArea() const;
 
 	//Setters
 	void setScale(Coord);
@@ -34,7 +35,7 @@ public:
 	Coord transform(Coord) const;
 
 private:
-	const Area* a;
+	const Area* area;
 
 	Coord scale;
 };

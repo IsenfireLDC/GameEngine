@@ -31,6 +31,9 @@ public:
 	Area();
 	Area(Rect);
 
+	//Getter
+	Rect getRect() const;
+
 	//Queries
 	virtual bool contains(Coord) const;
 
