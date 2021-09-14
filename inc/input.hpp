@@ -13,23 +13,26 @@
 #include <unordered_map>
 
 typedef std::function<void(Entity*, int)> Action;
+//typedef void(*Action)(Entity*, int);
 
-extern const Action MoveAction;
+extern Action MoveAction;
 
-extern std::unordered_map<int, const Action> ActionMap;
+extern const std::unordered_map<int, Action> DefaultMap;
 
 //Special key code
 const int sKey = (224<<8);
 
-enum Inputs : int {
-	W = 119,
-	A = 97,
-	S = 115,
-	D = 100,
-	Up = sKey|72,
-	Left = sKey|75,
-	Down = sKey|80,
-	Right = sKey|77
+class Input {
+public:
+	enum Key : int;
+
+	const Action getAction(int) const;
+	void callAction(Entity*, int) const;
+
+	void addActionMapping(int, Action);
+	void removeActionMapping(int);
+private:
+	std::unordered_map<int, Action> ActionMap;
 };
 
 #endif

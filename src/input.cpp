@@ -6,24 +6,35 @@
 
 #include "input.hpp"
 
+enum Input::Key : int {
+	W = 119,
+	A = 97,
+	S = 115,
+	D = 100,
+	Up = sKey|72,
+	Left = sKey|75,
+	Down = sKey|80,
+	Right = sKey|77
+};
+
 static void aMove(Entity *entity, int input) {
 	Coord ePos = entity->getPosition();
 
 	switch (input) {
-		case Inputs::W:
-		case Inputs::Up:
+		case Input::Key::W:
+		case Input::Key::Up:
 			ePos = ePos + Coord(0,1);
 			break;
-		case Inputs::A:
-		case Inputs::Left:
+		case Input::Key::A:
+		case Input::Key::Left:
 			ePos = ePos + Coord(-1,0);
 			break;
-		case Inputs::S:
-		case Inputs::Down:
+		case Input::Key::S:
+		case Input::Key::Down:
 			ePos = ePos + Coord(0,-1);
 			break;
-		case Inputs::D:
-		case Inputs::Right:
+		case Input::Key::D:
+		case Input::Key::Right:
 			ePos = ePos + Coord(1,0);
 			break;
 	};
@@ -31,15 +42,33 @@ static void aMove(Entity *entity, int input) {
 	entity->move(ePos);
 };
 
-const Action MoveAction = aMove;
+Action MoveAction = aMove;
 
-std::unordered_map<int, const Action> ActionMap = {
-	{Inputs::W, MoveAction},
-	{Inputs::A, MoveAction},
-	{Inputs::S, MoveAction},
-	{Inputs::D, MoveAction},
-	{Inputs::Up, MoveAction},
-	{Inputs::Left, MoveAction},
-	{Inputs::Down, MoveAction},
-	{Inputs::Right, MoveAction}
+const std::unordered_map<int, Action> DefaultMap = {
+	{Input::Key::W, MoveAction},
+	{Input::Key::A, MoveAction},
+	{Input::Key::S, MoveAction},
+	{Input::Key::D, MoveAction},
+	{Input::Key::Up, MoveAction},
+	{Input::Key::Left, MoveAction},
+	{Input::Key::Down, MoveAction},
+	{Input::Key::Right, MoveAction}
 };
+
+const Action Input::getAction(int input) const {
+	return this->ActionMap.at(input);
+};
+
+void Input::callAction(Entity *entity, int input) const {
+	Action a = this->ActionMap.at(input);
+	a(entity, input);
+};
+
+void Input::addActionMapping(int input, Action action) {
+	this->ActionMap[input] = action;
+};
+
+void Input::removeActionMapping(int input) {
+	this->ActionMap.erase(input);
+};
+
