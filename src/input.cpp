@@ -6,6 +6,8 @@
 
 #include "input.hpp"
 
+#include <conio.h>
+
 enum Input::Key : int {
 	W = 119,
 	A = 97,
@@ -53,6 +55,18 @@ const std::unordered_map<int, Action> DefaultMap = {
 	{Input::Key::Left, MoveAction},
 	{Input::Key::Down, MoveAction},
 	{Input::Key::Right, MoveAction}
+};
+
+int Input::getInput() {
+	if(!kbhit()) return 0;
+	int kb_code = getch();
+
+	if(kb_code == 224) {
+		kb_code <<= 8;
+		kb_code |= getch();
+	};
+
+	return kb_code;
 };
 
 const Action Input::getAction(int input) const {

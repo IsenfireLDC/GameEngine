@@ -26,6 +26,8 @@ class Input {
 public:
 	enum Key : int;
 
+	static int getInput();
+
 	const Action getAction(int) const;
 	void callAction(Entity*, int) const;
 
