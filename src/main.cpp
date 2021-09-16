@@ -19,10 +19,10 @@
 //#include <random>
 //#include <ctime>
 
+static bool running = true;
 
 static void aExit(Entity *target, int input) {
-	if(input == Input::Key::Escape) exit(0);
-	else std::cout << input << std::endl;
+	if(input == Input::Key::Escape) running = false;
 };
 
 void getKBCodes() {
@@ -96,7 +96,7 @@ int main() {
 
 	//Get inputs
 	char keyMsg[20];
-	while(true) {
+	while(running) {
 		int inKey = Input::getInputKey();
 		int inScan = Input::getInputScan();
 		if(inScan != 0) {
