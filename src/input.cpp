@@ -9,22 +9,6 @@
 #include <conio.h>
 #include <winuser.h>
 
-static const int lQwerty = 67699721;
-static const int lDvorak = -268303351;
-/*
-enum Input::Key : int {
-	W = 119,
-	A = 97,
-	S = 115,
-	D = 100,
-	Up = sKey|72,
-	Left = sKey|75,
-	Down = sKey|80,
-	Right = sKey|77,
-	Null = 0
-};
-*/
-
 static void aMove(Entity *target, int input) {
 	Coord ePos = target->getPos();
 
@@ -67,19 +51,7 @@ const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::Null, NoneAction}
 };
 
-int Input::getInputKey() {
-	if(!kbhit()) return 0;
-	int kb_code = getch();
-
-	if(kb_code == 224) {
-		kb_code <<= 8;
-		kb_code |= getch();
-	};
-
-	return kb_code;
-};
-
-int Input::getInputScan() {
+static INPUT_RECORD getInput() {
 	DWORD mode;
 	INPUT_RECORD input;
 
@@ -97,36 +69,28 @@ int Input::getInputScan() {
 
 		//Get input event
 		ReadConsoleInput(handle, &input, 1, &cnt);
-
-		if(input.EventType == KEY_EVENT) {
-			SetConsoleMode(handle, mode);
-			return input.Event.KeyEvent.wVirtualScanCode;
-		};
 	};
 
 	SetConsoleMode(handle, mode);
+	return input;
+};
+
+int Input::getInputKey() {
+	INPUT_RECORD input = getInput();
+
+	if(input.EventType == KEY_EVENT)
+		return getInput().Event.KeyEvent.wVirtualKeyCode;
+
 	return 0;
 };
 
-/*
- * Unused
- *
- * Return a number based on keyboard layout
- *
- * 0	: Qwerty
- * 1	: Dvorak
- */
-int Input::getKeyboardLayout() {
-	int layout = reinterpret_cast<int>(GetKeyboardLayout(0));
+int Input::getInputScan() {
+	INPUT_RECORD input = getInput();
 
-	switch(layout) {
-		case lQwerty:
-			return 0;
-		case lDvorak:
-			return 1;
-		default:
-			return 0;
-	};
+	if(input.EventType == KEY_EVENT)
+		return getInput().Event.KeyEvent.wVirtualScanCode;
+
+	return 0;
 };
 
 
