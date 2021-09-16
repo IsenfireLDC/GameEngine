@@ -40,6 +40,14 @@ void Window::setMsg(const char *msg) {
 };
 
 void Window::render() const {
+	//Disable cursor
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO cInfo;
+
+	GetConsoleCursorInfo(hOut, &cInfo);
+	cInfo.bVisible = false;
+	SetConsoleCursorInfo(hOut, &cInfo);
+
 	Coord size = this->field->getArea()->getRect().c2;
 	size = size * this->field->getScale();
 
@@ -72,4 +80,8 @@ void Window::render() const {
 	setColor(0b1001);
 	if(this->msg) std::cout << this->msg << std::endl;
 	resetColor();
+
+	//Enable cursor
+	cInfo.bVisible = true;
+	SetConsoleCursorInfo(hOut, &cInfo);
 };
