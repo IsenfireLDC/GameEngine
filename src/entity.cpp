@@ -61,20 +61,6 @@ Model* Entity::getModel() const {
 	return this->model;
 };
 
-/*
- * Coord collision query
- */
-bool Entity::collidesWith(Coord c) {
-	return this->pos == c;
-};
-
-/*
- * Entity collision query
- */
-bool Entity::collidesWith(const Entity* entity) {
-	return this->pos == entity->getPos();
-};
-
 
 
 /****	     EntityManager	****/

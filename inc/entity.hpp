@@ -40,10 +40,6 @@ public:
 
 	Model* getModel() const;
 
-	//Queries
-	bool collidesWith(Coord);
-	bool collidesWith(const Entity*);
-
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << "Entity";
