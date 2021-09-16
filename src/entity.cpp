@@ -9,35 +9,73 @@
 #include <iostream>
 
 
-/****	     EntityManager	****/
+/****	        Entity     	****/
+
+char Entity::gID = 0;
+
+const Coord Entity::origin = Coord(1,1);
+const char Entity::dName[] = "Entity";
 
 /*
- * Constructor for default entity (type=None, pos=origin)
+ * Static
+ *
+ * Returns next id
  */
-Entity::Entity() {
-	this->pos = Entity::origin;
+char Entity::nextID() {
+	return Entity::gID++;
 };
 
 /*
- * Constructor for new entity with default collision
+ * Constructor for default entity
+ */
+Entity::Entity() {
+	this->pos = Entity::origin;
+
+	this->data = {Entity::nextID(), 0, Entity::dName};
+};
+
+/*
+ * Constructor for new entity with default data
  *
  * Coord pos		: Position struct for new entity
  */
 Entity::Entity(Coord pos) {
 	this->pos = pos;
+
+	this->data = {Entity::nextID(), 0, Entity::dName};
 };
 
-const Coord Entity::origin = Coord(1,1);
+/*
+ * Constructor for new entity
+ *
+ * Coord pos		: Position struct
+ * char type		: Type id
+ * const char *name	: Entity name
+ */
+Entity::Entity(Coord pos, char type, const char *name) {
+	this->pos = pos;
+
+	this->data = {Entity::nextID(), type, name};
+};
 
 /*
  * Moves entity, checking for collision if registered to manager
  */
 bool Entity::move(Coord pos) {
-	if(this->manager && !this->manager->canPlaceAt(pos)) return false;
+	//Check if entity at pos
+	Entity* other = nullptr;
+	if(this->manager)
+		other = this->manager->getEntityAt(pos);
 
-	this->pos = pos;
+	//Interact with entity
+	bool move = this->moveInto(other);
 
-	return true;
+	//Move entity
+	if(move) {
+		this->pos = pos;
+	};
+
+	return move;
 };
 
 /*
@@ -45,6 +83,13 @@ bool Entity::move(Coord pos) {
  */
 void Entity::setModel(Model *model) {
 	this->model = model;
+};
+
+/*
+ * Setter for entity data
+ */
+void Entity::setData(EntityData data) {
+	this->data = data;
 };
 
 /*
@@ -61,6 +106,21 @@ Model* Entity::getModel() const {
 	return this->model;
 };
 
+/*
+ * Getter for data
+ */
+EntityData Entity::getData() const {
+	return this->data;
+};
+
+/*
+ * Controls interaction from moving into other entities
+ */
+bool Entity::moveInto(Entity *other) {
+	if(!other) return true;
+
+	return false;
+};
 
 
 /****	     EntityManager	****/

@@ -19,26 +19,41 @@
 /*	Types		*/
 class EntityManager;
 
+struct EntityData {
+	char id;
+	char type;
+	const char* name;
+};
+
 class Entity {
 public:
 	friend class EntityManager;
 
-	//Constructors
-	Entity();
-	Entity(Coord);
+	//Static methods
+	static char nextID();
 
 	//Constants
 	const static Coord origin;
+	const static char dName[];
+
+	//Constructors
+	Entity();
+	Entity(Coord);
+	Entity(Coord, char, const char*);
 
 	//Setters
-	bool move(Coord);
-
 	void setModel(Model*);
+	void setData(EntityData);
 
 	//Getters
 	Coord getPos() const;
-
 	Model* getModel() const;
+	EntityData getData() const;
+
+	//Action
+	bool move(Coord);
+
+	bool moveInto(Entity*);
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
@@ -50,9 +65,13 @@ public:
 	};
 
 private:
+	static char gID;
+
 	Coord pos;
 
 	Model* model;
+
+	EntityData data;
 
 	EntityManager *manager = nullptr;
 };
