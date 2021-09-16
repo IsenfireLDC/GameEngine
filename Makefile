@@ -7,7 +7,7 @@ INC_DIR=inc/
 
 DEBUG=-ggdb -g3
 
-FLAGS=-Wall -I$(INC_DIR)
+FLAGS=-Wall -I$(INC_DIR) -Wno-parentheses
 #FLAGS+=$(DEBUG)
 
 OBJECTS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.o, $(wildcard $(SRC_DIR)*.cpp))

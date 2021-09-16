@@ -36,6 +36,7 @@ public:
 
 	//Queries
 	virtual bool contains(Coord) const;
+	virtual bool contains(Coord, bool) const;
 
 private:
 	Rect area;
