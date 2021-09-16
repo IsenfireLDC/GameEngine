@@ -1,0 +1,25 @@
+Base Requirements:
+ X Input controls the player
+ - Player can interact with NPCs
+ - NPCs are ticked
+ X Player/NPC stopped by level bounds
+ X Game has end condition
+ X Game is rendered
+
+Input:
+ X Input is mapped to actions
+ X Actions sent to Player
+
+Player/NPC:
+ X Player and NPC are "Entity"
+ X Player receives input from user
+ - NPC receives input from program
+ X Moves are checked against "Field" bounds
+
+Game:
+ X Use 'running' flag
+ X Set flag in main; unset flag as player interaction
+
+Render:
+ X Get "Model" and "Coord" from "Entity"
+ X Output at given position
