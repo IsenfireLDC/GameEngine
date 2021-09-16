@@ -97,6 +97,7 @@ public:
 	bool moveEntity(Entity*, Coord);
 
 	//Query
+	bool inBounds(Coord) const;
 	bool canPlaceAt(Coord) const;
 	unsigned int findEntity(Entity*) const;
 

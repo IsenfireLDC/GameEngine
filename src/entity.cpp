@@ -64,8 +64,10 @@ Entity::Entity(Coord pos, char type, const char *name) {
 bool Entity::move(Coord pos) {
 	//Check if entity at pos
 	Entity* other = nullptr;
-	if(this->manager)
+	if(this->manager) {
+		if(!this->manager->inBounds(pos)) return false;
 		other = this->manager->getEntityAt(pos);
+	};
 
 	//Interact with entity
 	bool move = this->moveInto(other);
@@ -215,6 +217,15 @@ bool EntityManager::moveEntity(Entity* entity, Coord pos) {
 
 	//Call entity's move method
 	return entity->move(pos);
+};
+
+/*
+ * Determines if coordinate is in field bounds
+ */
+bool EntityManager::inBounds(Coord pos) const {
+	if(this->field) return this->field->contains(pos);
+
+	return false;
 };
 
 /*
