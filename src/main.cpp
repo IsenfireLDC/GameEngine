@@ -62,16 +62,20 @@ int main() {
 	input.addActionMapping(Input::Key::Escape, ExitAction);
 
 	//Add entity to manager
-	manager.addEntity(&entity);
+	manager.registerEntity(&entity);
 
 	//Render window
 	window.render();
+
+	//Print out manager
+	std::cout << manager << std::endl;
 
 	//Attempt to move entity
 	Coord testCoord = {2,5};
 	manager.moveEntity(&entity, testCoord);
 
-	if(manager.getEntityAt(testCoord) != nullptr) {
+
+	if(manager.getEntityAt(testCoord)) {
 		window.setMsg("Moved entity succesfully");
 	} else {
 		window.setMsg("Failed to move entity");

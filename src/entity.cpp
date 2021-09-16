@@ -15,8 +15,7 @@
  * Constructor for default entity (type=None, pos=origin)
  */
 Entity::Entity() {
-	this->curr = Entity::origin;
-	this->prev = Entity::origin;
+	this->pos = Entity::origin;
 };
 
 /*
@@ -25,25 +24,20 @@ Entity::Entity() {
  * Coord pos		: Position struct for new entity
  */
 Entity::Entity(Coord pos) {
-	this->curr = pos;
-	this->prev = pos;
+	this->pos = pos;
 };
 
 const Coord Entity::origin = Coord(1,1);
 
 /*
- * Setter for entity position
+ * Moves entity, checking for collision if registered to manager
  */
-void Entity::move(Coord pos) {
-	this->prev = this->curr;
-	this->curr = pos;
-};
+bool Entity::move(Coord pos) {
+	if(this->manager && !this->manager->canPlaceAt(pos)) return false;
 
-/*
- * Resets entity position to previous position
- */
-void Entity::moveBack() {
-	this->curr = this->prev;
+	this->pos = pos;
+
+	return true;
 };
 
 /*
@@ -57,7 +51,7 @@ void Entity::setModel(Model *model) {
  * Getter for entity position
  */
 Coord Entity::getPos() const {
-	return this->curr;
+	return this->pos;
 };
 
 /*
@@ -71,14 +65,14 @@ Model* Entity::getModel() const {
  * Coord collision query
  */
 bool Entity::collidesWith(Coord c) {
-	return this->curr == c;
+	return this->pos == c;
 };
 
 /*
  * Entity collision query
  */
 bool Entity::collidesWith(const Entity* entity) {
-	return this->curr == entity->getPos();
+	return this->pos == entity->getPos();
 };
 
 
@@ -89,7 +83,7 @@ bool Entity::collidesWith(const Entity* entity) {
  * Constructor for default entity manager
  */
 EntityManager::EntityManager() {
-	this->field = new Field();
+	this->field = nullptr;
 	this->entities = std::vector<Entity*>();
 };
 
@@ -103,13 +97,23 @@ EntityManager::EntityManager(Field* field) {
 };
 
 /*
+ * Destructor
+ *
+ * Unregisters all entities
+ */
+EntityManager::~EntityManager() {
+	for(int i = this->entities.size()-1; i >= 0; --i)
+		this->unregisterEntity(this->entities[i]);
+};
+
+/*
  * Finds first entity at given coordinates (1 max at coords)
  *
  * Returns null pointer if no entity found
  */
 Entity* EntityManager::getEntityAt(Coord pos) const {
 	for(Entity* entity : this->entities)
-		if(pos == entity->getPos())
+		if(pos == entity->pos)
 			return entity;
 
 	return nullptr;
@@ -127,10 +131,30 @@ std::vector<Entity*> EntityManager::getEntities() const {
  *
  * Returns false if an entity already exists in the same location
  */
-bool EntityManager::addEntity(Entity* entity) {
-	if(entity == nullptr || this->canPlaceAt(entity->getPos())) return false;
+bool EntityManager::registerEntity(Entity* entity) {
+	if(entity == nullptr || !this->canPlaceAt(entity->pos)) return false;
 
 	this->entities.push_back(entity);
+
+	entity->manager = this;
+
+	return true;
+};
+
+/*
+ * Remove an entity from the entity manager
+ *
+ * Returns false if entity was null or not found
+ */
+bool EntityManager::unregisterEntity(Entity* entity) {
+	if(entity == nullptr) return false;
+
+	unsigned int index = this->findEntity(entity);
+	if(index == this->entities.size()) return false;
+
+	this->entities.erase(this->entities.begin() + index);
+
+	entity->manager = nullptr;
 
 	return true;
 };
@@ -138,26 +162,34 @@ bool EntityManager::addEntity(Entity* entity) {
 /*
  * Attempt to move an entity to a new coordinate
  *
- * Returns false if an entity is already there
+ * Returns false if entity is null, else returns move(pos)
  */
 bool EntityManager::moveEntity(Entity* entity, Coord pos) {
-	if(entity == nullptr || this->canPlaceAt(pos)) return false;
+	if(entity == nullptr) return false;
 
 	//Call entity's move method
-	entity->move(pos);
-
-	return true;
+	return entity->move(pos);
 };
 
 /*
  * Determines if an entity exists at a given location
  */
 bool EntityManager::canPlaceAt(Coord pos) const {
-	if(!this->field->contains(pos)) return false;
+	if(this->field && !this->field->contains(pos)) return false;
 
 	for(Entity* entity : this->entities)
-		if(pos == entity->getPos())
-			return true;
+		if(pos == entity->pos)
+			return false;
 
-	return false;
+	return true;
+};
+
+/*
+ * Determines where entity exists, size if it does not
+ */
+unsigned int EntityManager::findEntity(Entity *entity) const {
+	for(unsigned int i = 0; i < this->entities.size(); ++i)
+		if(this->entities[i] == entity) return i;
+
+	return this->entities.size();
 };
