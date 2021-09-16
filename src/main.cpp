@@ -42,15 +42,22 @@ void getKBCodes() {
 };
 
 int main() {
-	//Create entity
-	Entity entity = Entity(Entity::origin);
-	Model mEntity = Model('~', 0b1010);
-	entity.setModel(&mEntity);
+	//Create player
+	const char nPlayer[20] = "Player";
+	Entity player = Entity(Entity::origin, 0, nPlayer);
+	Model mPlayer = Model('~', 0b1010);
+	player.setModel(&mPlayer);
+
+	//Create non-player
+	const char nNPC[20] = "NPC";
+	Entity npc = Entity({3,4}, 1, nNPC);
+	Model mNPC = Model('!', 0b1111100);
+	npc.setModel(&mNPC);
 
 	//Create field
 	Field field = Field(Coord(25, 20), Coord(2,1));
 
-	//Create entity manager
+	//Create player manager
 	EntityManager manager = EntityManager(&field);
 
 	//Create window
@@ -61,8 +68,9 @@ int main() {
 	Action ExitAction = aExit;
 	input.addActionMapping(Input::Key::Escape, ExitAction);
 
-	//Add entity to manager
-	manager.registerEntity(&entity);
+	//Add player to manager
+	manager.registerEntity(&player);
+	manager.registerEntity(&npc);
 
 	//Render window
 	window.render();
@@ -70,15 +78,15 @@ int main() {
 	//Print out manager
 	std::cout << manager << std::endl;
 
-	//Attempt to move entity
+	//Attempt to move player
 	Coord testCoord = {2,5};
-	manager.moveEntity(&entity, testCoord);
+	manager.moveEntity(&player, testCoord);
 
 
 	if(manager.getEntityAt(testCoord)) {
-		window.setMsg("Moved entity succesfully");
+		window.setMsg("Moved player succesfully");
 	} else {
-		window.setMsg("Failed to move entity");
+		window.setMsg("Failed to move player");
 	};
 
 	Sleep(1000);
@@ -87,11 +95,11 @@ int main() {
 	window.render();
 
 	//Print out list of entities
-	std::vector<Entity*> entityList = manager.getEntities();
+	std::vector<Entity*> playerList = manager.getEntities();
 
 	std::cout << "Printing entities" << std::endl;
-	for(unsigned int i = 0; i < entityList.size(); ++i) {
-		std::cout << "\t" << *entityList[i] << std::endl;
+	for(unsigned int i = 0; i < playerList.size(); ++i) {
+		std::cout << "\t" << *playerList[i] << std::endl;
 	};
 
 	//Get inputs
@@ -104,7 +112,7 @@ int main() {
 			window.setMsg(keyMsg);
 		};
 
-		input.callAction(&entity, inScan);
+		input.callAction(&player, inScan);
 		window.render();
 
 		Sleep(100);
