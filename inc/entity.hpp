@@ -57,8 +57,9 @@ public:
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
-		out << "Entity";
+		out << entity.data.name;
 		if(entity.model) out << "(" << entity.model << ")";
+		out << " type=" << (int)entity.data.type;
 		out << " at" << entity.pos;
 		if(entity.manager) out << " managed by " << entity.manager;
 		return out;
