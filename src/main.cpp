@@ -10,12 +10,20 @@
 //includes
 #include "render.hpp"
 #include "entity.hpp"
+#include "input.hpp"
 
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
+#include <cstdio>
 //#include <random>
 //#include <ctime>
+
+
+static void aExit(Entity *target, int input) {
+	if(input == Input::Key::Escape) exit(0);
+	else std::cout << input << std::endl;
+};
 
 void getKBCodes() {
 	int kb_code = 0;
@@ -23,15 +31,12 @@ void getKBCodes() {
 	std::cout << "Hit a key" << std::endl;
 
 	while(true) {
-		if(kbhit()) {
-			std::cout << "Key hit: ";
-			kb_code = getch();
+		kb_code = Input::getInputKey();
 
-			std::cout << kb_code << std::endl << std::flush;
+		if(kb_code != 0) std::cout << kb_code << std::endl;
 
-			//Break after hitting escape
-			if (kb_code == 27) break;
-		}
+		if(kb_code == 27) break;
+
 		Sleep(100);
 	}
 };
@@ -50,6 +55,11 @@ int main() {
 
 	//Create window
 	Window window = Window(&field, &manager);
+
+	//Create input
+	Input input = Input();
+	Action ExitAction = aExit;
+	input.addActionMapping(Input::Key::Escape, ExitAction);
 
 	//Add entity to manager
 	manager.addEntity(&entity);
@@ -78,6 +88,22 @@ int main() {
 	std::cout << "Printing entities" << std::endl;
 	for(unsigned int i = 0; i < entityList.size(); ++i) {
 		std::cout << "\t" << *entityList[i] << std::endl;
+	};
+
+	//Get inputs
+	char keyMsg[20];
+	while(true) {
+		int inKey = Input::getInputKey();
+		int inScan = Input::getInputScan();
+		if(inScan != 0) {
+			sprintf(keyMsg, "%c : %08d", inKey, inScan);
+			window.setMsg(keyMsg);
+		};
+
+		input.callAction(&entity, inScan);
+		window.render();
+
+		Sleep(100);
 	};
 
 	return 0;
