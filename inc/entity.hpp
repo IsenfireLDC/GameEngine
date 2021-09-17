@@ -47,6 +47,7 @@ public:
 
 	//Getters
 	Coord getPos() const;
+	Coord getLastPos() const;
 	Model* getModel() const;
 	EntityData getData() const;
 
@@ -54,6 +55,9 @@ public:
 	virtual bool move(Coord);
 
 	virtual bool moveInto(Entity*);
+
+	//Query
+	bool changed();
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
@@ -69,12 +73,15 @@ private:
 	static char gID;
 
 	Coord pos;
+	Coord lastPos;
 
 	Model* model;
 
 	EntityData data;
 
 	EntityManager *manager = nullptr;
+
+	bool dirty = false;
 };
 
 class EntityManager {

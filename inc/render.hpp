@@ -31,7 +31,8 @@ public:
 	void setMsg(const char*);
 
 	//Rendering
-	void render() const;
+	void render();
+	void render(bool) const;
 
 private:
 	Field *field;
@@ -41,6 +42,8 @@ private:
 	Model *mBackground = new Model(' ', 0b0000);
 
 	const char * msg = nullptr;
+
+	bool firstRender = true;
 };
 
 #endif

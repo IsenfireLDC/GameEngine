@@ -30,6 +30,7 @@ char Entity::nextID() {
  */
 Entity::Entity() {
 	this->pos = Entity::origin;
+	this->lastPos = Entity::origin;
 
 	this->data = {Entity::nextID(), 0, Entity::dName};
 };
@@ -41,6 +42,7 @@ Entity::Entity() {
  */
 Entity::Entity(Coord pos) {
 	this->pos = pos;
+	this->lastPos = pos;
 
 	this->data = {Entity::nextID(), 0, Entity::dName};
 };
@@ -54,6 +56,7 @@ Entity::Entity(Coord pos) {
  */
 Entity::Entity(Coord pos, char type, const char *name) {
 	this->pos = pos;
+	this->lastPos = pos;
 
 	this->data = {Entity::nextID(), type, name};
 };
@@ -74,8 +77,11 @@ bool Entity::move(Coord pos) {
 
 	//Move entity
 	if(move) {
+		this->lastPos = this->pos;
 		this->pos = pos;
 	};
+
+	this->dirty = move;
 
 	return move;
 };
@@ -84,6 +90,7 @@ bool Entity::move(Coord pos) {
  * Setter for entity model
  */
 void Entity::setModel(Model *model) {
+	this->dirty = true;
 	this->model = model;
 };
 
@@ -91,6 +98,7 @@ void Entity::setModel(Model *model) {
  * Setter for entity data
  */
 void Entity::setData(EntityData data) {
+	this->dirty = true;
 	this->data = data;
 };
 
@@ -99,6 +107,13 @@ void Entity::setData(EntityData data) {
  */
 Coord Entity::getPos() const {
 	return this->pos;
+};
+
+/*
+ * Getter for last entity position
+ */
+Coord Entity::getLastPos() const {
+	return this->lastPos;
 };
 
 /*
@@ -119,9 +134,21 @@ EntityData Entity::getData() const {
  * Controls interaction from moving into other entities
  */
 bool Entity::moveInto(Entity *other) {
+	this->dirty = true;
 	if(!other) return true;
 
 	return false;
+};
+
+/*
+ * Determines if the entity has changed since the last call
+ */
+bool Entity::changed() {
+	bool changed = this->dirty;
+
+	this->dirty = false;
+
+	return changed;
 };
 
 

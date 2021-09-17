@@ -39,7 +39,13 @@ void Window::setMsg(const char *msg) {
 	this->msg = msg;
 };
 
-void Window::render() const {
+void Window::render() {
+	this->render(this->firstRender);
+
+	this->firstRender = false;
+};
+
+void Window::render(bool firstRender) const {
 	//Disable cursor
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cInfo;
@@ -52,13 +58,15 @@ void Window::render() const {
 	size = size * this->field->getScale();
 
 	//Field
-	for(short i = 0; i <= size.x; ++i) {
-		for(short j = 0; j <= size.y; ++j) {
-			setPos((Coord){i,j});
-			if(i == 0 || i == size.x || j == 0 || j == size.y) {
-				renderModel(this->mBorder);
-			} else {
-				renderModel(this->mBackground);
+	if(firstRender) {
+		for(short i = 0; i <= size.x; ++i) {
+			for(short j = 0; j <= size.y; ++j) {
+				setPos((Coord){i,j});
+				if(i == 0 || i == size.x || j == 0 || j == size.y) {
+					renderModel(this->mBorder);
+				} else {
+					renderModel(this->mBackground);
+				};
 			};
 		};
 	};
@@ -66,8 +74,14 @@ void Window::render() const {
 	//Entities
 	std::vector<Entity*> entityList = this->entities->getEntities();
 	for(unsigned int i = 0; i < entityList.size(); ++i) {
-		setPos(this->field->transform(entityList[i]->getPos()));
-		renderModel(entityList[i]->getModel());
+		Entity* entity = entityList[i];
+		if(entity->changed()) {
+			setPos(this->field->transform(entity->getLastPos()));
+			std::cout << " ";
+
+			setPos(this->field->transform(entity->getPos()));
+			renderModel(entity->getModel());
+		};
 	};
 
 
