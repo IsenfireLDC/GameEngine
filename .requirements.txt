@@ -1,6 +1,6 @@
 Base Requirements:
  X Input controls the player
- - Player can interact with NPCs
+ X Player can interact with NPCs
  - NPCs are ticked
  X Player/NPC stopped by level bounds
  X Game has end condition

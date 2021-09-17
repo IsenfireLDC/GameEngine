@@ -51,9 +51,9 @@ public:
 	EntityData getData() const;
 
 	//Action
-	bool move(Coord);
+	virtual bool move(Coord);
 
-	bool moveInto(Entity*);
+	virtual bool moveInto(Entity*);
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
