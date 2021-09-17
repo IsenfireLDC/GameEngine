@@ -16,14 +16,19 @@
 #include <iostream>
 #include <conio.h>
 #include <cstdio>
-//#include <random>
-//#include <ctime>
+
+#include <random>
 
 static bool running = true;
 
 static void aExit(Entity *target, int input) {
 	if(input == Input::Key::Escape) running = false;
 };
+
+std::random_device rd;
+std::default_random_engine gen;
+std::uniform_int_distribution<int> randMove(0, 3);
+int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
 
 void getKBCodes() {
 	int kb_code = 0;
@@ -42,6 +47,8 @@ void getKBCodes() {
 };
 
 int main() {
+	gen.seed(rd());
+
 	//Create player
 	const char nPlayer[20] = "Player";
 	Entity player = Entity(Entity::origin, 0, nPlayer);
@@ -113,6 +120,8 @@ int main() {
 		};
 
 		input.callAction(&player, inScan);
+
+		input.callAction(&npc, inputs[randMove(gen)]);
 		window.render();
 
 		Sleep(100);

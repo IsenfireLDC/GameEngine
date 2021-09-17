@@ -1,7 +1,7 @@
 Base Requirements:
  X Input controls the player
  X Player can interact with NPCs
- - NPCs are ticked
+ X NPCs are ticked
  X Player/NPC stopped by level bounds
  X Game has end condition
  X Game is rendered
@@ -13,7 +13,7 @@ Input:
 Player/NPC:
  X Player and NPC are "Entity"
  X Player receives input from user
- - NPC receives input from program
+ X NPC receives input from program
  X Moves are checked against "Field" bounds
 
 Game:
