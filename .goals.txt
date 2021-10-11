@@ -1,3 +1,18 @@
+Goals:
+ X Basic functionality
+ - Create class to mimic main
+
+
+===============================================================================
+
+Move main to class:
+ - Create class for controlling NPCs
+ - Handle input automatically
+ - Provide system for custom entity interaction
+
+
+===============================================================================
+
 Base Requirements:
  X Input controls the player
  X Player can interact with NPCs
