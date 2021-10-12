@@ -7,6 +7,8 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-int getNextID(int*);
+struct Utils {
+	static int nextID(int*);
+};
 
 #endif

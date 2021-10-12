@@ -55,9 +55,6 @@ class Entity {
 public:
 	friend class EntityManager;
 
-	//Static methods
-	static char nextID();
-
 	//Constants
 	const static Coord origin;
 	const static char dName[];

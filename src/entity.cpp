@@ -19,15 +19,6 @@ const Coord Entity::origin = Coord(1,1);
 const char Entity::dName[] = "Entity";
 
 /*
- * Static
- *
- * Returns next id
- */
-char Entity::nextID() {
-	return getNextID(&Entity::gID);
-};
-
-/*
  * Constructor for default entity
  */
 Entity::Entity() {
@@ -35,7 +26,7 @@ Entity::Entity() {
 	this->lastPos = Entity::origin;
 
 	this->type = 0;
-	this->data = {Entity::nextID(), 0, Entity::dName};
+	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
 };
 
 /*
@@ -46,7 +37,7 @@ Entity::Entity(EntityType *type) {
 	this->lastPos = Entity::origin;
 
 	this->type = type;
-	this->data = {Entity::nextID(), 0, Entity::dName};
+	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
 };
 
 /*
@@ -59,7 +50,7 @@ Entity::Entity(EntityType *type, Coord pos) {
 	this->lastPos = pos;
 
 	this->type = type;
-	this->data = {Entity::nextID(), 0, Entity::dName};
+	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
 };
 
 /*
@@ -74,7 +65,7 @@ Entity::Entity(EntityType *type, Coord pos, const char *name) {
 	this->lastPos = pos;
 
 	this->type = type;
-	this->data = {Entity::nextID(), 0, name};
+	this->data = {Utils::nextID(&Entity::gID), 0, name};
 };
 
 /*
