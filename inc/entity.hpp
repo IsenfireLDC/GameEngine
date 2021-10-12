@@ -101,7 +101,7 @@ public:
 	};
 
 private:
-	static char gID;
+	static int gID;
 
 	Coord pos;
 	Coord lastPos;

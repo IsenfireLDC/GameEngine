@@ -6,12 +6,14 @@
 
 #include "entity.hpp"
 
+#include "utils.hpp"
+
 #include <iostream>
 
 
 /****	        Entity     	****/
 
-char Entity::gID = 0;
+int Entity::gID = 0;
 
 const Coord Entity::origin = Coord(1,1);
 const char Entity::dName[] = "Entity";
@@ -22,7 +24,7 @@ const char Entity::dName[] = "Entity";
  * Returns next id
  */
 char Entity::nextID() {
-	return Entity::gID++;
+	return getNextID(&Entity::gID);
 };
 
 /*
