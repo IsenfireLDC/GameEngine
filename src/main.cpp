@@ -25,6 +25,18 @@ static void aExit(Entity *target, int input) {
 	if(input == Input::Key::Escape) running = false;
 };
 
+static int exHandler(Entity *target, EntityAction action) {
+	EntityData d = action.sender->getData();
+	d.state += 1;
+	action.sender->setData(d);
+
+	d = target->getData();
+	d.state += 2;
+	target->setData(d);
+
+	return 0;
+};
+
 std::random_device rd;
 std::default_random_engine gen;
 std::uniform_int_distribution<int> randMove(0, 3);
@@ -50,14 +62,17 @@ int main() {
 	gen.seed(rd());
 
 	//Create player
+	const char nEntType[20] = "Entity";
+	EntityType tEntity = EntityType(0, nEntType);
+	tEntity.handlers[1] = exHandler;
 	const char nPlayer[20] = "Player";
-	Entity player = Entity(Entity::origin, 0, nPlayer);
+	Entity player = Entity(&tEntity, Entity::origin, nPlayer);
 	Model mPlayer = Model('~', 0b1010);
 	player.setModel(&mPlayer);
 
 	//Create non-player
 	const char nNPC[20] = "NPC";
-	Entity npc = Entity({3,4}, 1, nNPC);
+	Entity npc = Entity(&tEntity, {3,4}, nNPC);
 	Model mNPC = Model('!', 0b1111100);
 	npc.setModel(&mNPC);
 

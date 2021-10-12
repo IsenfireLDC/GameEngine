@@ -10,6 +10,21 @@ Move main to class:
  - Handle input automatically
  - Provide system for custom entity interaction
 
+Game:
+ - Have initialization function for setup
+ - Run function for input listening
+
+NPCController:
+ - Provide action map per NPC
+ - Allow sharing of action maps
+
+Entity Interactions:
+ > Edit input system to queue an event instead of directly taking action
+   - Use queued events to call action handlers for entities
+ X Create action handler template for entities
+   X Create EntityType with pointer to handler
+ - Allow action handler to be swapped
+
 
 ===============================================================================
 
