@@ -32,6 +32,18 @@ Entity::Entity() {
 	this->pos = Entity::origin;
 	this->lastPos = Entity::origin;
 
+	this->type = 0;
+	this->data = {Entity::nextID(), 0, Entity::dName};
+};
+
+/*
+ * Constructor for typed entity
+ */
+Entity::Entity(EntityType *type) {
+	this->pos = Entity::origin;
+	this->lastPos = Entity::origin;
+
+	this->type = type;
 	this->data = {Entity::nextID(), 0, Entity::dName};
 };
 
@@ -40,10 +52,11 @@ Entity::Entity() {
  *
  * Coord pos		: Position struct for new entity
  */
-Entity::Entity(Coord pos) {
+Entity::Entity(EntityType *type, Coord pos) {
 	this->pos = pos;
 	this->lastPos = pos;
 
+	this->type = type;
 	this->data = {Entity::nextID(), 0, Entity::dName};
 };
 
@@ -54,11 +67,12 @@ Entity::Entity(Coord pos) {
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(Coord pos, char type, const char *name) {
+Entity::Entity(EntityType *type, Coord pos, const char *name) {
 	this->pos = pos;
 	this->lastPos = pos;
 
-	this->data = {Entity::nextID(), type, name};
+	this->type = type;
+	this->data = {Entity::nextID(), 0, name};
 };
 
 /*

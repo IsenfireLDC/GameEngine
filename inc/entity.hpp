@@ -10,6 +10,9 @@
 #include <vector>
 #include <iostream>
 
+#include <functional>
+#include <unordered_map>
+
 #include "area.hpp"
 #include "field.hpp"
 #include "pos.hpp"
@@ -18,11 +21,34 @@
 
 /*	Types		*/
 class EntityManager;
+class Entity;
 
 struct EntityData {
-	char id;
-	char type;
+	int id;
+	int state;
 	const char* name;
+};
+
+struct EntityAction {
+	Entity *sender;
+	int id;
+	void *data;
+};
+
+typedef std::function<int(Entity*, EntityAction)> EntityActionHandler;
+
+//Singleton type
+struct EntityType {
+	int id;
+	const char* name;
+	std::unordered_map<int, EntityActionHandler> handlers;
+
+	EntityType(int id, const char *name) {
+		this->id = id;
+		this->name = name;
+
+		this->handlers = std::unordered_map<int, EntityActionHandler>();
+	};
 };
 
 class Entity {
@@ -38,8 +64,9 @@ public:
 
 	//Constructors
 	Entity();
-	Entity(Coord);
-	Entity(Coord, char, const char*);
+	Entity(EntityType*);
+	Entity(EntityType*, Coord);
+	Entity(EntityType*, Coord, const char*);
 
 	//Setters
 	void setModel(Model*);
@@ -52,6 +79,9 @@ public:
 	EntityData getData() const;
 
 	//Action
+	int sendAction(Entity*, EntityAction);
+	int receiveAction(EntityAction);
+
 	virtual bool move(Coord);
 
 	virtual bool moveInto(Entity*);
@@ -63,7 +93,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << entity.data.name;
 		if(entity.model) out << "(" << *entity.model << ")";
-		out << " type=" << (int)entity.data.type;
+		out << " id=" << (int)entity.data.id;
+		out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;
 		if(entity.manager) out << " managed by " << entity.manager;
 		return out;
@@ -78,6 +109,7 @@ private:
 	Model* model;
 
 	EntityData data;
+	EntityType *type;
 
 	EntityManager *manager = nullptr;
 
