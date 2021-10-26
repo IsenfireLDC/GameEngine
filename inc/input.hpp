@@ -9,6 +9,8 @@
 
 #include "entity.hpp"
 
+#include "events.hpp"
+
 #include <functional>
 #include <unordered_map>
 
@@ -53,5 +55,15 @@ public:
 private:
 	std::unordered_map<int, Action> actionMap;
 };
+
+struct InputEvent : Event {
+	Input::Key key;
+
+	InputEvent(int trigger, Input::Key key) : Event(trigger) {
+		this->key = key;
+	};
+};
+
+//TODO?: Create async handler for input with new event system
 
 #endif
