@@ -6,21 +6,24 @@ SRC_DIR=src/
 INC_DIR=inc/
 
 DEBUG=-ggdb -g3
+LIBS=-pthread
 
-FLAGS=-Wall -I$(INC_DIR) -Wno-parentheses -std=c++2a
+FLAGS=-Wall -I$(INC_DIR) -Wno-parentheses
+#FLAGS+=-std=c++2a
 #FLAGS+=$(DEBUG)
+FLAGS+=$(LIBS)
 
 OBJECTS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.o, $(wildcard $(SRC_DIR)*.cpp))
 DEPENDS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.d, $(wildcard $(SRC_DIR)*.cpp))
 OUTFILE=$(OUT_DIR)TerminalEngine.exe
 
 all: $(OBJECTS)
-	g++ $(OBJECTS) -o $(OUTFILE)
+	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
 
 -include $(DEPENDS)
 
 $(OUT_DIR)%.o : $(SRC_DIR)%.cpp
-	g++ $(FLAGS) -MMD -MP -c $< -o $@
+	g++ -MMD -MP $(FLAGS) -c $< -o $@
 
 
 # Clean objects, dependencies, and executable
