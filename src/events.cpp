@@ -40,10 +40,39 @@ int Events::registerEventType(Event event) {
 int Events::getEventID(Event event) {
 	int hash = getHash(event);
 
-	if(this->eventIDs.contains(hash))
+	if(this->eventIDs.find(hash) != this->eventIDs.end())
 		return this->eventIDs[hash];
 	else
 		return -1;
+};
+
+/*
+ * Queues an event to be handled
+ *
+ * May be called by other threads
+ */
+void Events::queueEvent(Event event) {
+	this->eventsLock.lock();
+	this->events.push(event);
+	this->eventsLock.unlock();
+};
+
+/*
+ * Dequeues and calls event handler for all events in queue
+ *
+ * Is thread-safe with calls to queueEvent
+ */
+void Events::handleEvents() {
+	while(this->events.size() > 0) {
+		this->eventsLock.lock();
+		Event event = this->events.front();
+		this->events.pop();
+		this->eventsLock.unlock();
+
+		int id = getEventID(event);
+
+		handlers[id](event);
+	};
 };
 
 /*

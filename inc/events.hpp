@@ -11,6 +11,8 @@
 
 #include <functional>
 #include <unordered_map>
+#include <queue>
+#include <mutex>
 
 /*
  * Basic Event List:
@@ -55,11 +57,7 @@
 struct Event {
 	friend class Events;
 
-	int trigger;
-
-	Event(int trigger) {
-		this->trigger = trigger;
-	};
+	Event() {};
 };
 
 typedef std::function<void(Event)> EventHandler;
@@ -69,10 +67,17 @@ public:
 	int registerEventType(Event);
 	int getEventID(Event);
 
+	void queueEvent(Event);
+	void handleEvents();
+
 	void registerEventHandler(int, EventHandler);
+
 private:
 	std::unordered_map<int, EventHandler> handlers;
 	std::unordered_map<int, int> eventIDs;
+
+	std::queue<Event> events;
+	std::mutex eventsLock;
 
 	static int gID;
 };

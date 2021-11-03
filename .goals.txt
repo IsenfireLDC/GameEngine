@@ -9,10 +9,12 @@ Move main to class:
  - Create class for controlling NPCs
  - Handle input automatically
  - Provide system for custom entity interaction
+ - Keep track of everything
 
 Game:
  - Have initialization function for setup
- - Run function for input listening
+ - Run function for input listening (Look at std::thread)
+ - Assign items global IDs for instance of Game for trigger?
 
 NPCController:
  - Provide action map per NPC
