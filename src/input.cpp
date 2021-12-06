@@ -103,6 +103,36 @@ Input::Input(std::unordered_map<int, Action> actionMap) {
 };
 
 /*
+ * Wait for thread to finish on delete
+ */
+Input::~Input() {
+	if(this->thread->joinable()) this->thread->join();
+};
+
+/*
+ * Spawn a thread for this instance
+ *
+ * Returns if a thread exists after the call
+ */
+bool Input::spawnThread() {
+	if(this->thread->joinable()) return true;
+
+	this->thread = new std::thread(&Input::threadHandler, this);
+
+	return this->thread->joinable();
+};
+
+/*
+ * Pause/resume the thread if it exists, otherwise return false
+ */
+bool Input::runThread(bool run) {
+	if(!this->thread->joinable()) return false;
+
+	//TODO: Pause/resume execution of thread
+	return false;
+};
+
+/*
  * Get the Action associated with input
  */
 const Action Input::getAction(int input) const {
@@ -139,3 +169,34 @@ void Input::removeActionMapping(int input) {
 		this->actionMap.erase(input);
 };
 
+/*
+ * Input handler
+ *
+ * Thread exits on generating QuitEvent
+ */
+void Input::threadHandler() {
+	while(1) {
+		int scanCode = Input::getInputScan();
+	
+		const Action action = this->getAction(scanCode);
+
+		Event event;
+		if(action) {
+			event = ActionEvent(action, scanCode);
+		} else {
+			switch(scanCode) {
+				case Input::Key::Escape:
+					event = QuitEvent(this);
+					break;
+				case Input::Key::Null:
+					continue;
+				default:
+					event = InputEvent((Input::Key)scanCode);
+			};
+		};
+		Engine::eventBus.queueEvent(event);
+	
+		//Select action and queue event
+		//Have quit event contain pointer to Input
+	}
+};

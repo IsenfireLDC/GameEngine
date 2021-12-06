@@ -14,6 +14,8 @@
 #include <functional>
 #include <unordered_map>
 
+#include <thread>
+
 typedef std::function<void(Entity*, int)> Action;
 //typedef void(*Action)(Entity*, int);
 
@@ -47,20 +49,48 @@ public:
 	Input();
 	Input(std::unordered_map<int, Action>);
 
+	~Input();
+
+	bool spawnThread();
+	bool runThread(bool);
+
 	const Action getAction(int) const;
 	bool callAction(Entity*, int) const;
 
 	void addActionMapping(int, Action);
 	void removeActionMapping(int);
+
 private:
+	void threadHandler();
+
 	std::unordered_map<int, Action> actionMap;
+
+	std::thread *thread;
 };
 
 struct InputEvent : Event {
 	Input::Key key;
 
-	InputEvent(int trigger, Input::Key key) : Event(trigger) {
+	InputEvent(Input::Key key) : Event() {
 		this->key = key;
+	};
+};
+
+struct ActionEvent : Event {
+	Action action;
+	int input;
+
+	ActionEvent(Action action, int input) : Event() {
+		this->action = action;
+		this->input = input;
+	};
+};
+
+struct QuitEvent : Event {
+	Input *input;
+
+	QuitEvent(Input *input) : Event() {
+		this->input = input;
 	};
 };
 

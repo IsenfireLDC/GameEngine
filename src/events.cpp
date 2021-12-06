@@ -6,6 +6,8 @@
 
 #include <typeinfo>
 
+Events Engine::eventBus;
+
 int Events::gID = 0;
 
 /*

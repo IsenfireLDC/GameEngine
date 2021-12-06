@@ -82,4 +82,9 @@ private:
 	static int gID;
 };
 
+//Place global in namespace engine
+namespace Engine {
+	extern Events eventBus;
+};
+
 #endif
