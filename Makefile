@@ -8,7 +8,7 @@ INC_DIR=inc/
 DEBUG=-ggdb -g3
 LIBS=-pthread
 
-FLAGS=-Wall -I$(INC_DIR) -Wno-parentheses
+FLAGS=-Wall -I$(INC_DIR)
 #FLAGS+=-std=c++2a
 #FLAGS+=$(DEBUG)
 FLAGS+=$(LIBS)
