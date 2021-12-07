@@ -60,14 +60,14 @@ struct Event {
 	Event() {};
 };
 
-typedef std::function<void(Event)> EventHandler;
+typedef std::function<void(Event*)> EventHandler;
 
 class Events {
 public:
-	int registerEventType(Event);
-	int getEventID(Event);
+	int registerEventType(Event*);
+	int getEventID(Event*);
 
-	void queueEvent(Event);
+	void queueEvent(Event*);
 	void handleEvents();
 
 	void registerEventHandler(int, EventHandler);
@@ -76,7 +76,7 @@ private:
 	std::unordered_map<int, EventHandler> handlers;
 	std::unordered_map<int, int> eventIDs;
 
-	std::queue<Event> events;
+	std::queue<Event*> events;
 	std::mutex eventsLock;
 
 	static int gID;

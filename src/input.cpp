@@ -180,18 +180,18 @@ void Input::threadHandler() {
 	
 		const Action action = this->getAction(scanCode);
 
-		Event event;
+		Event *event;
 		if(action) {
-			event = ActionEvent(action, scanCode);
+			event = new ActionEvent(action, scanCode);
 		} else {
 			switch(scanCode) {
 				case Input::Key::Escape:
-					event = QuitEvent(this);
+					event = new QuitEvent(this);
 					break;
 				case Input::Key::Null:
 					continue;
 				default:
-					event = InputEvent((Input::Key)scanCode);
+					event = new InputEvent((Input::Key)scanCode);
 			};
 		};
 		Engine::eventBus.queueEvent(event);

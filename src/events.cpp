@@ -15,8 +15,8 @@ int Events::gID = 0;
  *
  * Used to get the key in the id mapping
  */
-static int getHash(Event event) {
-	return typeid(event).hash_code();
+static int getHash(Event *event) {
+	return typeid(*event).hash_code();
 };
 
 /*
@@ -25,7 +25,7 @@ static int getHash(Event event) {
  *
  * In both cases, the id of the event is returned
  */
-int Events::registerEventType(Event event) {
+int Events::registerEventType(Event *event) {
 	int eventID = this->getEventID(event);
 	if(eventID < 0) {
 		eventID = Utils::nextID(&Events::gID);
@@ -39,7 +39,7 @@ int Events::registerEventType(Event event) {
  * Searches the event IDs map for the given event and returns the id if found.
  * Otherwise, returns -1
  */
-int Events::getEventID(Event event) {
+int Events::getEventID(Event *event) {
 	int hash = getHash(event);
 
 	if(this->eventIDs.find(hash) != this->eventIDs.end())
@@ -53,7 +53,7 @@ int Events::getEventID(Event event) {
  *
  * May be called by other threads
  */
-void Events::queueEvent(Event event) {
+void Events::queueEvent(Event *event) {
 	this->eventsLock.lock();
 	this->events.push(event);
 	this->eventsLock.unlock();
@@ -67,13 +67,15 @@ void Events::queueEvent(Event event) {
 void Events::handleEvents() {
 	while(this->events.size() > 0) {
 		this->eventsLock.lock();
-		Event event = this->events.front();
+		Event *event = this->events.front();
 		this->events.pop();
 		this->eventsLock.unlock();
 
 		int id = getEventID(event);
 
 		handlers[id](event);
+
+		delete event;
 	};
 };
 
