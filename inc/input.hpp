@@ -16,11 +16,12 @@
 
 #include <thread>
 
+#include <string>
+
 typedef std::function<void(Entity*, int)> Action;
 //typedef void(*Action)(Entity*, int);
 
 extern Action MoveAction;
-extern Action NoneAction;
 
 extern const std::unordered_map<int, Action> defaultMap;
 
@@ -65,7 +66,10 @@ private:
 
 	std::unordered_map<int, Action> actionMap;
 
-	std::thread *thread;
+	std::thread *thread = nullptr;
+
+	int timeout = 2000;
+	bool active = false;
 };
 
 struct InputEvent : Event {
@@ -73,6 +77,16 @@ struct InputEvent : Event {
 
 	InputEvent(Input::Key key) : Event() {
 		this->key = key;
+	};
+
+	virtual int getHash() {
+		return Event_MgetHash(InputEvent);
+	};
+
+	virtual std::string getInfo() {
+		char info[100];
+		sprintf(info, "InputEvent{key=%d}", this->key);
+		return std::string(info);
 	};
 };
 
@@ -84,6 +98,17 @@ struct ActionEvent : Event {
 		this->action = action;
 		this->input = input;
 	};
+
+	virtual int getHash() {
+		return Event_MgetHash(ActionEvent);
+	};
+
+	virtual std::string getInfo() {
+		char info[100];
+		void(**act)(Entity*,int) = this->action.target<void(*)(Entity*,int)>();
+		sprintf(info, "ActionEvent{action=%p;input=%d}", *act, this->input);
+		return std::string(info);
+	};
 };
 
 struct QuitEvent : Event {
@@ -91,6 +116,16 @@ struct QuitEvent : Event {
 
 	QuitEvent(Input *input) : Event() {
 		this->input = input;
+	};
+
+	virtual int getHash() {
+		return Event_MgetHash(QuitEvent);
+	};
+
+	virtual std::string getInfo() {
+		char info[100];
+		sprintf(info, "QuitEvent{input=%p}", this->input);
+		return std::string(info);
 	};
 };
 

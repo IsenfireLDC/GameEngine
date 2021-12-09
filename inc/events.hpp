@@ -14,6 +14,8 @@
 #include <queue>
 #include <mutex>
 
+#include <string>
+
 /*
  * Basic Event List:
  * ============================================================================
@@ -54,10 +56,16 @@
  *  - If something is waiting on the event, notify it
  */
 
+#define Event_MgetHash(x) typeid(x).hash_code()
+
 struct Event {
 	friend class Events;
 
 	Event() {};
+	virtual ~Event();
+
+	virtual int getHash() = 0;
+	virtual std::string getInfo() = 0;
 };
 
 typedef std::function<void(Event*)> EventHandler;

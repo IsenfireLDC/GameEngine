@@ -34,10 +34,7 @@ static void aMove(Entity *target, int input) {
 	target->move(ePos);
 };
 
-static void aNone(Entity *target, int input) {};
-
 Action MoveAction = aMove;
-Action NoneAction = aNone;
 
 const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::W, MoveAction},
@@ -47,11 +44,10 @@ const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::Up, MoveAction},
 	{Input::Key::Left, MoveAction},
 	{Input::Key::Down, MoveAction},
-	{Input::Key::Right, MoveAction},
-	{Input::Key::Null, NoneAction}
+	{Input::Key::Right, MoveAction}
 };
 
-static INPUT_RECORD getInput() {
+static INPUT_RECORD getInput(int timeout) {
 	DWORD mode;
 	INPUT_RECORD input;
 
@@ -64,7 +60,7 @@ static INPUT_RECORD getInput() {
 	//Set mode
 	SetConsoleMode(handle, 0);
 
-	if(WaitForSingleObject(handle, 0) == WAIT_OBJECT_0) {
+	if(WaitForSingleObject(handle, timeout) == WAIT_OBJECT_0) {
 		DWORD cnt;
 
 		//Get input event
@@ -76,23 +72,22 @@ static INPUT_RECORD getInput() {
 };
 
 int Input::getInputKey() {
-	INPUT_RECORD input = getInput();
+	INPUT_RECORD input = getInput(0);
 
 	if(input.EventType == KEY_EVENT)
-		return getInput().Event.KeyEvent.wVirtualKeyCode;
+		return getInput(0).Event.KeyEvent.wVirtualKeyCode;
 
 	return 0;
 };
 
 int Input::getInputScan() {
-	INPUT_RECORD input = getInput();
+	INPUT_RECORD input = getInput(0);
 
 	if(input.EventType == KEY_EVENT)
-		return getInput().Event.KeyEvent.wVirtualScanCode;
+		return getInput(0).Event.KeyEvent.wVirtualScanCode;
 
 	return 0;
 };
-
 
 Input::Input() {
 	this->actionMap = defaultMap;
@@ -106,6 +101,7 @@ Input::Input(std::unordered_map<int, Action> actionMap) {
  * Wait for thread to finish on delete
  */
 Input::~Input() {
+	this->active = false;
 	if(this->thread->joinable()) this->thread->join();
 };
 
@@ -115,10 +111,11 @@ Input::~Input() {
  * Returns if a thread exists after the call
  */
 bool Input::spawnThread() {
-	if(this->thread->joinable()) return true;
+	if(this->thread && this->thread->joinable()) return true;
 
+	this->active = true;
 	this->thread = new std::thread(&Input::threadHandler, this);
-
+	
 	return this->thread->joinable();
 };
 
@@ -129,7 +126,8 @@ bool Input::runThread(bool run) {
 	if(!this->thread->joinable()) return false;
 
 	//TODO: Pause/resume execution of thread
-	return false;
+	this->active = run;
+	return true;
 };
 
 /*
@@ -175,8 +173,13 @@ void Input::removeActionMapping(int input) {
  * Thread exits on generating QuitEvent
  */
 void Input::threadHandler() {
-	while(1) {
-		int scanCode = Input::getInputScan();
+	std::cout << "<input>Input thread" << std::endl;
+	while(this->active) {
+		INPUT_RECORD input = getInput(this->timeout);
+		int scanCode;
+
+		if(input.EventType == KEY_EVENT)
+			scanCode = getInput(this->timeout).Event.KeyEvent.wVirtualScanCode;
 	
 		const Action action = this->getAction(scanCode);
 
@@ -188,8 +191,6 @@ void Input::threadHandler() {
 				case Input::Key::Escape:
 					event = new QuitEvent(this);
 					break;
-				case Input::Key::Null:
-					continue;
 				default:
 					event = new InputEvent((Input::Key)scanCode);
 			};

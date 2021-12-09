@@ -6,18 +6,13 @@
 
 #include <typeinfo>
 
+//Engine event bus (global)
 Events Engine::eventBus;
 
 int Events::gID = 0;
 
-/*
- * Gets the type hash of the event
- *
- * Used to get the key in the id mapping
- */
-static int getHash(Event *event) {
-	return typeid(*event).hash_code();
-};
+//Does not link correctly with destructor in header file
+Event::~Event() {};
 
 /*
  * Checks if an event type has an id
@@ -29,7 +24,7 @@ int Events::registerEventType(Event *event) {
 	int eventID = this->getEventID(event);
 	if(eventID < 0) {
 		eventID = Utils::nextID(&Events::gID);
-		this->eventIDs[getHash(event)] = eventID;
+		this->eventIDs[event->getHash()] = eventID;
 	};
 
 	return eventID;
@@ -40,7 +35,7 @@ int Events::registerEventType(Event *event) {
  * Otherwise, returns -1
  */
 int Events::getEventID(Event *event) {
-	int hash = getHash(event);
+	int hash = event->getHash();
 
 	if(this->eventIDs.find(hash) != this->eventIDs.end())
 		return this->eventIDs[hash];
@@ -71,9 +66,9 @@ void Events::handleEvents() {
 		this->events.pop();
 		this->eventsLock.unlock();
 
-		int id = getEventID(event);
+		int id = this->getEventID(event);
 
-		handlers[id](event);
+		this->handlers[id](event);
 
 		delete event;
 	};
