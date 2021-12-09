@@ -11,6 +11,7 @@
 #include "render.hpp"
 #include "entity.hpp"
 #include "input.hpp"
+#include "events.hpp"
 
 #include <windows.h>
 #include <iostream>
@@ -20,9 +21,29 @@
 #include <random>
 
 static bool running = true;
-
+static Entity *primary;
+/*
 static void aExit(Entity *target, int input) {
 	if(input == Input::Key::Escape) running = false;
+};*/
+
+static void inputHandler(Event *event) {
+	//InputEvent *inputEvent = (InputEvent*)event;
+};
+
+static void actionHandler(Event *event) {
+	ActionEvent *actionEvent = (ActionEvent*)event;
+
+	actionEvent->action(primary, actionEvent->input);
+};
+
+static void quitHandler(Event *event) {
+	QuitEvent *quitEvent = (QuitEvent*)event;
+
+	printf("Received QuitEvent from %p\n", quitEvent->input);
+	quitEvent->input->runThread(false);
+
+	running = false;
 };
 
 static int exHandler(Entity *target, EntityAction action) {
@@ -70,6 +91,9 @@ int main() {
 	Model mPlayer = Model('~', 0b1010);
 	player.setModel(&mPlayer);
 
+	//Set player as primary
+	primary = &player;
+
 	//Create non-player
 	const char nNPC[20] = "NPC";
 	Entity npc = Entity(&tEntity, {3,4}, nNPC);
@@ -87,8 +111,8 @@ int main() {
 
 	//Create input
 	Input input = Input();
-	Action ExitAction = aExit;
-	input.addActionMapping(Input::Key::Escape, ExitAction);
+	//Action ExitAction = aExit;
+	//input.addActionMapping(Input::Key::Escape, ExitAction);
 
 	//Add player to manager
 	manager.registerEntity(&player);
@@ -125,16 +149,34 @@ int main() {
 	};
 
 	//Get inputs
-	char keyMsg[20];
-	while(running) {
-		int inKey = Input::getInputKey();
-		int inScan = Input::getInputScan();
-		if(inScan != 0) {
-			sprintf(keyMsg, "%c : %08d", inKey, inScan);
-			window.setMsg(keyMsg);
-		};
+	std::cout << "Spawning thread...";
+	if(!input.spawnThread()) return 1;
 
-		input.callAction(&player, inScan);
+	//Setup event handling
+	//InputEvent
+	InputEvent ieType = InputEvent(Input::Key::Null);
+	int typeIEID = Engine::eventBus.registerEventType(&ieType);
+	Engine::eventBus.registerEventHandler(typeIEID, &inputHandler);
+	//ActionEvent
+	ActionEvent aeType = ActionEvent(0, 0);
+	int typeAEID = Engine::eventBus.registerEventType(&aeType);
+	Engine::eventBus.registerEventHandler(typeAEID, &actionHandler);
+	//QuitEvent
+	QuitEvent qeType = QuitEvent(0);
+	int typeQEID = Engine::eventBus.registerEventType(&qeType);
+	Engine::eventBus.registerEventHandler(typeQEID, &quitHandler);
+
+	std::cout << "Wait" << std::endl;
+	Sleep(2000);
+	
+	std::cout << "Run" << std::endl;
+	while(running) {
+		Event* first = Engine::eventBus.getFirstEvent();
+		const char* info = 0;
+		if(first) info = first->getInfo().c_str();
+
+		Engine::eventBus.handleEvents();
+		if(info) window.setMsg(info);
 
 		input.callAction(&npc, inputs[randMove(gen)]);
 		window.render();

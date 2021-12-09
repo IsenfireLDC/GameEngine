@@ -78,6 +78,12 @@ public:
 	void queueEvent(Event*);
 	void handleEvents();
 
+	Event* getFirstEvent() const {
+		if(this->events.size()>0)
+			return this->events.front();
+		return nullptr;
+	};
+
 	void registerEventHandler(int, EventHandler);
 
 private:

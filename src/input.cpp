@@ -191,6 +191,8 @@ void Input::threadHandler() {
 				case Input::Key::Escape:
 					event = new QuitEvent(this);
 					break;
+				case Input::Key::Null:
+					continue;
 				default:
 					event = new InputEvent((Input::Key)scanCode);
 			};

@@ -68,7 +68,7 @@ private:
 
 	std::thread *thread = nullptr;
 
-	int timeout = 2000;
+	int timeout = 200;
 	bool active = false;
 };
 
