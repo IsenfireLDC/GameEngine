@@ -18,17 +18,23 @@
 #include <conio.h>
 #include <cstdio>
 
+#include <string>
+
 #include <random>
 
 static bool running = true;
 static Entity *primary;
+
+static std::string message;
 /*
 static void aExit(Entity *target, int input) {
 	if(input == Input::Key::Escape) running = false;
 };*/
 
 static void inputHandler(Event *event) {
-	//InputEvent *inputEvent = (InputEvent*)event;
+	InputEvent *inputEvent = (InputEvent*)event;
+
+	message.append(std::to_string(inputEvent->key)+" ");
 };
 
 static void actionHandler(Event *event) {
@@ -171,12 +177,13 @@ int main() {
 	
 	std::cout << "Run" << std::endl;
 	while(running) {
-		Event* first = Engine::eventBus.getFirstEvent();
-		const char* info = 0;
-		if(first) info = first->getInfo().c_str();
+		//Event* first = Engine::eventBus.getFirstEvent();
+		//const char* info = 0;
+		//if(first) info = first->getInfo().c_str();
 
 		Engine::eventBus.handleEvents();
-		if(info) window.setMsg(info);
+		//if(info) window.setMsg(info);
+		window.setMsg(message.c_str());
 
 		input.callAction(&npc, inputs[randMove(gen)]);
 		window.render();
