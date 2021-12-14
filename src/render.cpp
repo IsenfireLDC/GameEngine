@@ -27,12 +27,12 @@ static void renderModel(const Model* model) {
 
 Window::Window() {
 	this->field = nullptr;
-	this->entities = nullptr;
+	this->modelableList = nullptr;
 };
 
-Window::Window(Field *field, EntityManager *entities) {
+Window::Window(Field *field, const std::vector<IModelable*> *modelableList) {
 	this->field = field;
-	this->entities = entities;
+	this->modelableList = modelableList;
 };
 
 void Window::setMsg(const char *msg) {
@@ -71,16 +71,15 @@ void Window::render(bool firstRender) const {
 		};
 	};
 
-	//Entities
-	std::vector<Entity*> entityList = this->entities->getEntities();
-	for(unsigned int i = 0; i < entityList.size(); ++i) {
-		Entity* entity = entityList[i];
-		if(entity->changed()) {
-			setPos(this->field->transform(entity->getLastPos()));
+	//IModelables (Entities)
+	for(unsigned int i = 0; i < this->modelableList->size(); ++i) {
+		IModelable* modelable = this->modelableList->at(i);
+		if(modelable->isDirty()) {
+			setPos(this->field->transform(modelable->getLastPos()));
 			std::cout << " ";
 
-			setPos(this->field->transform(entity->getPos()));
-			renderModel(entity->getModel());
+			setPos(this->field->transform(modelable->getPos()));
+			renderModel(modelable->getModel());
 		};
 	};
 
