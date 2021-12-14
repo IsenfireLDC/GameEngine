@@ -84,7 +84,6 @@ bool Entity::move(Coord pos) {
 
 	//Move entity
 	if(move) {
-		this->lastPos = this->pos;
 		this->pos = pos;
 	};
 
