@@ -19,6 +19,8 @@
 
 #include "model.hpp"
 
+#include "render.hpp"
+
 /*	Types		*/
 class EntityManager;
 class Entity;
@@ -51,7 +53,7 @@ struct EntityType {
 	};
 };
 
-class Entity {
+class Entity : public IModelable {
 public:
 	friend class EntityManager;
 
@@ -70,9 +72,6 @@ public:
 	void setData(EntityData);
 
 	//Getters
-	Coord getPos() const;
-	Coord getLastPos() const;
-	Model* getModel() const;
 	EntityData getData() const;
 
 	//Action
@@ -83,8 +82,11 @@ public:
 
 	virtual bool moveInto(Entity*);
 
-	//Query
-	bool changed();
+	//IModelable interface
+	Model* getModel() const;
+	Coord getPos() const;
+	Coord getLastPos();
+	bool isDirty();
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
@@ -124,6 +126,7 @@ public:
 	//Get information
 	Entity* getEntityAt(Coord) const;
 	std::vector<Entity*> getEntities() const;
+	const std::vector<Entity*>* getEntitiesList() const;
 
 	//Add/remove from list
 	bool registerEntity(Entity*);

@@ -84,7 +84,6 @@ bool Entity::move(Coord pos) {
 
 	//Move entity
 	if(move) {
-		this->lastPos = this->pos;
 		this->pos = pos;
 	};
 
@@ -119,8 +118,11 @@ Coord Entity::getPos() const {
 /*
  * Getter for last entity position
  */
-Coord Entity::getLastPos() const {
-	return this->lastPos;
+Coord Entity::getLastPos() {
+	Coord lastPos = this->lastPos;
+	this->lastPos = this->pos;
+
+	return lastPos;
 };
 
 /*
@@ -150,7 +152,7 @@ bool Entity::moveInto(Entity *other) {
 /*
  * Determines if the entity has changed since the last call
  */
-bool Entity::changed() {
+bool Entity::isDirty() {
 	bool changed = this->dirty;
 
 	this->dirty = false;
@@ -202,10 +204,17 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
 };
 
 /*
- * Get const pointer to array containing all entities
+ * Get copy of vector containing all entities
  */
 std::vector<Entity*> EntityManager::getEntities() const {
 	return this->entities;
+};
+
+/*
+ * Get pointer to entity vector
+ */
+const std::vector<Entity*>* EntityManager::getEntitiesList() const {
+	return &this->entities;
 };
 
 /*

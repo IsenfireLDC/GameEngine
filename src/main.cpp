@@ -113,7 +113,8 @@ int main() {
 	EntityManager manager = EntityManager(&field);
 
 	//Create window
-	Window window = Window(&field, &manager);
+	const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
+	Window window = Window(&field, modelable);
 
 	//Create input
 	Input input = Input();
