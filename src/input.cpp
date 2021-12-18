@@ -48,27 +48,46 @@ const std::unordered_map<int, Action> defaultMap = {
 };
 
 static INPUT_RECORD getInput(int timeout) {
+	const int bufferSize = 10;
+
 	DWORD mode;
-	INPUT_RECORD input;
 
-	//Std handle
-	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
+	static INPUT_RECORD input[bufferSize];
+	static int buffered = 0;
 
-	//Save current mode
-	GetConsoleMode(handle, &mode);
+	if(buffered == 0) {
+		//Std handle
+		HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
 
-	//Set mode
-	SetConsoleMode(handle, 0);
+		//Save current mode
+		GetConsoleMode(handle, &mode);
 
-	if(WaitForSingleObject(handle, timeout) == WAIT_OBJECT_0) {
-		DWORD cnt;
+		//Set mode
+		SetConsoleMode(handle, 0);
+		if(WaitForSingleObject(handle, timeout) == WAIT_OBJECT_0) {
+			DWORD cnt;
 
-		//Get input event
-		ReadConsoleInput(handle, &input, 1, &cnt);
+			//Get input event
+			ReadConsoleInput(handle, input, bufferSize, &cnt);
+
+			buffered = cnt;
+		} else {
+			input[0].EventType = 0;
+			return input[0];
+		};
+
+		SetConsoleMode(handle, mode);
 	};
 
-	SetConsoleMode(handle, mode);
-	return input;
+
+	INPUT_RECORD retVal = input[0];
+
+	--buffered;
+
+	for(int i = 0; i < buffered; ++i)
+		input[i] = input[i+1];
+
+	return retVal;
 };
 
 int Input::getInputKey() {
@@ -175,11 +194,13 @@ void Input::removeActionMapping(int input) {
 void Input::threadHandler() {
 	std::cout << "<input>Input thread" << std::endl;
 	while(this->active) {
-		INPUT_RECORD input = getInput(this->timeout);
+		INPUT_RECORD input = getInput(100);
 		int scanCode;
 
-		if(input.EventType == KEY_EVENT)
-			scanCode = getInput(this->timeout).Event.KeyEvent.wVirtualScanCode;
+		if(input.EventType == KEY_EVENT && input.Event.KeyEvent.bKeyDown)
+			scanCode = input.Event.KeyEvent.wVirtualScanCode;
+		else
+			scanCode = 0;
 	
 		const Action action = this->getAction(scanCode);
 
