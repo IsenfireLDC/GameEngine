@@ -4,6 +4,8 @@
 
 #include "log.hpp"
 
+#include "utils.hpp"
+
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable
@@ -11,6 +13,7 @@ Log Engine::log{"Master", "./logs/master.log"};
 
 Log::Log(std::string name, std::string logfile) {
 	this->name = name;
+	Utils::create_directories(logfile.substr(0, logfile.rfind("/")));
 	this->logfile.open(logfile, std::ios::out | std::ios::app);
 };
 
