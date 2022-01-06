@@ -4,11 +4,18 @@
 
 #include "log.hpp"
 
-Log Engine::log = Log("Master", "./logs/master.log");
+using std::chrono::system_clock;
+
+//Must construct in-place because ofstream is non-copyable
+Log Engine::log{"Master", "./logs/master.log"};
 
 Log::Log(std::string name, std::string logfile) {
 	this->name = name;
 	this->logfile.open(logfile, std::ios::out | std::ios::app);
+};
+
+Log::~Log() {
+	this->logfile.close();
 };
 
 void Log::setParent(Log *parent) {

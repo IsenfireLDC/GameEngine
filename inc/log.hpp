@@ -6,19 +6,18 @@
 #include <string>
 #include <chrono>
 
-using std::chrono::system_clock;
-
 class Log {
 public:
 	enum LogType{Min, Debug, Info, Warning, Error, Fatal};
 	struct Entry {
-		system_clock::time_point timestamp;
+		std::chrono::system_clock::time_point timestamp;
 		LogType severity;
 		std::string message;
 		std::string sender;
 	};
 
 	Log(std::string, std::string);
+	virtual ~Log();
 
 	void setParent(Log*);
 
