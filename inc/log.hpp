@@ -8,12 +8,13 @@
 
 class Log {
 public:
-	enum LogType{Min, Debug, Info, Warning, Error, Fatal};
 	struct Entry {
 		std::chrono::system_clock::time_point timestamp;
-		LogType severity;
+		enum LogType{None, Debug, Info, Warning, Error, Fatal} severity;
 		std::string message;
 		std::string sender;
+
+		friend std::ostream& operator<<(std::ostream&, const Entry&);
 	};
 
 	Log(std::string, std::string);
@@ -22,8 +23,8 @@ public:
 	void setParent(Log*);
 
 	void log(std::string);
-	void log(std::string, LogType);
-	void log(std::string, LogType, std::string);
+	void log(std::string, Entry::LogType);
+	void log(std::string, Entry::LogType, std::string);
 
 private:
 	void writeEntry(Entry);
