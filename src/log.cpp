@@ -6,6 +6,8 @@
 
 #include "utils.hpp"
 
+#include <ctime>
+
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable
@@ -42,7 +44,7 @@ void Log::log(std::string message, Log::Entry::LogType severity) {
 };
 
 void Log::log(std::string message, Log::Entry::LogType severity, std::string sender) {
-	Entry entry{system_clock::now(), severity, message, ""};
+	Entry entry{system_clock::now(), severity, message, sender};
 
 	this->writeEntry(entry);
 };
@@ -57,7 +59,10 @@ void Log::writeEntry(Entry entry) {
 };
 
 std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
-	os << system_clock::to_time_t(entry.timestamp) << "\t";
+	std::time_t timestamp = system_clock::to_time_t(entry.timestamp);
+	std::string str{ctime(&timestamp)};
+	str.pop_back();
+	os << str << " -- ";
 
 	switch(entry.severity) {
 		case Log::Entry::LogType::None:

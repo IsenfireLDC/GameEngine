@@ -12,6 +12,7 @@
 #include "entity.hpp"
 #include "input.hpp"
 #include "events.hpp"
+#include "log.hpp"
 
 #include <windows.h>
 #include <iostream>
@@ -127,6 +128,9 @@ int main() {
 
 	//Render window
 	window.render();
+
+	//Test log
+	Engine::log.log("Initialization complete", Log::Entry::LogType::Info, "Main");
 
 	//Print out manager
 	std::cout << manager << std::endl;
