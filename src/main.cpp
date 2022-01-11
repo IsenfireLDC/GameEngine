@@ -130,6 +130,8 @@ int main() {
 	window.render();
 
 	//Test log
+	Log testLog{"Test", "./logs/test.log"};
+	testLog.log("Testing nested log");
 	Engine::log.log("Initialization complete", Log::Entry::LogType::Info, "Main");
 
 	//Print out manager

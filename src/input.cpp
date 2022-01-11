@@ -9,6 +9,8 @@
 #include <conio.h>
 #include <winuser.h>
 
+Log Input::log{"Input", "./logs/input.log"};
+
 static void aMove(Entity *target, int input) {
 	Coord ePos = target->getPos();
 
@@ -219,6 +221,8 @@ void Input::threadHandler() {
 			};
 		};
 		Engine::eventBus.queueEvent(event);
+
+		Input::log.log("Received keypress", Log::Entry::LogType::Debug, "Handler");
 	
 		//Select action and queue event
 		//Have quit event contain pointer to Input
