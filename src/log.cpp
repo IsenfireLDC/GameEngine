@@ -11,20 +11,16 @@
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable
-Log Engine::log{"Master", "./logs/master.log"};
+Log Engine::log{"Master", "./logs/master.log", nullptr};
 
-Log::Log(std::string name, std::string logfile) {
-	static bool master = true;
+Log::Log(std::string name, std::string logfile) : Log(name, logfile, &Engine::log){};
 
+Log::Log(std::string name, std::string logfile, Log *parent) {
 	this->name = name;
 	Utils::create_directories(logfile.substr(0, logfile.rfind("/")));
 	this->logfile.open(logfile, std::ios::out | std::ios::app);
 
-	this->parent = &Engine::log;
-	if(master) {
-		this->parent = nullptr;
-		master = false;
-	};
+	this->parent = parent;
 };
 
 Log::~Log() {
@@ -85,7 +81,10 @@ std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
 			break;
 	};
 
-	os << " (" << entry.sender << ") : " << entry.message;
+	if(entry.sender.size() > 0)
+		os << " (" << entry.sender << ")";
+
+	os << " : " << entry.message;
 
 	return os;
 };

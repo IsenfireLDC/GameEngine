@@ -2,6 +2,9 @@
  * log.hpp
  */
 
+#ifndef _LOG_HPP_
+#define _LOG_HPP_
+
 #include <fstream>
 #include <string>
 #include <chrono>
@@ -18,6 +21,7 @@ public:
 	};
 
 	Log(std::string, std::string);
+	Log(std::string, std::string, Log*);
 	virtual ~Log();
 
 	void setParent(Log*);
@@ -38,3 +42,5 @@ private:
 namespace Engine {
 	extern Log log;
 };
+
+#endif
