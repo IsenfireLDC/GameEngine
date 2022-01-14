@@ -20,6 +20,9 @@ OUTFILE=$(OUT_DIR)TerminalEngine.exe
 all: $(OBJECTS)
 	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
 
+debug: FLAGS += $(DEBUG)
+debug: all
+
 -include $(DEPENDS)
 
 $(OUT_DIR)%.o : $(SRC_DIR)%.cpp

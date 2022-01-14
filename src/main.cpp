@@ -12,6 +12,7 @@
 #include "entity.hpp"
 #include "input.hpp"
 #include "events.hpp"
+#include "log.hpp"
 
 #include <windows.h>
 #include <iostream>
@@ -20,7 +21,11 @@
 
 #include <string>
 
+#include <sstream>
+
 #include <random>
+
+using LogType = Log::Entry::LogType;
 
 static bool running = true;
 static Entity *primary;
@@ -128,8 +133,16 @@ int main() {
 	//Render window
 	window.render();
 
+	//Test log
+	Log testLog{"Test", "./logs/test.log"};
+	LogType testLogType = LogType::Debug;
+	testLog.log("Testing nested log", LogType::Info, "Main");
+	Engine::log.log("Initialization complete", LogType::Info, "Main");
+
 	//Print out manager
-	std::cout << manager << std::endl;
+	std::stringstream sstr{};
+	sstr << manager;
+	testLog.log(sstr.str(), testLogType, "Manager");
 
 	//Attempt to move player
 	Coord testCoord = {2,5};
@@ -150,14 +163,19 @@ int main() {
 	//Print out list of entities
 	std::vector<Entity*> playerList = manager.getEntities();
 
-	std::cout << "Printing entities" << std::endl;
+	testLog.log("Printing entities", testLogType, "Main");
 	for(unsigned int i = 0; i < playerList.size(); ++i) {
-		std::cout << "\t" << *playerList[i] << std::endl;
+		sstr.str("\t");
+		sstr << *playerList[i];
+		testLog.log(sstr.str(), testLogType, "Main");
 	};
 
 	//Get inputs
-	std::cout << "Spawning thread...";
-	if(!input.spawnThread()) return 1;
+	testLog.log("Spawning thread...", LogType::Info, "Main");
+	if(!input.spawnThread()) {
+		testLog.log("Failed, exiting", LogType::Fatal, "Main");
+		return 1;
+	};
 
 	//Setup event handling
 	//InputEvent
@@ -173,10 +191,6 @@ int main() {
 	int typeQEID = Engine::eventBus.registerEventType(&qeType);
 	Engine::eventBus.registerEventHandler(typeQEID, &quitHandler);
 
-	std::cout << "Wait" << std::endl;
-	Sleep(2000);
-	
-	std::cout << "Run" << std::endl;
 	while(running) {
 		//Event* first = Engine::eventBus.getFirstEvent();
 		//const char* info = 0;

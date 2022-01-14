@@ -9,6 +9,10 @@
 #include <conio.h>
 #include <winuser.h>
 
+using LogType = Log::Entry::LogType;
+
+Log Input::log{"Input", "./logs/input.log"};
+
 static void aMove(Entity *target, int input) {
 	Coord ePos = target->getPos();
 
@@ -192,7 +196,7 @@ void Input::removeActionMapping(int input) {
  * Thread exits on generating QuitEvent
  */
 void Input::threadHandler() {
-	std::cout << "<input>Input thread" << std::endl;
+	Input::log.log("Input thread started", LogType::Info, "Handler");
 	while(this->active) {
 		INPUT_RECORD input = getInput(100);
 		int scanCode;
@@ -219,6 +223,8 @@ void Input::threadHandler() {
 			};
 		};
 		Engine::eventBus.queueEvent(event);
+
+		Input::log.log("Received keypress", LogType::Debug, "Handler");
 	
 		//Select action and queue event
 		//Have quit event contain pointer to Input

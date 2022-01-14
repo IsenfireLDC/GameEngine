@@ -10,6 +10,7 @@
 #include "entity.hpp"
 
 #include "events.hpp"
+#include "log.hpp"
 
 #include <functional>
 #include <unordered_map>
@@ -62,6 +63,7 @@ public:
 	void removeActionMapping(int);
 
 private:
+	static Log log;
 	void threadHandler();
 
 	std::unordered_map<int, Action> actionMap;
