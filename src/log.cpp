@@ -13,9 +13,20 @@ using std::chrono::system_clock;
 //Must construct in-place because ofstream is non-copyable
 Log Engine::log{"Master", "./logs/master.log", nullptr};
 
-
+/*
+ * Creates entry with given message, severity, and sender
+ * Sets timestamp to current time
+ */
 Log::Entry Log::makeEntry(std::string message, Log::Entry::LogType severity, std::string sender) {
 	return Log::Entry{system_clock::now(), severity, message, sender};
+};
+
+/*
+ * Pulls severity and sender for new Entry from base
+ * Replaces message and timestamp with new values
+ */
+Log::Entry Log::makeEntry(Log::Entry base, std::string message) {
+	return Log::makeEntry(message, base.severity, base.sender);
 };
 
 

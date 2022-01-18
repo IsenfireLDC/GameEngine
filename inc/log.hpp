@@ -21,6 +21,7 @@ public:
 	};
 
 	static Entry makeEntry(std::string, Entry::LogType, std::string);
+	static Entry makeEntry(Entry, std::string);
 
 	Log(std::string, std::string);
 	Log(std::string, std::string, Log*);
