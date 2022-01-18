@@ -72,6 +72,8 @@ private:
 
 	int timeout = 200;
 	bool active = false;
+
+	HANDLE intrHandle;
 };
 
 struct InputEvent : Event {

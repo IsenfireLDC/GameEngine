@@ -51,13 +51,15 @@ const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::Right, MoveAction}
 };
 
-static INPUT_RECORD getInput(int timeout) {
+static INPUT_RECORD getInput(int timeout, HANDLE interruptHandle) {
 	const int bufferSize = 10;
 
 	DWORD mode;
 
 	static INPUT_RECORD input[bufferSize];
 	static int buffered = 0;
+
+	HANDLE waitHandles[2] = {nullptr, interruptHandle};
 
 	if(buffered == 0) {
 		//Std handle
@@ -68,7 +70,8 @@ static INPUT_RECORD getInput(int timeout) {
 
 		//Set mode
 		SetConsoleMode(handle, 0);
-		if(WaitForSingleObject(handle, timeout) == WAIT_OBJECT_0) {
+		waitHandles[0] = handle;
+		if(WaitForMultipleObjects(2, waitHandles, false, timeout) == WAIT_OBJECT_0) {
 			DWORD cnt;
 
 			//Get input event
@@ -77,6 +80,7 @@ static INPUT_RECORD getInput(int timeout) {
 			buffered = cnt;
 		} else {
 			input[0].EventType = 0;
+			SetConsoleMode(handle, mode);
 			return input[0];
 		};
 
@@ -95,29 +99,29 @@ static INPUT_RECORD getInput(int timeout) {
 };
 
 int Input::getInputKey() {
-	INPUT_RECORD input = getInput(0);
+	INPUT_RECORD input = getInput(0, 0);
 
 	if(input.EventType == KEY_EVENT)
-		return getInput(0).Event.KeyEvent.wVirtualKeyCode;
+		return getInput(0, 0).Event.KeyEvent.wVirtualKeyCode;
 
 	return 0;
 };
 
 int Input::getInputScan() {
-	INPUT_RECORD input = getInput(0);
+	INPUT_RECORD input = getInput(0, 0);
 
 	if(input.EventType == KEY_EVENT)
-		return getInput(0).Event.KeyEvent.wVirtualScanCode;
+		return getInput(0, 0).Event.KeyEvent.wVirtualScanCode;
 
 	return 0;
 };
 
-Input::Input() {
-	this->actionMap = defaultMap;
-};
+Input::Input() : Input(defaultMap) {};
 
 Input::Input(std::unordered_map<int, Action> actionMap) {
 	this->actionMap = actionMap;
+
+	this->intrHandle = CreateEventA(0, true, false, 0);
 };
 
 /*
@@ -125,6 +129,8 @@ Input::Input(std::unordered_map<int, Action> actionMap) {
  */
 Input::~Input() {
 	this->active = false;
+
+	PulseEvent(this->intrHandle);
 	if(this->thread->joinable()) this->thread->join();
 };
 
@@ -198,7 +204,7 @@ void Input::removeActionMapping(int input) {
 void Input::threadHandler() {
 	Input::log.log("Input thread started", LogType::Info, "Handler");
 	while(this->active) {
-		INPUT_RECORD input = getInput(100);
+		INPUT_RECORD input = getInput(10000, this->intrHandle);
 		int scanCode;
 
 		if(input.EventType == KEY_EVENT && input.Event.KeyEvent.bKeyDown)
