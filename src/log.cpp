@@ -13,6 +13,12 @@ using std::chrono::system_clock;
 //Must construct in-place because ofstream is non-copyable
 Log Engine::log{"Master", "./logs/master.log", nullptr};
 
+
+Log::Entry Log::makeEntry(std::string message, Log::Entry::LogType severity, std::string sender) {
+	return Log::Entry{system_clock::now(), severity, message, sender};
+};
+
+
 Log::Log(std::string name, std::string logfile) : Log(name, logfile, &Engine::log){};
 
 Log::Log(std::string name, std::string logfile, Log *parent) {
@@ -32,11 +38,11 @@ void Log::setParent(Log *parent) {
 };
 
 void Log::log(std::string message) {
-	this->log(message, Log::Entry::LogType::Info, "");
+	this->log(message, Log::Entry::LogType::Info, "Default");
 };
 
 void Log::log(std::string message, Log::Entry::LogType severity) {
-	this->log(message, severity, "");
+	this->log(message, severity, "Default");
 };
 
 void Log::log(std::string message, Log::Entry::LogType severity, std::string sender) {
@@ -87,4 +93,12 @@ std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
 	os << " : " << entry.message;
 
 	return os;
+};
+
+void operator<<(Log &log, const std::string &message) {
+	log.log(message);
+};
+
+void operator<<(Log &log, const Log::Entry &entry) {
+	log.writeEntry(entry);
 };

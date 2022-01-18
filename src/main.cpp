@@ -137,6 +137,8 @@ int main() {
 	Log testLog{"Test", "./logs/test.log"};
 	LogType testLogType = LogType::Debug;
 	testLog.log("Testing nested log", LogType::Info, "Main");
+	testLog << "Testing log insertion operator for message";
+	testLog << Log::makeEntry("Test log insertion operator for Entry", testLogType, "Main");
 	Engine::log.log("Initialization complete", LogType::Info, "Main");
 
 	//Print out manager

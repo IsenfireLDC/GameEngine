@@ -20,6 +20,8 @@ public:
 		friend std::ostream& operator<<(std::ostream&, const Entry&);
 	};
 
+	static Entry makeEntry(std::string, Entry::LogType, std::string);
+
 	Log(std::string, std::string);
 	Log(std::string, std::string, Log*);
 	virtual ~Log();
@@ -29,6 +31,9 @@ public:
 	void log(std::string);
 	void log(std::string, Entry::LogType);
 	void log(std::string, Entry::LogType, std::string);
+
+	friend void operator<<(Log&, const std::string&);
+	friend void operator<<(Log&, const Entry&);
 
 private:
 	void writeEntry(Entry);
