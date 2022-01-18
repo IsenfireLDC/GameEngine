@@ -80,6 +80,7 @@ static INPUT_RECORD getInput(int timeout, HANDLE interruptHandle) {
 			buffered = cnt;
 		} else {
 			input[0].EventType = 0;
+			SetConsoleMode(handle, mode);
 			return input[0];
 		};
 
