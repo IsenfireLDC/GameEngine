@@ -5,7 +5,7 @@
 #include "game.hpp"
 
 Game::Game() {
-	this->framePeriod = 100;
+	this->framePeriod = std::chrono::milliseconds(100);
 	this->tickables = std::unordered_set<ITickable*>();
 };
 
@@ -13,14 +13,14 @@ Game::Game() {
  * Sets frame period (in milliseconds)
  */
 void Game::setFramePeriod(int framePeriod) {
-	this->framePeriod = framePeriod;
+	this->framePeriod = std::chrono::milliseconds(framePeriod);
 };
 
 /*
  * Gets frame period (in milliseconds)
  */
 int Game::getFramePeriod() {
-	return this->framePeriod;
+	return this->framePeriod.count();
 };
 
 /*
@@ -38,4 +38,21 @@ void Game::unregisterTickable(ITickable* tickable) {
 		this->tickables.erase(tickable);
 };
 
-int Game::run() {return 0;};
+int Game::run(bool run) {
+	static Utils::CallbackHandle *handler;
+
+	if(run) {
+		if(handler) return 0;
+		else handler = Utils::scheduleAsyncCallback(this->framePeriod, [this](void* p){this->tick();}, true, false);
+	} else if (handler) {
+		Utils::destroyAsyncCallback(handler);
+		handler = nullptr;
+	};
+
+	return 0;
+};
+
+void Game::tick() {
+	for(ITickable *tickable : this->tickables)
+		tickable->tick();
+};

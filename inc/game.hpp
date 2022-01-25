@@ -5,6 +5,9 @@
 #ifndef _GAME_HPP_
 #define _GAME_HPP_
 
+#include "utils.hpp"
+
+#include <chrono>
 #include <unordered_set>
 
 struct ITickable {
@@ -21,9 +24,11 @@ public:
 	void registerTickable(ITickable*);
 	void unregisterTickable(ITickable*);
 
-	int run();
+	int run(bool);
 private:
-	int framePeriod;
+	void tick();
+
+	std::chrono::milliseconds framePeriod;
 	
 	std::unordered_set<ITickable*> tickables;
 };
