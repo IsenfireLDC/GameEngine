@@ -4,23 +4,26 @@
 
 #include "game.hpp"
 
+/*
+ * Creates game with empty tickables set at 30 fps
+ */
 Game::Game() {
-	this->framePeriod = std::chrono::milliseconds(100);
+	this->framePeriod = std::chrono::duration_cast<Utils::Duration>(Utils__FPS(30));
 	this->tickables = std::unordered_set<ITickable*>();
 };
 
 /*
- * Sets frame period (in milliseconds)
+ * Sets frame period in Utils::Duration (us)
  */
-void Game::setFramePeriod(int framePeriod) {
-	this->framePeriod = std::chrono::milliseconds(framePeriod);
+void Game::setFramePeriod(Utils::Duration framePeriod) {
+	this->framePeriod = framePeriod;
 };
 
 /*
- * Gets frame period (in milliseconds)
+ * Gets frame period in Utils::Duration (us)
  */
-int Game::getFramePeriod() {
-	return this->framePeriod.count();
+Utils::Duration Game::getFramePeriod() {
+	return this->framePeriod;
 };
 
 /*

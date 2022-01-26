@@ -8,6 +8,7 @@
 #include "utils.hpp"
 
 #include <chrono>
+#include <ratio>
 #include <unordered_set>
 
 struct ITickable {
@@ -18,8 +19,8 @@ class Game {
 public:
 	Game();
 
-	void setFramePeriod(int);
-	int getFramePeriod();
+	void setFramePeriod(Utils::Duration);
+	Utils::Duration getFramePeriod();
 
 	void registerTickable(ITickable*);
 	void unregisterTickable(ITickable*);
@@ -28,7 +29,7 @@ public:
 private:
 	void tick();
 
-	std::chrono::milliseconds framePeriod;
+	Utils::Duration framePeriod;
 	
 	std::unordered_set<ITickable*> tickables;
 };
