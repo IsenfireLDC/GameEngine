@@ -14,6 +14,8 @@
 #include "events.hpp"
 #include "log.hpp"
 
+#include "game.hpp"
+
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
@@ -68,6 +70,18 @@ static int exHandler(Entity *target, EntityAction action) {
 
 	return 0;
 };
+
+
+struct Ticker : ITickable {
+	std::function<void(void)> tf;
+
+	void tick() {
+		tf();
+	};
+};
+
+
+
 
 std::random_device rd;
 std::default_random_engine gen;
@@ -194,6 +208,24 @@ int main() {
 	int typeQEID = Engine::eventBus.registerEventType(&qeType);
 	Engine::eventBus.registerEventHandler(typeQEID, &quitHandler);
 
+	Ticker ticker;
+	ticker.tf = [&window, &input, &npc](){
+		Engine::eventBus.handleEvents();
+
+		window.setMsg(message.c_str());
+
+		input.callAction(&npc, inputs[randMove(gen)]);
+		window.render();
+	};
+	Game game;
+	game.registerTickable(&ticker);
+	game.run(true);
+
+	//Busy wait to avoid returning
+	while(running);
+	game.run(false);
+
+	/*
 	while(running) {
 		//Event* first = Engine::eventBus.getFirstEvent();
 		//const char* info = 0;
@@ -208,6 +240,7 @@ int main() {
 
 		Sleep(100);
 	};
+	*/
 
 	return 0;
 }

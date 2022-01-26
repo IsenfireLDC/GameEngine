@@ -12,6 +12,10 @@ Game::Game() {
 	this->tickables = std::unordered_set<ITickable*>();
 };
 
+Game::~Game() {
+	this->run(false);
+};
+
 /*
  * Sets frame period in Utils::Duration (us)
  */

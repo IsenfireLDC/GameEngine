@@ -19,6 +19,8 @@ class Game {
 public:
 	Game();
 
+	~Game();
+
 	void setFramePeriod(Utils::Duration);
 	Utils::Duration getFramePeriod();
 
