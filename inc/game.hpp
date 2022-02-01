@@ -11,6 +11,10 @@
 #include <ratio>
 #include <unordered_set>
 
+namespace Engine::Units {
+	using Time = std::chrono::microseconds;
+};
+
 struct ITickable {
 	virtual void tick() = 0;
 };
@@ -21,8 +25,8 @@ public:
 
 	~Game();
 
-	void setFramePeriod(Utils::Duration);
-	Utils::Duration getFramePeriod();
+	void setFramePeriod(Engine::Units::Time);
+	Engine::Units::Time getFramePeriod();
 
 	void registerTickable(ITickable*);
 	void unregisterTickable(ITickable*);
@@ -31,9 +35,14 @@ public:
 private:
 	void tick();
 
-	Utils::Duration framePeriod;
+	Engine::Units::Time framePeriod;
 	
 	std::unordered_set<ITickable*> tickables;
+};
+
+namespace Engine {
+	template<class duration = Units::Time>
+	duration FPS(int fps);
 };
 
 #endif

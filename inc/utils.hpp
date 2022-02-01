@@ -46,10 +46,6 @@ namespace Utils {
 
 	CallbackHandle* scheduleAsyncCallback(Duration, Callback, bool, bool);
 	void destroyAsyncCallback(CallbackHandle*);
-
-#define Utils__FPS(fps) std::chrono::duration<int, std::ratio<1, fps>>(1)
-	//template<std::intmax_t fps>  //How do you do that w/o a macro?
-	//std::chrono::duration<int, std::ratio<1, fps>>;
 };
 
 #endif

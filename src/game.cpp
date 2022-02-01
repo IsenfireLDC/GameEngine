@@ -8,7 +8,7 @@
  * Creates game with empty tickables set at 30 fps
  */
 Game::Game() {
-	this->framePeriod = std::chrono::duration_cast<Utils::Duration>(Utils__FPS(30));
+	this->framePeriod = Engine::FPS(30);
 	this->tickables = std::unordered_set<ITickable*>();
 };
 
@@ -19,14 +19,14 @@ Game::~Game() {
 /*
  * Sets frame period in Utils::Duration (us)
  */
-void Game::setFramePeriod(Utils::Duration framePeriod) {
+void Game::setFramePeriod(Engine::Units::Time framePeriod) {
 	this->framePeriod = framePeriod;
 };
 
 /*
  * Gets frame period in Utils::Duration (us)
  */
-Utils::Duration Game::getFramePeriod() {
+Engine::Units::Time Game::getFramePeriod() {
 	return this->framePeriod;
 };
 
@@ -62,4 +62,15 @@ int Game::run(bool run) {
 void Game::tick() {
 	for(ITickable *tickable : this->tickables)
 		tickable->tick();
+};
+
+
+namespace Engine {
+
+template<class duration = Units::Time>
+duration FPS(int fps) {
+	intmax_t ticks = duration::period::den / (fps * duration::period::num);
+	return duration(ticks);
+};
+
 };
