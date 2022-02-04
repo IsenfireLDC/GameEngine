@@ -16,6 +16,8 @@
 
 #include "game.hpp"
 
+#include "threads.hpp"
+
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
@@ -104,7 +106,7 @@ void getKBCodes() {
 	}
 };
 
-int main() {
+int gameTest() {
 	gen.seed(rd());
 
 	//Create player
@@ -243,4 +245,36 @@ int main() {
 	*/
 
 	return 0;
+};
+
+void threadTest() {
+	ThreadPool tp1{5};
+
+	std::mutex lock;
+	ThreadPool::Task task = [&lock](){
+		static int x=0, y=0;
+
+		lock.lock();
+		if(x > y) ++y;
+		else ++x;
+
+		std::cout << "x=" << x << ", y=" << y << std::endl;
+		lock.unlock();
+	};
+
+	for(int i = 0; i < 10; ++i)
+		tp1.add(task);
+
+	tp1.start();
+
+	tp1.join();
+};
+
+int main() {
+	int ret = 0;
+
+	//ret = gameTest();
+	threadTest();
+
+	return ret;
 }
