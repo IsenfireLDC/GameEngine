@@ -10,10 +10,12 @@
 #include <functional>
 #include <mutex>
 #include <vector>
+#include <condition_variable>
 
-class Semaphore {
+namespace mystd {
+class semaphore {
 public:
-	Semaphore(int);
+	semaphore(int);
 
 	void wait();
 	void post();
@@ -21,21 +23,29 @@ private:
 	int count;
 
 	std::mutex lock, barrier;
+	std::condition_variable_any cv;
 };
+}; //namespace mystd
 
-template<class Task = std::function<void(void)>>
 class ThreadPool {
 public:
-	ThreadPool(int);
-	~ThreadPool();
+	using Task = std::function<void(void)>;
 
-	void add(Task);
-	void join();
-	void exit();
+	ThreadPool(int);
+	virtual ~ThreadPool();
+
+	virtual void start();
+
+	virtual void add(Task);
+	virtual void join();
+	virtual void exit();
 private:
 	std::queue<Task> todo;
+	std::mutex lock;
+	std::condition_variable_any empty;
 
-	bool running;
+	bool running = false;
+	bool joining = false;
 
 	std::vector<std::thread*> threads;
 };
