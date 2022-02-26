@@ -284,7 +284,7 @@ void threadTest2() {
 	int x = 20; //Limit iterations
 	ThreadPool::Task task;
 	task = [&ts, &task, &x](){
-		static time_us period = time_us(100000);
+		static time_us period = time_us(1000);
 		static sys_clk::time_point lastTime = sys_clk::now();
 
 		sys_clk::time_point time = sys_clk::now();
@@ -300,7 +300,10 @@ void threadTest2() {
 
 
 		//Re-add this to the queue
-		if(x-- > 0) ts.scheduleIn(task, period);
+		int schedP = 2*period.count() - time_passed.count();
+		if(schedP < 0) schedP = 0;
+		time_us sched_period = time_us(schedP);
+		if(x-- > 0) ts.scheduleIn(task, sched_period);
 		//Move repetition out of thread pool?
 		//Refactor thread pool to repeat items?
 	};
