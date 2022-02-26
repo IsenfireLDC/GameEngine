@@ -72,8 +72,8 @@ void ThreadPool::add(Task task) {
 	this->lock.lock();
 	this->todo.push(task);
 
-	this->empty.notify_one(); //Deadlock condition?
 	this->lock.unlock();
+	this->empty.notify_one();
 };
 
 void ThreadPool::join() {
