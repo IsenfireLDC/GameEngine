@@ -270,11 +270,56 @@ void threadTest() {
 	tp1.join();
 };
 
+void threadTest2() {
+	//Create thread pool
+	ThreadPool tp1{2};
+
+	//Create scheduler
+	TaskScheduler<> ts{&tp1};
+
+	using sys_clk = std::chrono::system_clock;
+	using time_us = std::chrono::microseconds;
+
+	//Prototype for ticking function (variable, recorded rate)
+	int x = 20; //Limit iterations
+	ThreadPool::Task task;
+	task = [&ts, &task, &x](){
+		static time_us period = time_us(100000);
+		static sys_clk::time_point lastTime = sys_clk::now();
+
+		sys_clk::time_point time = sys_clk::now();
+		time_us time_passed = std::chrono::duration_cast<time_us>(time - lastTime);
+
+		lastTime = time;
+
+		std::cout << "time passed: " << time_passed.count() << "us" << std::endl;
+
+		//As tick sched: Either run tick function or spawn a thread to do so
+
+		for(int i = 0; i < 10000; ++i); //Use time
+
+
+		//Re-add this to the queue
+		if(x-- > 0) ts.scheduleIn(task, period);
+		//Move repetition out of thread pool?
+		//Refactor thread pool to repeat items?
+	};
+
+	//for(int i=x;i>0;--i) tp1.add(task);
+	tp1.add(task);
+
+	tp1.start();
+
+	while(x>0) std::this_thread::yield();
+
+	tp1.join();
+};
+
 int main() {
 	int ret = 0;
 
 	//ret = gameTest();
-	threadTest();
+	threadTest2();
 
 	return ret;
 }
