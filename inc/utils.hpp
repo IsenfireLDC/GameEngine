@@ -7,6 +7,8 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+#include "units.hpp"
+
 #include <string>
 
 #include <thread>
@@ -19,7 +21,7 @@ namespace Utils {
 	
 	void create_directories(std::string);
 
-	using Duration = std::chrono::microseconds;
+	using Duration = Engine::Units::Time;
 
 	typedef std::function<void(void*)> Callback;
 	struct CallbackHandle {

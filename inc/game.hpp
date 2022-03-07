@@ -6,14 +6,11 @@
 #define _GAME_HPP_
 
 #include "utils.hpp"
+#include "units.hpp"
 
 #include <chrono>
 #include <ratio>
 #include <unordered_set>
-
-namespace Engine::Units {
-	using Time = std::chrono::microseconds;
-};
 
 struct ITickable {
 	virtual void tick() = 0;
