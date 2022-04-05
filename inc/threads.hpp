@@ -41,6 +41,8 @@ public:
 	virtual void add(Task);
 	virtual void join();
 	virtual void exit();
+
+	bool isRunning() const;
 private:
 	std::queue<Task> todo;
 	std::mutex lock;

@@ -37,14 +37,14 @@ private:
 	struct TickStatus {
 		bool started; //Shows if the ITick has been scheduled
 		bool active;  //Used to stop ITick from running
-		Engine::Units::TimePoint lastTick;
-		TaskScheduler<>::Task *recurse;
 	};
 
 	//Internal
 	bool createdPool = false;
 	ThreadPool *threadPool;
 	TaskScheduler<> scheduler;
+	TaskScheduler<>::Task schedulingTask;
+	Engine::Units::TimePoint lastTick;
 
 	//Register/Unregister
 	std::unordered_map<ITick*,TickStatus> active;
@@ -58,3 +58,10 @@ private:
 };
 
 #endif
+
+/*
+Task scheduling lambda must reschedule itself
+TSL must have a check for join/exit
+Will there be an issue if start is called quickly after exit?
+ - Create a new priority queue container that supports removal?
+*/

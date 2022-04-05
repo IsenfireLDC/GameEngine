@@ -93,3 +93,7 @@ void ThreadPool::join() {
 void ThreadPool::exit() {
 	this->running = false;
 };
+
+bool ThreadPool::isRunning() const {
+	return this->running;
+};
