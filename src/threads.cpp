@@ -4,6 +4,11 @@
 
 #include "threads.hpp"
 
+#include "engine.hpp"
+
+//Default global thread pool
+ThreadPool Engine::threadPool{10};
+
 namespace mystd {
 
 semaphore::semaphore(int count = 1) {
