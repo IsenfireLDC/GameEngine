@@ -76,10 +76,10 @@ static int exHandler(Entity *target, EntityAction action) {
 };
 
 
-struct Ticker : ITickable {
+struct Ticker : ITick {
 	std::function<void(void)> tf;
 
-	void tick() {
+	void tick(Engine::Units::Time t) {
 		tf();
 	};
 };
@@ -222,7 +222,7 @@ int gameTest() {
 		window.render();
 	};
 	Game game;
-	game.registerTickable(&ticker);
+	game.add(&ticker);
 	game.run(true);
 
 	//Busy wait to avoid returning
@@ -323,8 +323,8 @@ void threadTest2() {
 int main() {
 	int ret = 0;
 
-	//ret = gameTest();
-	threadTest2();
+	ret = gameTest();
+	//threadTest2();
 
 	return ret;
 }
