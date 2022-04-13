@@ -9,9 +9,8 @@
 /*
  * Creates game with empty tickables set at 30 fps
  */
-Game::Game() {
-	this->framePeriod = Engine::FPS(30);
-	this->tickables = std::unordered_set<ITickable*>();
+Game::Game() : tickHandler(&Engine::threadPool) {
+	this->setFPS(30);
 };
 
 Game::~Game() {
@@ -19,49 +18,48 @@ Game::~Game() {
 };
 
 /*
- * Sets frame period in Utils::Duration (us)
+ * Sets the framerate
+ *
+ * To set a more exact period, access the TickHandler directly
  */
-void Game::setFramePeriod(Engine::Units::Time framePeriod) {
-	this->framePeriod = framePeriod;
+void Game::setFPS(int fps) {
+	this->tickHandler.setTickRate(fps);
 };
 
 /*
- * Gets frame period in Utils::Duration (us)
+ * Gets the framerate set by setFPS
  */
-Engine::Units::Time Game::getFramePeriod() {
-	return this->framePeriod;
+int Game::getFPS() const {
+	return this->tickHandler.getTickRate();
 };
 
 /*
- * Adds a ITickable* to the set (a tickable can only be added once)
+ * Registers the given object with the tick handler
  */
-void Game::registerTickable(ITickable *tickable) {
-	this->tickables.insert(tickable);
+void Game::add(ITick *object) {
+	this->tickHandler.registerITick(object);
 };
 
 /*
- * Removes a ITickable* from the set
+ * Unregisters the given object with the tick handler
  */
-void Game::unregisterTickable(ITickable* tickable) {
-	if(this->tickables.count(tickable))
-		this->tickables.erase(tickable);
+void Game::remove(ITick *object) {
+	this->tickHandler.unregisterITick(object);
 };
 
-int Game::run(bool run) {
-	static Utils::CallbackHandle *handler;
-
-	if(run) {
-		if(handler) return 0;
-		else handler = Utils::scheduleAsyncCallback(this->framePeriod, [this](void* p){this->tick();}, true, false);
-	} else if (handler) {
-		Utils::destroyAsyncCallback(handler);
-		handler = nullptr;
-	};
-
-	return 0;
+/*
+ * Starts or stops ticking game objects
+ */
+void Game::run(bool run) {
+	if(run & !this->tickHandler.active())
+		this->tickHandler.start();
+	else if(!run)
+		this->tickHandler.join();
 };
 
-void Game::tick() {
-	for(ITickable *tickable : this->tickables)
-		tickable->tick();
+/*
+ * Grants access to the internal TickHandler
+ */
+TickHandler* Game::handler() {
+	return &this->tickHandler;
 };

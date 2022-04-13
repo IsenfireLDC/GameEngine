@@ -25,13 +25,15 @@ public:
 	void unregisterITick(ITick*);
 
 	void setTickRate(int);
-	int getTickRate();
+	int getTickRate() const;
 	void setTickPeriod(Engine::Units::Time);
-	Engine::Units::Time getTickPeriod();
+	Engine::Units::Time getTickPeriod() const;
 
 	void start();
 	void join(); //Allow next execution to finish
 	void stop(); //Stop immediately
+
+	bool active() const;
 
 private:
 	struct TickStatus {
@@ -47,7 +49,7 @@ private:
 	Engine::Units::TimePoint lastTick;
 
 	//Register/Unregister
-	std::unordered_map<ITick*,TickStatus> active;
+	std::unordered_map<ITick*,TickStatus> registered;
 
 	//Tick rate
 	Engine::Units::Time tickPeriod;

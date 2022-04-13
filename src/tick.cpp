@@ -25,7 +25,7 @@ TickHandler::TickHandler(ThreadPool *threadPool) : scheduler(threadPool) {
 	
 		Engine::Units::Time passed = tp - this->lastTick;
 	
-		for(std::pair<ITick*const, TickStatus>& n : this->active) {
+		for(std::pair<ITick*const, TickStatus>& n : this->registered) {
 			if(!n.second.active) continue;
 			n.second.started = true;
 
@@ -51,8 +51,8 @@ TickHandler::~TickHandler() {
 
 void TickHandler::registerITick(ITick *toTick) {
 	//Add ITick to map, if it's not already there
-	if(this->active.count(toTick) == 0) {
-		this->active[toTick] = (TickStatus){false,true};
+	if(this->registered.count(toTick) == 0) {
+		this->registered[toTick] = (TickStatus){false,true};
 	};
 };
 
@@ -62,10 +62,10 @@ void TickHandler::registerITick(ITick *toTick) {
  * the task lambda
  */
 void TickHandler::unregisterITick(ITick *toTick) {
-	if(this->active[toTick].started)
-		this->active[toTick].active = false;
+	if(this->registered[toTick].started)
+		this->registered[toTick].active = false;
 	else
-		this->active.erase(toTick);
+		this->registered.erase(toTick);
 };
 
 /*
@@ -82,7 +82,7 @@ void TickHandler::setTickRate(int tickRate) {
  *
  * TODO: Add rounding?
  */
-int TickHandler::getTickRate() {
+int TickHandler::getTickRate() const {
 	return Engine::Units::Time::period::den / this->tickPeriod.count();
 };
 
@@ -90,7 +90,7 @@ void TickHandler::setTickPeriod(Engine::Units::Time tickPeriod) {
 	this->tickPeriod = tickPeriod;
 };
 
-Engine::Units::Time TickHandler::getTickPeriod() {
+Engine::Units::Time TickHandler::getTickPeriod() const {
 	return this->tickPeriod;
 };
 
@@ -102,7 +102,7 @@ Engine::Units::Time TickHandler::getTickPeriod() {
 void TickHandler::start() {
 	this->running = true;
 	this->joining = false;
-	for(std::pair<ITick*const, TickStatus>& n : this->active) {
+	for(std::pair<ITick*const, TickStatus>& n : this->registered) {
 		n.second.active = true;
 	};
 
@@ -129,4 +129,8 @@ void TickHandler::join() {
 void TickHandler::stop() {
 	this->running = false;
 	this->joining = true;
+};
+
+bool TickHandler::active() const {
+	return this->running;
 };

@@ -35,4 +35,16 @@ namespace Engine {
 #endif
 #endif
 
+/*
+ * threads.hpp
+ *
+ * Default thread pool
+ */
+#ifdef _THREADS_HPP_
+#ifndef _ENGINE_THREADS
+#define _ENGINE_THREADS
+	extern ThreadPool threadPool;
+#endif
+#endif
+
 };
