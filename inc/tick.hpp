@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 
-#include "engine.hpp"
+#include "engine_types.hpp"
 
 struct ITick {
 	virtual void tick(Engine::Units::Time) = 0;

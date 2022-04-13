@@ -11,7 +11,7 @@
 #include <ratio>
 #include <unordered_set>
 
-#include "engine.hpp"
+#include "engine_types.hpp"
 
 struct ITickable {
 	virtual void tick() = 0;
