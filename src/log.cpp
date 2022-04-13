@@ -8,6 +8,8 @@
 
 #include <ctime>
 
+#include "engine.hpp"
+
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable

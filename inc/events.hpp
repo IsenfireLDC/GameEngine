@@ -1,11 +1,11 @@
 /*
- * events.h
+ * events.hpp
  *
  * Events used to queue inputs and interactions
  */
 
-#ifndef _EVENTS_H_
-#define _EVENTS_H_
+#ifndef _EVENTS_HPP_
+#define _EVENTS_HPP_
 
 #include "utils.hpp"
 
@@ -94,11 +94,6 @@ private:
 	std::mutex eventsLock;
 
 	static int gID;
-};
-
-//Place global in namespace engine
-namespace Engine {
-	extern Events eventBus;
 };
 
 #endif

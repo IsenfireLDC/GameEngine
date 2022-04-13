@@ -6,11 +6,12 @@
 #define _GAME_HPP_
 
 #include "utils.hpp"
-#include "units.hpp"
 
 #include <chrono>
 #include <ratio>
 #include <unordered_set>
+
+#include "engine.hpp"
 
 struct ITickable {
 	virtual void tick() = 0;
@@ -35,11 +36,6 @@ private:
 	Engine::Units::Time framePeriod;
 	
 	std::unordered_set<ITickable*> tickables;
-};
-
-namespace Engine {
-	template<class duration = Units::Time>
-	duration FPS(int fps);
 };
 
 #endif

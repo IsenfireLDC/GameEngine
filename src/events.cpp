@@ -6,6 +6,8 @@
 
 #include <typeinfo>
 
+#include "engine.hpp"
+
 //Engine event bus (global)
 Events Engine::eventBus;
 

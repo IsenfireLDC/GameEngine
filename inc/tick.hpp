@@ -5,11 +5,11 @@
 #ifndef _TICK_HPP_
 #define _TICK_HPP_
 
-#include "units.hpp"
-
 #include "threads.hpp"
 
 #include <unordered_map>
+
+#include "engine.hpp"
 
 struct ITick {
 	virtual void tick(Engine::Units::Time) = 0;

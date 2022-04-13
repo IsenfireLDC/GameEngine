@@ -45,8 +45,4 @@ private:
 	Log *parent;
 };
 
-namespace Engine {
-	extern Log log;
-};
-
 #endif

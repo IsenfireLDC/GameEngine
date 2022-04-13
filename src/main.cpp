@@ -29,6 +29,8 @@
 
 #include <random>
 
+#include "engine.hpp"
+
 using LogType = Log::Entry::LogType;
 
 static bool running = true;

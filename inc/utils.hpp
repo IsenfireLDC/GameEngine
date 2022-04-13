@@ -4,10 +4,8 @@
  * General utilities used throughout the program
  */
 
-#ifndef _UTILS_H_
-#define _UTILS_H_
-
-#include "units.hpp"
+#ifndef _UTILS_HPP_
+#define _UTILS_HPP_
 
 #include <string>
 
@@ -15,6 +13,8 @@
 #include <chrono>
 #include <functional>
 #include <mutex>
+
+#include "engine_types.hpp"
 
 namespace Utils {
 	int nextID(int*);

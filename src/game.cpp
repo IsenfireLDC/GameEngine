@@ -4,6 +4,8 @@
 
 #include "game.hpp"
 
+#include "engine.hpp"
+
 /*
  * Creates game with empty tickables set at 30 fps
  */
@@ -62,15 +64,4 @@ int Game::run(bool run) {
 void Game::tick() {
 	for(ITickable *tickable : this->tickables)
 		tickable->tick();
-};
-
-
-namespace Engine {
-
-template<class duration = Units::Time>
-duration FPS(int fps) {
-	intmax_t ticks = duration::period::den / (fps * duration::period::num);
-	return duration(ticks);
-};
-
 };

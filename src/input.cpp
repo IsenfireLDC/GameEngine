@@ -9,6 +9,8 @@
 #include <conio.h>
 #include <winuser.h>
 
+#include "engine.hpp"
+
 using LogType = Log::Entry::LogType;
 
 Log Input::log{"Input", "./logs/input.log"};
