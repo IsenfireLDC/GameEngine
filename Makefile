@@ -15,7 +15,7 @@ FLAGS+=$(LIBS)
 
 OBJECTS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.o, $(wildcard $(SRC_DIR)*.cpp))
 DEPENDS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.d, $(wildcard $(SRC_DIR)*.cpp))
-OUTFILE=TerminalEngine.exe
+OUTFILE=./TerminalEngine.exe
 
 all: $(OBJECTS)
 	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
