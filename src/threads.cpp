@@ -44,30 +44,8 @@ ThreadPool::~ThreadPool() {
 void ThreadPool::start() {
 	this->running = true;
 
-	Task handler = [this](){
-		bool aquired;
-		Task t;
-		while(this->running) {
-			this->lock.lock();
-
-			if(this->todo.size() <= 0) {
-				this->empty.wait(this->lock);
-
-				aquired = this->running && !this->joining;
-			} else aquired = true;
-
-			if(aquired) {
-				t = this->todo.front();
-				this->todo.pop();
-			};
-			this->lock.unlock();
-
-			if(aquired) t();
-		};
-	};
-
 	for(unsigned int i = 0; i < threads.size(); ++i) {
-		this->threads[i] = new std::thread(handler);
+		this->threads[i] = new std::thread(ThreadPool::taskHandler, this);
 	};
 };
 
@@ -101,4 +79,31 @@ void ThreadPool::exit() {
 
 bool ThreadPool::isRunning() const {
 	return this->running;
+};
+
+/*
+ * Dequeues and runs a task for the parent thread pool
+ *
+ * Spawned as a new thread to add to the thread pool
+ */
+void ThreadPool::taskHandler(ThreadPool *parent) {
+	bool aquired;
+	Task t;
+	while(parent->running) {
+		parent->lock.lock();
+
+		if(parent->todo.size() <= 0) {
+			parent->empty.wait(parent->lock);
+
+			aquired = parent->running && !parent->joining;
+		} else aquired = true;
+
+		if(aquired) {
+			t = parent->todo.front();
+			parent->todo.pop();
+		};
+		parent->lock.unlock();
+
+		if(aquired) t();
+	};
 };

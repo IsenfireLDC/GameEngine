@@ -43,6 +43,9 @@ public:
 	virtual void exit();
 
 	bool isRunning() const;
+
+	static void taskHandler(ThreadPool*);
+
 private:
 	std::queue<Task> todo;
 	std::mutex lock;
@@ -77,6 +80,8 @@ public:
 	template<class C, class D>
 	void scheduleAt(Task, const std::chrono::time_point<C,D>&);
 
+	static void schedulingTask(TaskScheduler<Time>*);
+
 private:
 	std::priority_queue<PTask, std::vector<PTask>, gtTask> tasks;
 
@@ -104,30 +109,7 @@ TaskScheduler<T>::TaskScheduler(ThreadPool *threadPool) {
 	this->barrier.lock();
 	this->running = true;
 
-	Task sched = [this](){
-		while(1) {
-			this->lock.lock();
-			while(this->tasks.empty()) {
-				if(!running) {
-					this->lock.unlock();
-					return;
-				};
-
-				this->cv.wait(lock);
-			};
-	
-			PTask next = this->tasks.top();
-			this->tasks.pop();
-			this->lock.unlock();
-	
-			if(this->barrier.try_lock_until(next.first))
-				return;
-
-			this->threadPool->add(next.second);
-		};
-	};
-
-	this->thread = new std::thread(sched);
+	this->thread = new std::thread(TaskScheduler<T>::schedulingTask, this);
 };
 
 template<class T>
@@ -168,6 +150,32 @@ void TaskScheduler<T>::scheduleAt(Task task, const std::chrono::time_point<C,D> 
 	this->lock.unlock();
 
 	this->cv.notify_one();
+};
+
+template<class T>
+void TaskScheduler<T>::schedulingTask(TaskScheduler<T> *parent) {
+	while(1) {
+		parent->lock.lock();
+		while(parent->tasks.empty()) {
+			if(!parent->running) {
+				parent->lock.unlock();
+				return;
+			};
+
+			parent->cv.wait(parent->lock);
+		};
+
+		PTask next = parent->tasks.top();
+		parent->tasks.pop();
+		parent->lock.unlock();
+
+		if(parent->barrier.try_lock_until(next.first)) {
+			parent->barrier.unlock();
+			return;
+		}
+
+		parent->threadPool->add(next.second);
+	};
 };
 
 #endif
