@@ -35,6 +35,8 @@ public:
 
 	bool active() const;
 
+	static void scheduleTask(TickHandler*);
+
 private:
 	struct TickStatus {
 		bool started; //Shows if the ITick has been scheduled

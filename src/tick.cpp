@@ -17,33 +17,6 @@ TickHandler::TickHandler() : TickHandler(new ThreadPool(5)) {
 TickHandler::TickHandler(ThreadPool *threadPool) : scheduler(threadPool) {
 	this->threadPool = threadPool;
 
-	this->schedulingTask = [this](){
-		if(!this->running) return;
-
-		//Monitor time
-		Engine::Units::TimePoint tp = Engine::Clock::now();
-	
-		Engine::Units::Time passed = tp - this->lastTick;
-	
-		for(std::pair<ITick*const, TickStatus>& n : this->registered) {
-			if(!n.second.active) continue;
-			n.second.started = true;
-
-			this->threadPool->add(std::bind(n.first->tick, n.first, passed));
-		};
-		this->scheduler.scheduleIn(this->schedulingTask, this->tickPeriod);
-	
-		this->lastTick = tp;
-	
-		//Reschedule task
-		if(!this->joining)
-			this->scheduler.scheduleIn(
-				this->schedulingTask,
-				this->tickPeriod
-			);
-		else
-			this->running = false;
-	};
 };
 
 TickHandler::~TickHandler() {
@@ -108,6 +81,8 @@ void TickHandler::start() {
 
 	if(!this->threadPool->isRunning())
 		this->threadPool->start();
+
+	this->threadPool->add(this->schedulingTask);
 };
 
 /*
@@ -133,4 +108,33 @@ void TickHandler::stop() {
 
 bool TickHandler::active() const {
 	return this->running;
+};
+
+
+void TickHandler::scheduleTask(TickHandler *parent) {
+	if(!parent->running) return;
+
+	//Monitor time
+	Engine::Units::TimePoint tp = Engine::Clock::now();
+
+	Engine::Units::Time passed = tp - parent->lastTick;
+
+	for(std::pair<ITick*const, TickStatus>& n : parent->registered) {
+		if(!n.second.active) continue;
+		n.second.started = true;
+
+		parent->threadPool->add(std::bind(n.first->tick, n.first, passed));
+	};
+	parent->scheduler.scheduleIn(parent->schedulingTask, parent->tickPeriod);
+
+	parent->lastTick = tp;
+
+	//Reschedule task
+	if(!parent->joining)
+		parent->scheduler.scheduleIn(
+			parent->schedulingTask,
+			parent->tickPeriod
+		);
+	else
+		parent->running = false;
 };
