@@ -4,6 +4,9 @@
 
 #include "threads.hpp"
 
+#include <sstream>
+#include "log.hpp"
+
 #include "engine.hpp"
 
 //Default global thread pool
@@ -52,6 +55,8 @@ void ThreadPool::start() {
 void ThreadPool::add(Task task) {
 	if(this->joining) return;
 
+	Engine::log.log("Adding task to thread pool", Log::Entry::LogType::Debug, "ThreadPool:add");
+
 	this->lock.lock();
 	this->todo.push(task);
 
@@ -84,26 +89,33 @@ bool ThreadPool::isRunning() const {
 /*
  * Dequeues and runs a task for the parent thread pool
  *
- * Spawned as a new thread to add to the thread pool
+ * Spawned as a thread in the pool
  */
 void ThreadPool::taskHandler(ThreadPool *parent) {
-	bool aquired;
 	Task t;
 	while(parent->running) {
 		parent->lock.lock();
 
-		if(parent->todo.size() <= 0) {
+		//Loop to avoid popping from the queue when there are no elements (Issue #15)
+		while(parent->todo.size() <= 0) {
 			parent->empty.wait(parent->lock);
 
-			aquired = parent->running && !parent->joining;
-		} else aquired = true;
-
-		if(aquired) {
-			t = parent->todo.front();
-			parent->todo.pop();
+			//All threads are notified when joining/stopping the thread pool
+			//This will stop this thread from running if the thread pool stops
+			if(!parent->running || parent->joining) {
+				parent->lock.unlock();
+				return;
+			};
 		};
+
+		//Pop the next task from the queue
+		t = parent->todo.front();
+		parent->todo.pop();
+
 		parent->lock.unlock();
 
-		if(aquired) t();
+		//Run the task after unlocking the pool
+		Engine::log.log("Running task in thread pool", Log::Entry::LogType::Debug, "ThreadPool:taskHandler");
+		t();
 	};
 };
