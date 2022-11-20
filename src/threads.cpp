@@ -36,6 +36,10 @@ void semaphore::post() {
 
 }; //namespace mystd
 
+
+
+/***** Thread Pool *****/
+
 ThreadPool::ThreadPool(int threads) {
 	this->threads = std::vector<std::thread*>(threads);
 };
@@ -44,6 +48,11 @@ ThreadPool::~ThreadPool() {
 	this->running = false;
 };
 
+/*
+ * Starts the thread pool
+ *
+ * This method will instantiate all threads in the pool
+ */
 void ThreadPool::start() {
 	this->running = true;
 
@@ -52,6 +61,12 @@ void ThreadPool::start() {
 	};
 };
 
+/*
+ * Adds a new task to the thread pool
+ *
+ * Tasks are queued, and run as soon as possible
+ * Cannot add tasks if joining with the thread pool
+ */
 void ThreadPool::add(Task task) {
 	if(this->joining) return;
 
@@ -64,6 +79,14 @@ void ThreadPool::add(Task task) {
 	this->empty.notify_one();
 };
 
+/*
+ * Joins with all threads in the pool
+ *
+ * Will run all remaining queued tasks before stopping pool
+ * New tasks can not be added when joining
+ *
+ * After stopping or joining, all threads will exit
+ */
 void ThreadPool::join() {
 	this->joining = true;
 
@@ -78,10 +101,20 @@ void ThreadPool::join() {
 			thread->join();
 };
 
+/*
+ * Exits the thread pool immediately
+ *
+ * Will not run any more queued tasks, but cannot kill any tasks in progress
+ *
+ * After stopping or joining, all threads will exit
+ */
 void ThreadPool::exit() {
 	this->running = false;
 };
 
+/*
+ * Returns the running status of the thread pool
+ */
 bool ThreadPool::isRunning() const {
 	return this->running;
 };
