@@ -9,6 +9,8 @@
 #include <conio.h>
 #include <winuser.h>
 
+#include <sstream>
+
 #include "engine.hpp"
 
 using LogType = Log::Entry::LogType;
@@ -40,7 +42,15 @@ static void aMove(Entity *target, int input) {
 	target->move(ePos);
 };
 
+static void aExit(Entity *target, int input) {
+	std::cerr << "Keyboard interrupt" << std::endl;
+	Engine::log.log("Keyboard interrupt", LogType::Fatal, "Input");
+
+	exit(1);
+};
+
 Action MoveAction = aMove;
+Action ExitAction = aExit;
 
 const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::W, MoveAction},
@@ -224,6 +234,8 @@ void Input::threadHandler() {
 				case Input::Key::Escape:
 					event = new QuitEvent(this);
 					break;
+				case Input::Key::Interrupt:
+					aExit(nullptr, 0);
 				case Input::Key::Null:
 					continue;
 				default:
@@ -232,7 +244,11 @@ void Input::threadHandler() {
 		};
 		Engine::eventBus.queueEvent(event);
 
-		Input::log.log("Received keypress", LogType::Debug, "Handler");
+		std::stringstream key{};
+		key << "Received keypress ";
+		if(input.Event.KeyEvent.wVirtualKeyCode > 16) key << "\"" << (char)input.Event.KeyEvent.wVirtualKeyCode << "\" ";
+		key << ": " << scanCode;
+		Input::log.log(key.str(), LogType::Debug, "Handler");
 	
 		//Select action and queue event
 		//Have quit event contain pointer to Input
