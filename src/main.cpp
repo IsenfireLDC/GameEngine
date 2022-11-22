@@ -228,8 +228,8 @@ int gameTest() {
 	game.add(&ticker);
 	game.run(true);
 
-	//Busy wait to avoid returning
-	while(running);
+	//Stall main until the game is done
+	while(running) std::this_thread::yield();
 	game.run(false);
 
 	/*
