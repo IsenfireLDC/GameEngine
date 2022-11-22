@@ -155,7 +155,7 @@ void TickHandler::stop() {
 	this->joining = true;
 
 	if(this->createdPool)
-		this->threadPool->stop();
+		this->threadPool->exit();
 };
 
 bool TickHandler::active() const {
@@ -175,7 +175,7 @@ void TickHandler::scheduleTask(TickHandler *parent) {
 	for(std::pair<ITick*const, TickStatus>& n : parent->registered) {
 		if(!n.second.active) {
 			if(n.second.started) { //These flags mean it should be removed
-				this->registered.erase(toTick);
+				parent->registered.erase(n.first);
 			};
 
 			//Don't run items that are inactive
