@@ -57,7 +57,9 @@ static void actionHandler(Event *event) {
 static void quitHandler(Event *event) {
 	QuitEvent *quitEvent = (QuitEvent*)event;
 
-	printf("Received QuitEvent from %p\n", quitEvent->input);
+	char strbuf[100];
+	sprintf(strbuf, "Received QuitEvent from %p\n", quitEvent->input);
+	Engine::log.log(strbuf, Log::Entry::LogType::Info, "Main");
 	quitEvent->input->runThread(false);
 
 	running = false;
@@ -109,6 +111,7 @@ void getKBCodes() {
 };
 
 int gameTest() {
+	Engine::log.log("-------------------- Log Start --------------------");
 	gen.seed(rd());
 
 	//Create player
