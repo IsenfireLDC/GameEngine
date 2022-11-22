@@ -4,7 +4,11 @@
 
 #include "game.hpp"
 
+#include "log.hpp"
+
 #include "engine.hpp"
+
+using LogType = Log::Entry::LogType;
 
 /*
  * Creates game with empty tickables set at 30 fps
@@ -37,6 +41,7 @@ int Game::getFPS() const {
  * Registers the given object with the tick handler
  */
 void Game::add(ITick *object) {
+	Engine::log.log("Registering ITick", LogType::Debug, "Game");
 	this->tickHandler.registerITick(object);
 };
 
@@ -51,9 +56,11 @@ void Game::remove(ITick *object) {
  * Starts or stops ticking game objects
  */
 void Game::run(bool run) {
-	if(run & !this->tickHandler.active())
-		this->tickHandler.start();
-	else if(!run)
+	if(run) {
+		Engine::log.log("Running game", LogType::Debug, "Game");
+		if(!this->tickHandler.active())
+			this->tickHandler.start();
+	} else
 		this->tickHandler.join();
 };
 
