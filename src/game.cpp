@@ -56,6 +56,9 @@ void Game::remove(ITick *object) {
 void Game::run(bool run) {
 	if(run) {
 		Engine::log.log("Running game", LogType::Debug, "Game");
+		if(!Engine::threadPool.isRunning())
+			Engine::threadPool.start();
+
 		if(!this->tickHandler.active())
 			this->tickHandler.start();
 	} else
