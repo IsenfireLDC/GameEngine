@@ -15,11 +15,9 @@
 /*
  * Default Constructor
  *
- * Create TickHandler with a new ThreadPool with 5 threads
+ * Create TickHandler using the default thread pool
  */
-TickHandler::TickHandler() : TickHandler(new ThreadPool(5)) {
-	this->createdPool = true;
-};
+TickHandler::TickHandler() : TickHandler(&Engine::threadPool) {};
 
 /*
  * Constructor
@@ -45,7 +43,7 @@ TickHandler::~TickHandler() {
  * Readding an existing ITick will do nothing
  */
 void TickHandler::enable(ITick *toTick) {
-	Engine::log.log("Registered new ITick", LogType::Debug, "TickHandler");
+	Engine::log.log("Enable ITick", LogType::Debug, "TickHandler");
 	//Add ITick to map, if it's not already there
 	if(this->registered.count(toTick) == 0) {
 		this->registered[toTick] = (TickStatus){false,true};
@@ -59,7 +57,7 @@ void TickHandler::enable(ITick *toTick) {
  * Otherwise, sets active flag to false; toTick will be removed by the scheduler
  */
 void TickHandler::disable(ITick *toTick) {
-	Engine::log.log("Unregistered ITick", LogType::Debug, "TickHandler");
+	Engine::log.log("Disable ITick", LogType::Debug, "TickHandler");
 	if(this->registered[toTick].started)
 		this->registered[toTick].active = false;
 	else
@@ -106,7 +104,7 @@ Engine::Units::Time TickHandler::getTickPeriod() const {
 /*
  * Start ticking registered ITick instances
  *
- * Starts the ThreadPool if it wasn't already running
+ * The thread pool must be running for this to have an effect
  */
 void TickHandler::start() {
 	Engine::log.log("Starting ticking registered ITick's", LogType::Debug, "TickHandler");
@@ -120,9 +118,6 @@ void TickHandler::start() {
 	};
 
 	this->schedulingTask = std::bind(TickHandler::scheduleTask, this);
-
-	if(!this->threadPool->isRunning())
-		this->threadPool->start();
 
 	this->lastTick = Engine::Clock::now();
 
@@ -141,9 +136,6 @@ void TickHandler::join() {
 	//The running flag will be unset in the tick handler
 	while(this->running)
 		std::this_thread::yield();
-
-	if(this->createdPool)
-		this->threadPool->join();
 };
 
 /*
@@ -153,41 +145,47 @@ void TickHandler::stop() {
 	Engine::log.log("Stopping thread pool", LogType::Debug, "TickHandler");
 	this->running = false;
 	this->joining = true;
-
-	if(this->createdPool)
-		this->threadPool->exit();
 };
 
+/*
+ * Returns the value of the running flag
+ */
 bool TickHandler::active() const {
 	return this->running;
 };
 
 
+/*
+ * Function run by the scheduler that queues all ticks to the thread pool
+ */
 void TickHandler::scheduleTask(TickHandler *parent) {
 	Engine::log.log("Scheduling task running", LogType::Debug, "TickHandler:scheduleTask");
 	if(!(parent && parent->running)) return;
 
-	//Provide a measurement of the actual time delta
-	Engine::Units::TimePoint tp = Engine::Clock::now();
-
-	Engine::Units::Time passed = tp - parent->lastTick;
-
-	for(std::pair<ITick*const, TickStatus>& n : parent->registered) {
-		if(!n.second.active) {
-			if(n.second.started) { //These flags mean it should be removed
-				parent->registered.erase(n.first);
+	//Ensure that the thread pool is running before we add tasks
+	if(parent->threadPool->isRunning()) {
+		//Provide a measurement of the actual time delta
+		Engine::Units::TimePoint tp = Engine::Clock::now();
+	
+		Engine::Units::Time passed = tp - parent->lastTick;
+	
+		for(std::pair<ITick*const, TickStatus>& n : parent->registered) {
+			if(!n.second.active) {
+				if(n.second.started) { //These flags mean it should be removed
+					parent->registered.erase(n.first);
+				};
+	
+				//Don't run items that are inactive
+				continue;
 			};
-
-			//Don't run items that are inactive
-			continue;
+	
+			n.second.started = true;
+	
+			parent->threadPool->add(std::bind(n.first->tick, n.first, passed));
 		};
-
-		n.second.started = true;
-
-		parent->threadPool->add(std::bind(n.first->tick, n.first, passed));
+	
+		parent->lastTick = tp;
 	};
-
-	parent->lastTick = tp;
 
 	//Reschedule task
 	if(!parent->joining)

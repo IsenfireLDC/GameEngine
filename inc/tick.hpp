@@ -44,7 +44,6 @@ private:
 	};
 
 	//Internal
-	bool createdPool = false;
 	ThreadPool *threadPool;
 	TaskScheduler<> scheduler;
 	TaskScheduler<>::Task schedulingTask;
