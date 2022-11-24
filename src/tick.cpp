@@ -39,12 +39,12 @@ TickHandler::~TickHandler() {
 };
 
 /*
- * Register a new ITick object to this handler
+ * Enables ticking on toTick
  *
  * This will call the `tick` method of the ITick at the current tick rate
  * Readding an existing ITick will do nothing
  */
-void TickHandler::registerITick(ITick *toTick) {
+void TickHandler::enable(ITick *toTick) {
 	Engine::log.log("Registered new ITick", LogType::Debug, "TickHandler");
 	//Add ITick to map, if it's not already there
 	if(this->registered.count(toTick) == 0) {
@@ -53,12 +53,12 @@ void TickHandler::registerITick(ITick *toTick) {
 };
 
 /*
- * Unregister an ITick object from this handler
+ * Disable ticking on toTick
  *
  * Removes toTick if it has not been scheduled
  * Otherwise, sets active flag to false; toTick will be removed by the scheduler
  */
-void TickHandler::unregisterITick(ITick *toTick) {
+void TickHandler::disable(ITick *toTick) {
 	Engine::log.log("Unregistered ITick", LogType::Debug, "TickHandler");
 	if(this->registered[toTick].started)
 		this->registered[toTick].active = false;

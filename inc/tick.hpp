@@ -21,8 +21,8 @@ public:
 	TickHandler(ThreadPool*);
 	~TickHandler();
 
-	void registerITick(ITick*);
-	void unregisterITick(ITick*);
+	void enable(ITick*);
+	void disable(ITick*);
 
 	void setTickRate(int);
 	int getTickRate() const;

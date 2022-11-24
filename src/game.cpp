@@ -40,14 +40,14 @@ int Game::getFPS() const {
  */
 void Game::add(ITick *object) {
 	Engine::log.log("Registering ITick", LogType::Debug, "Game");
-	this->tickHandler.registerITick(object);
+	this->tickHandler.enable(object);
 };
 
 /*
  * Unregisters the given object with the tick handler
  */
 void Game::remove(ITick *object) {
-	this->tickHandler.unregisterITick(object);
+	this->tickHandler.disable(object);
 };
 
 /*
