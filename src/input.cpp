@@ -13,8 +13,6 @@
 
 #include "engine.hpp"
 
-using LogType = Log::Entry::LogType;
-
 Log Input::log{"Input", "./logs/input.log"};
 
 static void aMove(Entity *target, int input) {

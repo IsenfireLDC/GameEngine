@@ -27,7 +27,7 @@ TickHandler::TickHandler() : TickHandler(new ThreadPool(5)) {
  * Create TickHandler using an existing ThreadPool
  */
 TickHandler::TickHandler(ThreadPool *threadPool) : scheduler(threadPool) {
-	Engine::log.log("Created new TickHandler", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Created new TickHandler", LogType::Debug, "TickHandler");
 	this->threadPool = threadPool;
 
 };
@@ -45,7 +45,7 @@ TickHandler::~TickHandler() {
  * Readding an existing ITick will do nothing
  */
 void TickHandler::registerITick(ITick *toTick) {
-	Engine::log.log("Registered new ITick", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Registered new ITick", LogType::Debug, "TickHandler");
 	//Add ITick to map, if it's not already there
 	if(this->registered.count(toTick) == 0) {
 		this->registered[toTick] = (TickStatus){false,true};
@@ -59,7 +59,7 @@ void TickHandler::registerITick(ITick *toTick) {
  * Otherwise, sets active flag to false; toTick will be removed by the scheduler
  */
 void TickHandler::unregisterITick(ITick *toTick) {
-	Engine::log.log("Unregistered ITick", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Unregistered ITick", LogType::Debug, "TickHandler");
 	if(this->registered[toTick].started)
 		this->registered[toTick].active = false;
 	else
@@ -70,7 +70,7 @@ void TickHandler::unregisterITick(ITick *toTick) {
  * Set tickPeriod using a tick rate of ticks per second
  */
 void TickHandler::setTickRate(int tickRate) {
-	Engine::log.log("Set tick rate", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Set tick rate", LogType::Debug, "TickHandler");
 	this->tickPeriod = Engine::Units::Time(
 		Engine::Units::Time::period::den / tickRate
 	);
@@ -92,7 +92,7 @@ int TickHandler::getTickRate() const {
  * All registered ITicks will be ticked every tickPeriod time units
  */
 void TickHandler::setTickPeriod(Engine::Units::Time tickPeriod) {
-	Engine::log.log("Set tick period", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Set tick period", LogType::Debug, "TickHandler");
 	this->tickPeriod = tickPeriod;
 };
 
@@ -109,7 +109,7 @@ Engine::Units::Time TickHandler::getTickPeriod() const {
  * Starts the ThreadPool if it wasn't already running
  */
 void TickHandler::start() {
-	Engine::log.log("Starting ticking registered ITick's", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Starting ticking registered ITick's", LogType::Debug, "TickHandler");
 	//Initialize running flags
 	this->running = true;
 	this->joining = false;
@@ -135,7 +135,7 @@ void TickHandler::start() {
  * Will not join with the ThreadPool unless it was created by the TickHandler
  */
 void TickHandler::join() {
-	Engine::log.log("Joining with thread pool", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Joining with thread pool", LogType::Debug, "TickHandler");
 	this->joining = true;
 
 	//The running flag will be unset in the tick handler
@@ -150,7 +150,7 @@ void TickHandler::join() {
  * Stops running immediately
  */
 void TickHandler::stop() {
-	Engine::log.log("Stopping thread pool", Log::Entry::LogType::Debug, "TickHandler");
+	Engine::log.log("Stopping thread pool", LogType::Debug, "TickHandler");
 	this->running = false;
 	this->joining = true;
 
@@ -164,7 +164,7 @@ bool TickHandler::active() const {
 
 
 void TickHandler::scheduleTask(TickHandler *parent) {
-	Engine::log.log("Scheduling task running", Log::Entry::LogType::Debug, "TickHandler:scheduleTask");
+	Engine::log.log("Scheduling task running", LogType::Debug, "TickHandler:scheduleTask");
 	if(!(parent && parent->running)) return;
 
 	//Provide a measurement of the actual time delta

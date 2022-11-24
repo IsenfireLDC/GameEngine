@@ -31,8 +31,6 @@
 
 #include "engine.hpp"
 
-using LogType = Log::Entry::LogType;
-
 static bool running = true;
 static Entity *primary;
 
@@ -59,7 +57,7 @@ static void quitHandler(Event *event) {
 
 	char strbuf[100];
 	sprintf(strbuf, "Received QuitEvent from %p\n", quitEvent->input);
-	Engine::log.log(strbuf, Log::Entry::LogType::Info, "Main");
+	Engine::log.log(strbuf, LogType::Info, "Main");
 	quitEvent->input->runThread(false);
 
 	running = false;

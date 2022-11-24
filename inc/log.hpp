@@ -9,18 +9,19 @@
 #include <string>
 #include <chrono>
 
+enum LogType{None, Debug, Info, Warning, Error, Fatal};
 class Log {
 public:
 	struct Entry {
 		std::chrono::system_clock::time_point timestamp;
-		enum LogType{None, Debug, Info, Warning, Error, Fatal} severity;
+		LogType severity;
 		std::string message;
 		std::string sender;
 
 		friend std::ostream& operator<<(std::ostream&, const Entry&);
 	};
 
-	static Entry makeEntry(std::string, Entry::LogType, std::string);
+	static Entry makeEntry(std::string, LogType, std::string);
 	static Entry makeEntry(Entry, std::string);
 
 	Log(std::string, std::string);
@@ -30,8 +31,8 @@ public:
 	void setParent(Log*);
 
 	void log(std::string);
-	void log(std::string, Entry::LogType);
-	void log(std::string, Entry::LogType, std::string);
+	void log(std::string, LogType);
+	void log(std::string, LogType, std::string);
 
 	friend void operator<<(Log&, const std::string&);
 	friend void operator<<(Log&, const Entry&);

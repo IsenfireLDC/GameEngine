@@ -19,7 +19,7 @@ Log Engine::log{"Master", "./logs/master.log", nullptr};
  * Creates entry with given message, severity, and sender
  * Sets timestamp to current time
  */
-Log::Entry Log::makeEntry(std::string message, Log::Entry::LogType severity, std::string sender) {
+Log::Entry Log::makeEntry(std::string message, LogType severity, std::string sender) {
 	return Log::Entry{system_clock::now(), severity, message, sender};
 };
 
@@ -51,14 +51,14 @@ void Log::setParent(Log *parent) {
 };
 
 void Log::log(std::string message) {
-	this->log(message, Log::Entry::LogType::Info, "Default");
+	this->log(message, LogType::Info, "Default");
 };
 
-void Log::log(std::string message, Log::Entry::LogType severity) {
+void Log::log(std::string message, LogType severity) {
 	this->log(message, severity, "Default");
 };
 
-void Log::log(std::string message, Log::Entry::LogType severity, std::string sender) {
+void Log::log(std::string message, LogType severity, std::string sender) {
 	Entry entry{system_clock::now(), severity, message, sender};
 
 	this->writeEntry(entry);
@@ -80,22 +80,22 @@ std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
 	os << str << " -- ";
 
 	switch(entry.severity) {
-		case Log::Entry::LogType::None:
+		case LogType::None:
 			os << "None";
 			break;
-		case Log::Entry::LogType::Debug:
+		case LogType::Debug:
 			os << "Debug";
 			break;
-		case Log::Entry::LogType::Info:
+		case LogType::Info:
 			os << "Info";
 			break;
-		case Log::Entry::LogType::Warning:
+		case LogType::Warning:
 			os << "Warning";
 			break;
-		case Log::Entry::LogType::Error:
+		case LogType::Error:
 			os << "Error";
 			break;
-		case Log::Entry::LogType::Fatal:
+		case LogType::Fatal:
 			os << "Fatal";
 			break;
 	};

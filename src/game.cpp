@@ -8,8 +8,6 @@
 
 #include "engine.hpp"
 
-using LogType = Log::Entry::LogType;
-
 /*
  * Creates game with empty tickables set at 30 fps
  */
