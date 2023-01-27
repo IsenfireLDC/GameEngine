@@ -70,7 +70,7 @@ void ThreadPool::start() {
 void ThreadPool::add(Task task) {
 	if(this->joining) return;
 
-	Engine::log.log("Adding task to thread pool", LogType::Debug, "ThreadPool:add");
+	Engine::log.log("Adding task to thread pool", LogLevel::Debug, "ThreadPool:add");
 
 	this->lock.lock();
 	this->todo.push(task);
@@ -148,7 +148,7 @@ void ThreadPool::taskHandler(ThreadPool *parent) {
 		parent->lock.unlock();
 
 		//Run the task after unlocking the pool
-		Engine::log.log("Running task in thread pool", LogType::Debug, "ThreadPool:taskHandler");
+		Engine::log.log("Running task in thread pool", LogLevel::Debug, "ThreadPool:taskHandler");
 		t();
 	};
 };

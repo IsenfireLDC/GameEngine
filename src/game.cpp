@@ -39,7 +39,7 @@ int Game::getFPS() const {
  * Registers the given object with the tick handler
  */
 void Game::add(ITick *object) {
-	Engine::log.log("Registering ITick", LogType::Debug, "Game");
+	Engine::log.log("Registering ITick", LogLevel::Debug, "Game");
 	this->tickHandler.enable(object);
 };
 
@@ -55,7 +55,7 @@ void Game::remove(ITick *object) {
  */
 void Game::run(bool run) {
 	if(run) {
-		Engine::log.log("Running game", LogType::Debug, "Game");
+		Engine::log.log("Running game", LogLevel::Debug, "Game");
 		if(!Engine::threadPool.isRunning())
 			Engine::threadPool.start();
 

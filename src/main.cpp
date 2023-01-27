@@ -57,7 +57,7 @@ static void quitHandler(Event *event) {
 
 	char strbuf[100];
 	sprintf(strbuf, "Received QuitEvent from %p\n", quitEvent->input);
-	Engine::log.log(strbuf, LogType::Info, "Main");
+	Engine::log.log(strbuf, LogLevel::Info, "Main");
 	quitEvent->input->runThread(false);
 
 	running = false;
@@ -154,17 +154,17 @@ int gameTest() {
 
 	//Test log
 	Log testLog{"Test", "./logs/test.log"};
-	LogType testLogType = LogType::Debug;
-	testLog.log("Testing nested log", LogType::Info, "Main");
+	LogLevel testLogLevel = LogLevel::Debug;
+	testLog.log("Testing nested log", LogLevel::Info, "Main");
 	testLog << "Testing log insertion operator for message";
-	Log::Entry testLogEntry = Log::makeEntry("BaseEntry", testLogType, "Main");
+	Log::Entry testLogEntry = Log::makeEntry("BaseEntry", testLogLevel, "Main");
 	testLog << Log::makeEntry(testLogEntry, "Test log insertion operator for Entry");
-	Engine::log.log("Initialization complete", LogType::Info, "Main");
+	Engine::log.log("Initialization complete", LogLevel::Info, "Main");
 
 	//Print out manager
 	std::stringstream sstr{};
 	sstr << manager;
-	testLog.log(sstr.str(), testLogType, "Manager");
+	testLog.log(sstr.str(), testLogLevel, "Manager");
 
 	//Attempt to move player
 	Coord testCoord = {2,5};
@@ -185,17 +185,17 @@ int gameTest() {
 	//Print out list of entities
 	std::vector<Entity*> playerList = manager.getEntities();
 
-	testLog.log("Printing entities", testLogType, "Main");
+	testLog.log("Printing entities", testLogLevel, "Main");
 	for(unsigned int i = 0; i < playerList.size(); ++i) {
 		sstr.str("\t");
 		sstr << *playerList[i];
-		testLog.log(sstr.str(), testLogType, "Main");
+		testLog.log(sstr.str(), testLogLevel, "Main");
 	};
 
 	//Get inputs
-	testLog.log("Spawning thread...", LogType::Info, "Main");
+	testLog.log("Spawning thread...", LogLevel::Info, "Main");
 	if(!input.spawnThread()) {
-		testLog.log("Failed, exiting", LogType::Fatal, "Main");
+		testLog.log("Failed, exiting", LogLevel::Fatal, "Main");
 		return 1;
 	};
 

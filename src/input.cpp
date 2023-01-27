@@ -42,7 +42,7 @@ static void aMove(Entity *target, int input) {
 
 static void aExit(Entity *target, int input) {
 	std::cerr << "Keyboard interrupt" << std::endl;
-	Engine::log.log("Keyboard interrupt", LogType::Fatal, "Input");
+	Engine::log.log("Keyboard interrupt", LogLevel::Fatal, "Input");
 
 	exit(1);
 };
@@ -212,7 +212,7 @@ void Input::removeActionMapping(int input) {
  * Thread exits on generating QuitEvent
  */
 void Input::threadHandler() {
-	Input::log.log("Input thread started", LogType::Info, "Handler");
+	Input::log.log("Input thread started", LogLevel::Info, "Handler");
 	while(this->active) {
 		INPUT_RECORD input = getInput(10000, this->intrHandle);
 		int scanCode;
@@ -246,7 +246,7 @@ void Input::threadHandler() {
 		key << "Received keypress ";
 		if(input.Event.KeyEvent.wVirtualKeyCode > 16) key << "\"" << (char)input.Event.KeyEvent.wVirtualKeyCode << "\" ";
 		key << ": " << scanCode;
-		Input::log.log(key.str(), LogType::Debug, "Handler");
+		Input::log.log(key.str(), LogLevel::Debug, "Handler");
 	
 		//Select action and queue event
 		//Have quit event contain pointer to Input
