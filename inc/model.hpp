@@ -7,24 +7,51 @@
 #ifndef _MODEL_HPP_
 #define _MODEL_HPP_
 
+#include "pos.hpp"
+#include "area.hpp"
+
+#include "field.hpp"
+
 #include <iostream>
 #include <vector>
 
+typedef char TermColor;
 
-typedef char Color;
-struct Model {
-	char model;
-	Color color;
+class Model {
+public:
+	Model(TermColor);
 
-	Model(char model, Color color) {
-		this->model = model;
-		this->color = color;
-	};
+	virtual void draw(Coord) const = 0;
+	virtual Area getBoundingBox() const = 0;
 
-	friend std::ostream& operator<<(std::ostream &out, const Model &model) {
-		out << model.model;
-		return out;
-	};
+	 void clear() const;
+
+protected:
+	//Model helper methods
+	static void setCursorPos(Coord);
+	static void setTermColor(TermColor);
+	static void resetTermColor();
+
+	TermColor color;
+};
+
+class BasicModel : public Model {
+public:
+	BasicModel(char, TermColor);
+
+	friend std::ostream& operator<<(std::ostream&, const Model&);
+private:
+	const char model;
+};
+
+class FieldModel : public Model {
+public:
+	FieldModel(const Field&, const BasicModel&, const BasicModel&);
+
+private:
+	const Field &field;
+	const BasicModel &border;
+	const BasicModel &background;
 };
 
 #endif
