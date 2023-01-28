@@ -9,16 +9,19 @@
 /*
  * Constructor for default Area
  */
-Area::Area() {
-	this->area = Rect();
-};
+Area::Area() : area() {};
 
 /*
- * Constructor for new Area
+ * Constructor for Area from rectangle
  */
 Area::Area(Rect area) {
 	this->area = area;
 };
+
+/*
+ * Constructor for Area from bounding box corners
+ */
+Area::Area(Coord c1, Coord c2) : area(c1, c2) {};
 
 /*
  * Getter for rect

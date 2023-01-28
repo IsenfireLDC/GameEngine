@@ -30,6 +30,7 @@ public:
 	//Constructor
 	Area();
 	Area(Rect);
+	Area(Coord, Coord);
 
 	//Getter
 	Rect getRect() const;
