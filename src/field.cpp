@@ -8,36 +8,48 @@
 
 #include "pos.hpp"
 
+const RectArea Field::defaultArea = RectArea();
 const Coord Field::defaultScale = Coord(2,1);
 
 /*
  * Constructor for default field
  */
-Field::Field() {
-	this->area = new Area();
-
+Field::Field() : area(Field::defaultArea) {
+	//this->area = Field::defaultArea;
 	this->scale = Field::defaultScale;
 };
 
 /*
- * Constructor for new field with default scale
- */
-Field::Field(Coord corner) {
-	this->area = new Area(Rect(Coord(0, 0), corner));
-
-	this->scale = Field::defaultScale;
-};
-
-/*
- * Constructor for new field
+ * Constructor
+ * Create a field with given area
  *
- * Coord corner	: Coord of far corner
- * Coord scale	: Render coord of (1,1)
+ * area - area of the field
  */
-Field::Field(Coord corner, Coord scale) {
-	this->area = new Area(Rect(Coord(0,0), corner));
+Field::Field(Area &area) : area(area) {
+	//this->area = area;
+
+	this->scale = Field::defaultScale;
+};
+
+/*
+ * Constructor
+ * Create a field with given area and scale
+ *
+ * area - field area
+ * scale - x and y scale of field
+ */
+Field::Field(Area &area, Coord scale) : area(area) {
+	//this->area = area;
 
 	this->scale = scale;
+};
+
+
+/*
+ * Get the bounding box of the field
+ */
+BoundingBox Field::getBoundingBox() const {
+	return this->area.getBoundingBox();
 };
 
 /*
@@ -48,14 +60,7 @@ Coord Field::getScale() const {
 };
 
 /*
- * Getter for area
- */
-const Area* Field::getArea() const {
-	return this->area;
-};
-
-/*
- * Setter for xScale
+ * Setter for scale
  */
 void Field::setScale(Coord scale) {
 	this->scale = scale;
@@ -65,7 +70,7 @@ void Field::setScale(Coord scale) {
  * Determines if the given coordinates are out of bounds for this field
  */
 bool Field::contains(Coord pos) const {
-	return this->area->contains(pos);
+	return this->area.contains(pos);
 };
 
 /*

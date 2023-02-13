@@ -14,16 +14,17 @@
 class Field {
 public:
 	//Exposed Constants
+	static const RectArea defaultArea;
 	static const Coord defaultScale;
 
 	//Constructors
 	Field();
-	Field(Coord);
-	Field(Coord, Coord);
+	Field(Area&);
+	Field(Area&, Coord);
 
 	//Getters
+	BoundingBox getBoundingBox() const;
 	Coord getScale() const;
-	const Area* getArea() const;
 
 	//Setters
 	void setScale(Coord);
@@ -35,7 +36,7 @@ public:
 	Coord transform(Coord) const;
 
 private:
-	const Area* area;
+	const Area &area;
 
 	Coord scale;
 };
