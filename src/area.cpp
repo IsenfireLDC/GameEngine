@@ -7,6 +7,17 @@
 #include "area.hpp"
 
 
+BoundingBox operator*(const BoundingBox &bb, const short scale) {
+	BoundingBox bb_s;
+	Coord c_scale{scale, scale};
+
+	bb_s.low = bb.low * c_scale;
+	bb_s.high = bb.high * c_scale;
+
+	return bb_s;
+};
+
+
 /*
  * Default constructor
  */

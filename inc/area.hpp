@@ -15,6 +15,8 @@ struct BoundingBox {
 	Coord high;
 };
 
+BoundingBox operator*(const BoundingBox&, const short);
+
 class Area {
 public:
 	virtual BoundingBox getBoundingBox() const = 0;
