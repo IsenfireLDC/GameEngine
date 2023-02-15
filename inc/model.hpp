@@ -10,29 +10,40 @@
 #include "pos.hpp"
 #include "area.hpp"
 
-#include "field.hpp"
+#include "render.hpp"
 
 #include <iostream>
 #include <vector>
 
-typedef char TermColor;
-
-class Model {
+class Model : public Renderer {
 public:
 	Model(TermColor);
 
 	virtual void draw(Coord) const = 0;
-	virtual Area getBoundingBox() const = 0;
+	virtual void redraw() const;
+	//virtual void clear() const;
 
-	 void clear() const;
+	virtual const BoundingBox getBoundingBox() const = 0;
 
 protected:
-	//Model helper methods
-	static void setCursorPos(Coord);
-	static void setTermColor(TermColor);
-	static void resetTermColor();
-
 	TermColor color;
+};
+
+class ModelRenderer : public Renderer {
+public:
+	ModelRenderer(const Model&);
+
+	void draw() const;
+	void redraw() const;
+
+	bool dirty() const;
+	void setPos(Coord);
+
+protected:
+	const Model &model;
+	Coord pos;
+
+	mutable bool changed = true;
 };
 
 class BasicModel : public Model {
@@ -42,16 +53,6 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const Model&);
 private:
 	const char model;
-};
-
-class FieldModel : public Model {
-public:
-	FieldModel(const Field&, const BasicModel&, const BasicModel&);
-
-private:
-	const Field &field;
-	const BasicModel &border;
-	const BasicModel &background;
 };
 
 #endif
