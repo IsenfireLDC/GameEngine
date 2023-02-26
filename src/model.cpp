@@ -25,15 +25,29 @@ Model::Model(TermColor color) {
  *
  * Attaches a model to this renderer
  */
-ModelRenderer::ModelRenderer(const Model &model) : model(model) {
+ModelRenderer::ModelRenderer(const Model *model) : model(model) {
 	//this->model = model;
+};
+
+/*
+ * Returns the model that this renderer will draw
+ */
+const Model* ModelRenderer::getModel() const {
+	return this->model;
+};
+
+/*
+ * Changes the model that this renderer will draw
+ */
+void ModelRenderer::setModel(const Model *model) {
+	this->model = model;
 };
 
 /*
  * Draws the model
  */
 void ModelRenderer::draw() const {
-	this->model.draw(this->pos);
+	this->model->draw(this->pos);
 
 	this->lastPos = this->pos;
 };

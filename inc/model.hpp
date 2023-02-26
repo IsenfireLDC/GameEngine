@@ -29,7 +29,10 @@ protected:
 
 class ModelRenderer : public Renderer {
 public:
-	ModelRenderer(const Model&);
+	ModelRenderer(const Model*);
+
+	const Model* getModel() const;
+	void setModel(const Model*);
 
 	void draw() const;
 	void redraw() const;
@@ -38,7 +41,7 @@ public:
 	void move(Coord);
 
 protected:
-	const Model &model;
+	const Model *model;
 	Coord pos;
 
 	mutable Coord lastPos;
