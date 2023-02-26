@@ -14,8 +14,8 @@ public:
 	//Constructors
 	Window(RectArea = RectArea(), Coord = Coord(1,1));
 	Window(RectArea, Coord,
-		BasicModel = BasicModel('#', TermColor.GRAY),
-		BasicModel = BasicModel(' ', TermColor.BG_DARK_GRAY)
+		BasicModel = BasicModel('#', TermColor::GRAY),
+		BasicModel = BasicModel(' ', TermColor::BG_DARK_GRAY)
 	);
 
 	//Getters
@@ -50,6 +50,8 @@ private:
 	BasicModel background;
 
 	bool visible;
+
+	std::vector<ModelRenderer*> models;
 
 	const char * msg = nullptr;
 };

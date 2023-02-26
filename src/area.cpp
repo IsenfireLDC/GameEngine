@@ -17,6 +17,15 @@ BoundingBox operator*(const BoundingBox &bb, const short scale) {
 	return bb_s;
 };
 
+BoundingBox operator*(const BoundingBox &bb, const Coord &scale) {
+	BoundingBox bb_s;
+
+	bb_s.low = bb.low * scale;
+	bb_s.high = bb.high * scale;
+
+	return bb_s;
+};
+
 
 /*
  * Default constructor

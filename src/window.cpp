@@ -6,12 +6,15 @@
 
 #include "render.hpp"
 
-Window::Window(RectArea area, Coord scale) : border('#', TermColor.GRAY), background(' ', TermColor.BLACK) {
+#include "window.hpp"
+#include "model.hpp"
+
+Window::Window(RectArea area, Coord scale) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
 	this->area = area;
 	this->scale = scale;
 };
 
-Window::Window(RectArea area, Coord scale, BasicModel border, BasicModel background) : border('#', TermColor.GRAY), background(' ', TermColor.BLACK) {
+Window::Window(RectArea area, Coord scale, BasicModel border, BasicModel background) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
 	this->area = area;
 	this->scale = scale;
 };
@@ -30,43 +33,43 @@ void Window::draw() const {
 	this->drawBorder();
 
 	//IModelables (Entities)
-	for(Model *m : models) {
+	for(ModelRenderer *m : this->models) {
 		m->draw();
 	};
 
 
 	//Info
-	resetColor();
-	setPos(Coord(0, size.y+1));
+	Renderer::resetTermColor();
+	Renderer::setCursorPos(Coord(0, this->size().y+1));
 
-	std::cout << size << std::endl;
+	std::cout << this->size() << std::endl;
 
-	setColor(0b1001);
+	Renderer::setTermColor(TermColor::BRIGHT_RED);
 	if(this->msg) std::cout << this->msg << std::endl;
-	resetColor();
+	Renderer::resetTermColor();
 };
 
 /*
  * Draw changes within window
  */
-void Window::draw() const {
+void Window::redraw() const {
 	if(!this->visible) return;
 
 	//IModelables (Entities)
-	for(Model *m : models) {
+	for(ModelRenderer *m : this->models) {
 		if(m->dirty()) m->redraw();
 	};
 
 
 	//Info
-	resetColor();
-	setPos(Coord(0, size.y+1));
+	Renderer::resetTermColor();
+	Renderer::setCursorPos(Coord(0, this->size().y+1));
 
-	std::cout << size << std::endl;
+	std::cout << this->size() << std::endl;
 
-	setColor(0b1001);
+	Renderer::setTermColor(TermColor::BRIGHT_RED);
 	if(this->msg) std::cout << this->msg << std::endl;
-	resetColor();
+	Renderer::resetTermColor();
 };
 
 /*
@@ -91,14 +94,14 @@ void Window::show(bool visible) {
 
 
 void Window::drawBorder() const {
-	Model::resetTermColor();
+	Renderer::resetTermColor();
 
 	BoundingBox bb = this->area.getBoundingBox() * this->scale;;
 
 	for(short i = bb.low.x; i <= bb.high.x; ++i) {
 		for(short j = bb.low.y; j <= bb.high.y; ++j) {
 			Coord currentPos = { .x=i, .y=j };
-			Model::setCursorPos(currentPos);
+			Renderer::setCursorPos(currentPos);
 
 			if(i == bb.low.x || i == bb.high.x || j == bb.low.y || j == bb.high.y) {
 				this->border.draw(currentPos);
