@@ -38,6 +38,8 @@ struct Coord {
 
 Coord operator+(const Coord&, const Coord&);
 Coord operator*(const Coord&, const Coord&);
+bool operator==(const Coord&, const Coord&);
+bool operator!=(const Coord&, const Coord&);
 
 
 #endif
