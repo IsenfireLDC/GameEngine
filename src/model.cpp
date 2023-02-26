@@ -19,15 +19,34 @@ Model::Model(TermColor color) {
 	this->color = color;
 };
 
+
 /*
- * Can be overridden to draws only changes
+ * Constructor
+ *
+ * Attaches a model to this renderer
+ */
+ModelRenderer::ModelRenderer(const Model &model) : model(model) {
+	//this->model = model;
+};
+
+/*
+ * Draws the model
+ */
+void ModelRenderer::draw() const {
+	this->model.draw(this->pos);
+
+	this->lastPos = this->pos;
+};
+
+/*
+ * Can be overridden to draw only changes
  *
  * By default draws normally
  */
 void ModelRenderer::redraw() const {
-	this->changed = false;
-
 	this->draw();
+
+	this->lastPos = this->pos;
 };
 
 /*
@@ -49,16 +68,14 @@ void ModelRenderer::redraw() const {
  * Returns whether the model has changed since last (re)draw
  */
 bool ModelRenderer::dirty() const {
-	return this->changed;
+	return this->pos != this->lastPos;
 };
 
 /*
  * Sets the position of this model
  */
-void ModelRenderer::setPos(Coord pos) {
+void ModelRenderer::move(Coord pos) {
 	this->pos = pos;
-
-	this->changed = true;
 };
 
 
@@ -67,8 +84,8 @@ void ModelRenderer::setPos(Coord pos) {
  *
  * Creates a single colored character
  */
-BasicModel::BasicModel(char model, TermColor color) : Model(color) {
-	this->model = model;
+BasicModel::BasicModel(char model, TermColor color) : Model(color), model(model) {
+	//this->model = model;
 };
 
 /*
@@ -78,8 +95,8 @@ BasicModel::BasicModel(char model, TermColor color) : Model(color) {
  */
 void BasicModel::draw(Coord pos) const {
 	Renderer::setCursorPos(pos);
-	Renderer::setTermColor(model->color);
-	std::cout << model->model;
+	Renderer::setTermColor(this->color);
+	std::cout << this->model;
 };
 
 /*
@@ -87,7 +104,7 @@ void BasicModel::draw(Coord pos) const {
  *
  * Will always be a single character (0 x 0)
  */
-BoundingBox BasicModel::getBoundingBox() const {
+const BoundingBox BasicModel::getBoundingBox() const {
 	return BoundingBox{Coord(), Coord()};
 };
 

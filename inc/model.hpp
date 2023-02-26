@@ -15,13 +15,11 @@
 #include <iostream>
 #include <vector>
 
-class Model : public Renderer {
+class Model {
 public:
 	Model(TermColor);
 
 	virtual void draw(Coord) const = 0;
-	virtual void redraw() const;
-	//virtual void clear() const;
 
 	virtual const BoundingBox getBoundingBox() const = 0;
 
@@ -37,20 +35,23 @@ public:
 	void redraw() const;
 
 	bool dirty() const;
-	void setPos(Coord);
+	void move(Coord);
 
 protected:
 	const Model &model;
 	Coord pos;
 
-	mutable bool changed = true;
+	mutable Coord lastPos;
 };
 
 class BasicModel : public Model {
 public:
 	BasicModel(char, TermColor);
 
-	friend std::ostream& operator<<(std::ostream&, const Model&);
+	void draw(Coord) const;
+	const BoundingBox getBoundingBox() const;
+
+	friend std::ostream& operator<<(std::ostream&, const BasicModel&);
 private:
 	const char model;
 };

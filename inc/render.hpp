@@ -25,7 +25,7 @@
 //	virtual bool isDirty() = 0;
 //};
 
-enum TermColor : char {
+enum TermColor : unsigned char {
 	BLACK = 0x0,
 	RED = 0x1,
 	GREEN = 0x2,
@@ -70,8 +70,8 @@ public:
 	virtual void redraw() const = 0;
 	//virtual void clear() const = 0;
 
-protected:
-	//Model helper methods
+//protected:
+	//Rendering helper methods
 	static void setCursorPos(Coord);
 	static void setTermColor(TermColor);
 	static void resetTermColor();
