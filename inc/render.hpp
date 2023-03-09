@@ -73,6 +73,8 @@ public:
 //protected:
 	//Rendering helper methods
 	static void setCursorPos(Coord);
+	static Coord getCursorPos();
+
 	static void setTermColor(TermColor);
 	static void resetTermColor();
 };
