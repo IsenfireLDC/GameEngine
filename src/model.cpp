@@ -10,13 +10,50 @@
 
 #include <windows.h>
 
+
 /*
  * Constructor
  *
- * Sets the color of the model
+ * Creates a single colored character
  */
-Model::Model(TermColor color) {
-	this->color = color;
+BasicModel::BasicModel(char model, TermColor color) : model(model), color(color) {};
+
+/*
+ * Draws the model
+ *
+ * Sets terminal color and prints character to display
+ */
+void BasicModel::draw(Coord pos) const {
+	Renderer::setCursorPos(pos);
+	Renderer::setTermColor(this->color);
+	std::cout << this->model;
+};
+
+/*
+ * Draws the model
+ *
+ * Same as BasicModel::draw
+ */
+void BasicModel::redraw(Coord pos) const {
+	this->draw(pos);
+};
+
+/*
+ * Get bounding box
+ *
+ * Will always be a single character (0 x 0)
+ */
+const BoundingBox BasicModel::getBoundingBox() const {
+	return BoundingBox{Coord(), Coord()};
+};
+
+
+/*
+ * Print the character for the model
+ */
+std::ostream& operator<<(std::ostream &out, const BasicModel &model) {
+	out << model.model;
+	return out;
 };
 
 
@@ -44,6 +81,13 @@ void ModelRenderer::setModel(const Model *model) {
 };
 
 /*
+ * Returns the area that should be cleared before the model is drawn
+ */
+BoundingBox ModelRenderer::getLastRegion() const {
+	return this->model->getBoundingBox() + this->lastPos;
+};
+
+/*
  * Draws the model
  */
 void ModelRenderer::draw() const {
@@ -53,30 +97,13 @@ void ModelRenderer::draw() const {
 };
 
 /*
- * Can be overridden to draw only changes
- *
- * By default draws normally
+ * Draws the model
  */
 void ModelRenderer::redraw() const {
-	this->draw();
+	this->model->redraw(this->pos);
 
 	this->lastPos = this->pos;
 };
-
-/*
- * Clears an area to space and default color
- */
-//void Model::clear() const {
-//	BoundingBox bb = this->getBoundingBox();
-//
-//	Renderer::resetTermColor();
-//	for(short i = bb.low.x; i <= bb.high.x; ++i) {
-//		for(short j = bb.low.y; j <= bb.high.y; ++j) {
-//			Renderer::setCursorPos((Coord){i,j});
-//			std::cout << " ";
-//		};
-//	};
-//};
 
 /*
  * Returns whether the model has changed since last (re)draw
@@ -90,43 +117,4 @@ bool ModelRenderer::dirty() const {
  */
 void ModelRenderer::move(Coord pos) {
 	this->pos = pos;
-};
-
-
-/*
- * Constructor
- *
- * Creates a single colored character
- */
-BasicModel::BasicModel(char model, TermColor color) : Model(color), model(model) {
-	//this->model = model;
-};
-
-/*
- * Draws the model
- *
- * Sets terminal color and prints character to display
- */
-void BasicModel::draw(Coord pos) const {
-	Renderer::setCursorPos(pos);
-	Renderer::setTermColor(this->color);
-	std::cout << this->model;
-};
-
-/*
- * Get bounding box
- *
- * Will always be a single character (0 x 0)
- */
-const BoundingBox BasicModel::getBoundingBox() const {
-	return BoundingBox{Coord(), Coord()};
-};
-
-
-/*
- * Print the character for the model
- */
-std::ostream& operator<<(std::ostream &out, const BasicModel &model) {
-	out << model.model;
-	return out;
 };

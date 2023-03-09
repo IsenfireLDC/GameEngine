@@ -17,34 +17,10 @@
 
 class Model {
 public:
-	Model(TermColor);
-
 	virtual void draw(Coord) const = 0;
+	virtual void redraw(Coord) const = 0;
 
 	virtual const BoundingBox getBoundingBox() const = 0;
-
-protected:
-	TermColor color;
-};
-
-class ModelRenderer : public Renderer {
-public:
-	ModelRenderer(const Model*);
-
-	const Model* getModel() const;
-	void setModel(const Model*);
-
-	void draw() const;
-	void redraw() const;
-
-	bool dirty() const;
-	void move(Coord);
-
-protected:
-	const Model *model;
-	Coord pos;
-
-	mutable Coord lastPos;
 };
 
 class BasicModel : public Model {
@@ -57,6 +33,33 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const BasicModel&);
 private:
 	const char model;
+	const TermColor color;
+};
+
+
+class ModelRenderer : public Renderer {
+public:
+	ModelRenderer(const Model*);
+
+	const Model* getModel() const;
+	void setModel(const Model*);
+
+	BoundingBox getLastRegion() const;
+
+	void draw() const;
+	void redraw() const;
+
+	bool dirty() const;
+	void move(Coord);
+
+protected:
+	const Model *model;
+	Coord pos;
+
+	mutable Coord lastPos;
+
+private:
+	void clear() const;
 };
 
 #endif
