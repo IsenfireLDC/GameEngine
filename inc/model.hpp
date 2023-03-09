@@ -28,6 +28,7 @@ public:
 	BasicModel(char, TermColor);
 
 	void draw(Coord) const;
+	void redraw(Coord) const;
 	const BoundingBox getBoundingBox() const;
 
 	friend std::ostream& operator<<(std::ostream&, const BasicModel&);
