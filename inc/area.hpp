@@ -17,6 +17,7 @@ struct BoundingBox {
 
 BoundingBox operator*(const BoundingBox&, const short);
 BoundingBox operator*(const BoundingBox&, const Coord&);
+BoundingBox operator+(const BoundingBox&, const Coord&);
 
 class Area {
 public:
