@@ -41,10 +41,12 @@ public:
 	void show(bool);
 
 private:
-	void drawBorder() const;
+	void drawBackground(BoundingBox) const;
 
 	RectArea area;
 	Coord scale;
+
+	BoundingBox windowBB;
 
 	BasicModel border;
 	BasicModel background;

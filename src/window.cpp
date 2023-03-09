@@ -12,11 +12,15 @@
 Window::Window(RectArea area, Coord scale) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
 	this->area = area;
 	this->scale = scale;
+
+	this->windowBB = this->area.getBoundingBox() * this->scale;
 };
 
 Window::Window(RectArea area, Coord scale, BasicModel border, BasicModel background) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
 	this->area = area;
 	this->scale = scale;
+
+	this->windowBB = this->area.getBoundingBox() * this->scale;
 };
 
 void Window::setMsg(const char *msg) {
@@ -30,7 +34,7 @@ void Window::setMsg(const char *msg) {
 void Window::draw() const {
 	if(!this->visible) return;
 
-	this->drawBorder();
+	this->drawBackground(this->windowBB);
 
 	//IModelables (Entities)
 	for(ModelRenderer *m : this->models) {
@@ -57,7 +61,13 @@ void Window::redraw() const {
 
 	//IModelables (Entities)
 	for(ModelRenderer *m : this->models) {
-		if(m->dirty()) m->redraw();
+		//TODO: Use redraw for animation?
+		if(m->dirty()) {
+			BoundingBox covered = m->getLastRegion();
+			this->drawBackground(covered);
+
+			m->redraw();
+		};
 	};
 
 
@@ -74,6 +84,8 @@ void Window::redraw() const {
 
 /*
  * Sets whether the window is shown
+ *
+ * TODO: Clear window area
  */
 void Window::show(bool visible) {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -93,17 +105,20 @@ void Window::show(bool visible) {
 };
 
 
-void Window::drawBorder() const {
+void Window::drawBackground(BoundingBox bb) const {
 	Renderer::resetTermColor();
-
-	BoundingBox bb = this->area.getBoundingBox() * this->scale;;
 
 	for(short i = bb.low.x; i <= bb.high.x; ++i) {
 		for(short j = bb.low.y; j <= bb.high.y; ++j) {
 			Coord currentPos = { .x=i, .y=j };
 			Renderer::setCursorPos(currentPos);
 
-			if(i == bb.low.x || i == bb.high.x || j == bb.low.y || j == bb.high.y) {
+			if(
+				i == this->windowBB.low.x ||
+				i == this->windowBB.high.x ||
+				j == this->windowBB.low.y ||
+				j == this->windowBB.high.y
+			) {
 				this->border.draw(currentPos);
 			} else {
 				this->background.draw(currentPos);
