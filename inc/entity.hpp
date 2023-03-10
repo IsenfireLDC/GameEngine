@@ -53,19 +53,17 @@ struct EntityType {
 	};
 };
 
-class Entity : public IModelable {
+class Entity : public ModelRenderer {
 public:
 	friend class EntityManager;
 
 	//Constants
 	const static Coord origin;
 	const static char dName[];
+	const static BasicModel defaultModel;
 
 	//Constructors
-	Entity();
-	Entity(EntityType*);
-	Entity(EntityType*, Coord);
-	Entity(EntityType*, Coord, const char*);
+	Entity(Coord=Coord(), EntityType* =nullptr, const char* =Entity::dName, const Model* =&Entity::defaultModel);
 
 	//Setters
 	void setModel(Model*);
@@ -91,7 +89,11 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << entity.data.name;
-		if(entity.model) out << "(" << *entity.model << ")";
+		if(entity.model && &out == &std::cout) {
+			out << "(";
+			entity.model->draw(Renderer::getCursorPos());
+			out << ")";
+		};
 		out << " id=" << (int)entity.data.id;
 		out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;

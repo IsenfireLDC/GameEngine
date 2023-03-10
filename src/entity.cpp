@@ -17,41 +17,7 @@ int Entity::gID = 0;
 
 const Coord Entity::origin = Coord(1,1);
 const char Entity::dName[] = "Entity";
-
-/*
- * Constructor for default entity
- */
-Entity::Entity() {
-	this->pos = Entity::origin;
-	this->lastPos = Entity::origin;
-
-	this->type = 0;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
-
-/*
- * Constructor for typed entity
- */
-Entity::Entity(EntityType *type) {
-	this->pos = Entity::origin;
-	this->lastPos = Entity::origin;
-
-	this->type = type;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
-
-/*
- * Constructor for new entity with default data
- *
- * Coord pos		: Position struct for new entity
- */
-Entity::Entity(EntityType *type, Coord pos) {
-	this->pos = pos;
-	this->lastPos = pos;
-
-	this->type = type;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
+const BasicModel Entity::defaultModel{'x', TermColor::BLACK | TermColor::BG_RED};
 
 /*
  * Constructor for new entity
@@ -60,7 +26,7 @@ Entity::Entity(EntityType *type, Coord pos) {
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(EntityType *type, Coord pos, const char *name) {
+Entity::Entity(Coord pos, EntityType *type, const char *name, const Model *model) : ModelRenderer(model) {
 	this->pos = pos;
 	this->lastPos = pos;
 
