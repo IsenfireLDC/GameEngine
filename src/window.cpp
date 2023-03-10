@@ -29,6 +29,27 @@ void Window::setMsg(const char *msg) {
 
 
 /*
+ * Changes the size of the window
+ *
+ * Takes Coord with new width and height
+ */
+void Window::resize(Coord size) {
+	this->area = RectArea(Coord(0,0), size);
+
+	this->windowBB = this->area.getBoundingBox() * this->scale;
+};
+
+/*
+ * Changes the scaling of the window
+ */
+void Window::setScale(Coord scale) {
+	this->scale = scale;
+
+	this->windowBB = this->area.getBoundingBox() * this->scale;
+};
+
+
+/*
  * Draw entire window
  */
 void Window::draw() const {

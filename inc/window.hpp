@@ -34,6 +34,11 @@ public:
 	void setBorderModel(BasicModel);
 	void setBackgroundModel(BasicModel);
 
+	void addModel(const Model*);
+	void removeModel(const Model*);
+
+	void addModels(std::vector<const Model*>&);
+
 	//Rendering
 	void draw() const;
 	void redraw() const;
@@ -53,7 +58,7 @@ private:
 
 	bool visible;
 
-	std::vector<ModelRenderer*> models;
+	std::vector<const ModelRenderer*> models;
 
 	const char * msg = nullptr;
 };
