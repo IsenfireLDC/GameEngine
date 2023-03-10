@@ -16,7 +16,7 @@
  *
  * Creates a single colored character
  */
-BasicModel::BasicModel(char model, TermColor color) : model(model), color(color) {};
+BasicModel::BasicModel(char model, unsigned char color) : model(model), color(color) {};
 
 /*
  * Draws the model

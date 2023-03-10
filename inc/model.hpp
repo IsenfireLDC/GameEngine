@@ -25,7 +25,7 @@ public:
 
 class BasicModel : public Model {
 public:
-	BasicModel(char, TermColor);
+	BasicModel(char, unsigned char);
 
 	void draw(Coord) const;
 	void redraw(Coord) const;
@@ -34,7 +34,7 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const BasicModel&);
 private:
 	const char model;
-	const TermColor color;
+	const unsigned char color;
 };
 
 
