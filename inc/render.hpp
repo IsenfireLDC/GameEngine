@@ -75,7 +75,7 @@ public:
 	static void setCursorPos(Coord);
 	static Coord getCursorPos();
 
-	static void setTermColor(TermColor);
+	static void setTermColor(unsigned char);
 	static void resetTermColor();
 };
 

@@ -20,7 +20,7 @@ Coord Renderer::getCursorPos() {
 /*
  * Sets the term color to color
  */
-void Renderer::setTermColor(TermColor color) {
+void Renderer::setTermColor(unsigned char color) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 };
 
