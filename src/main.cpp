@@ -9,6 +9,7 @@
 
 //includes
 #include "render.hpp"
+#include "window.hpp"
 #include "entity.hpp"
 #include "input.hpp"
 #include "events.hpp"
@@ -117,8 +118,8 @@ int gameTest() {
 	EntityType tEntity = EntityType(0, nEntType);
 	tEntity.handlers[1] = exHandler;
 	const char nPlayer[20] = "Player";
-	Entity player = Entity(&tEntity, Entity::origin, nPlayer);
-	Model mPlayer = Model('~', 0b1010);
+	Entity player = Entity(Entity::origin, &tEntity, nPlayer);
+	BasicModel mPlayer = BasicModel('~', TermColor::LIME);
 	player.setModel(&mPlayer);
 
 	//Set player as primary
@@ -126,19 +127,26 @@ int gameTest() {
 
 	//Create non-player
 	const char nNPC[20] = "NPC";
-	Entity npc = Entity(&tEntity, {3,4}, nNPC);
-	Model mNPC = Model('!', 0b1111100);
+	Entity npc = Entity({3,4}, &tEntity, nNPC);
+	BasicModel mNPC = BasicModel('!', TermColor::LIGHT_BLUE | TermColor::BG_GRAY);
 	npc.setModel(&mNPC);
 
 	//Create field
-	Field field = Field(Coord(25, 20), Coord(2,1));
+	RectArea fieldArea{Coord(), Coord(25, 20)};
+	Field field = Field(fieldArea, Coord(2,1));
 
 	//Create player manager
 	EntityManager manager = EntityManager(&field);
 
 	//Create window
-	const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
-	Window window = Window(&field, modelable);
+	std::vector<const ModelRenderer*> renderers = manager.getRenderers();
+	//const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
+	//Window window = Window(&field, modelable);
+
+	RectArea windowArea = RectArea(Coord(0,0), Coord(25, 20));
+	Window window = Window(windowArea, Coord(2,1));
+
+	window.addRenderers(renderers);
 
 	//Create input
 	Input input = Input();
@@ -150,7 +158,8 @@ int gameTest() {
 	manager.registerEntity(&npc);
 
 	//Render window
-	window.render();
+	window.show(true);
+	window.draw();
 
 	//Test log
 	Log testLog{"Test", "./logs/test.log"};
@@ -180,7 +189,7 @@ int gameTest() {
 	Sleep(1000);
 
 	//Render window
-	window.render();
+	window.redraw();
 
 	//Print out list of entities
 	std::vector<Entity*> playerList = manager.getEntities();
@@ -220,7 +229,7 @@ int gameTest() {
 		window.setMsg(message.c_str());
 
 		input.callAction(&npc, inputs[randMove(gen)]);
-		window.render();
+		window.redraw();
 	};
 	Game game;
 	game.add(&ticker);
