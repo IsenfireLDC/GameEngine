@@ -117,7 +117,7 @@ private:
 	bool dirty = false;
 };
 
-class EntityManager {
+class EntityManager : public Renderer {
 public:
 	//Constructors
 	EntityManager();
@@ -128,8 +128,10 @@ public:
 	//Get information
 	Entity* getEntityAt(Coord) const;
 	std::vector<Entity*> getEntities() const;
-	std::vector<const ModelRenderer*> getRenderers() const;
-	const std::vector<Entity*>* getEntitiesList() const;
+
+	//Renderer
+	void draw() const;
+	void redraw() const;
 
 	//Add/remove from list
 	bool registerEntity(Entity*);

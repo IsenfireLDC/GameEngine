@@ -156,6 +156,26 @@ EntityManager::~EntityManager() {
 		this->unregisterEntity(this->entities[i]);
 };
 
+
+/*
+ * Draw all managed entities
+ */
+void EntityManager::draw() const {
+	for(Entity *entity : this->entities) {
+		entity->draw();
+	};
+};
+
+/*
+ * Redraw all managed entities
+ */
+void EntityManager::redraw() const {
+	for(Entity *entity : this->entities) {
+		entity->redraw();
+	};
+};
+
+
 /*
  * Finds first entity at given coordinates (1 max at coords)
  *
@@ -174,25 +194,6 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
  */
 std::vector<Entity*> EntityManager::getEntities() const {
 	return this->entities;
-};
-
-/*
- * Get a vector of renderers
- */
-std::vector<const ModelRenderer*> EntityManager::getRenderers() const {
-	std::vector<const ModelRenderer*> renderers;
-
-	for(Entity *entity : this->entities)
-		renderers.push_back(entity);
-
-	return std::move(renderers);
-};
-
-/*
- * Get pointer to entity vector
- */
-const std::vector<Entity*>* EntityManager::getEntitiesList() const {
-	return &this->entities;
 };
 
 /*
