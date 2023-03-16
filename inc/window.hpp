@@ -4,6 +4,8 @@
 #include "render.hpp"
 #include "model.hpp"
 
+#include <unordered_set>
+
 /*
  * Represents a drawable window
  *
@@ -11,19 +13,21 @@
  */
 class Window : public Renderer {
 public:
+	static BasicModel defaultBorder;
+	static BasicModel defaultBackground;
+
 	//Constructors
-	Window(RectArea = RectArea(), Coord = Coord(1,1));
-	Window(RectArea, Coord,
-		BasicModel = BasicModel('#', TermColor::GRAY),
-		BasicModel = BasicModel(' ', TermColor::BG_DARK_GRAY)
+	Window(RectArea = RectArea(), Coord = Coord(1,1),
+		BasicModel* = &defaultBorder,
+		BasicModel* = &defaultBackground
 	);
 
 	//Getters
 	Coord size() const;
 	Coord getScale() const;
 
-	BasicModel getBorderModel() const;
-	BasicModel getBackgroundModel() const;
+	BasicModel* getBorderModel() const;
+	BasicModel* getBackgroundModel() const;
 
 	//Setters
 	void setMsg(const char*);
@@ -31,13 +35,13 @@ public:
 	void resize(Coord);
 	void setScale(Coord);
 
-	void setBorderModel(BasicModel);
-	void setBackgroundModel(BasicModel);
+	void setBorderModel(BasicModel*);
+	void setBackgroundModel(BasicModel*);
 
-	void addModel(const Model*);
-	void removeModel(const Model*);
+	void addRenderer(const ModelRenderer*);
+	void removeRenderer(const ModelRenderer*);
 
-	void addModels(std::vector<const Model*>&);
+	void addRenderers(std::vector<const ModelRenderer*>&);
 
 	//Rendering
 	void draw() const;
@@ -53,12 +57,12 @@ private:
 
 	BoundingBox windowBB;
 
-	BasicModel border;
-	BasicModel background;
+	BasicModel *border;
+	BasicModel *background;
 
 	bool visible;
 
-	std::vector<const ModelRenderer*> models;
+	std::unordered_set<const ModelRenderer*> models;
 
 	const char * msg = nullptr;
 };

@@ -1,5 +1,5 @@
 /*
- * render.cpp
+ * window.cpp
  *
  * Holds scene and entities; renders the screen
  */
@@ -9,18 +9,46 @@
 #include "window.hpp"
 #include "model.hpp"
 
-Window::Window(RectArea area, Coord scale) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
+#include "log.hpp"
+#include "engine.hpp"
+
+BasicModel Window::defaultBorder{'#', TermColor::GRAY};
+BasicModel Window::defaultBackground{' ', TermColor::BG_DARK_GRAY};
+
+Window::Window(RectArea area, Coord scale, BasicModel *border, BasicModel *background) : border(border), background(background) {
 	this->area = area;
 	this->scale = scale;
 
 	this->windowBB = this->area.getBoundingBox() * this->scale;
 };
 
-Window::Window(RectArea area, Coord scale, BasicModel border, BasicModel background) : border('#', TermColor::GRAY), background(' ', TermColor::BLACK) {
-	this->area = area;
-	this->scale = scale;
 
-	this->windowBB = this->area.getBoundingBox() * this->scale;
+/*
+ * Get window size
+ */
+Coord Window::size() const {
+	return this->area.getBoundingBox().high;
+};
+
+/*
+ * Get window scale
+ */
+Coord Window::getScale() const {
+	return this->scale;
+};
+
+/*
+ * Get border model
+ */
+BasicModel* Window::getBorderModel() const {
+	return this->border;
+};
+
+/*
+ * Get background model
+ */
+BasicModel* Window::getBackgroundModel() const {
+	return this->background;
 };
 
 void Window::setMsg(const char *msg) {
@@ -50,15 +78,56 @@ void Window::setScale(Coord scale) {
 
 
 /*
+ * Changes model for the border
+ */
+void Window::setBorderModel(BasicModel *border) {
+	this->border = border;
+};
+
+/*
+ * Changes model for the background
+ */
+void Window::setBackgroundModel(BasicModel *background) {
+	this->background = background;
+};
+
+
+/*
+ * Adds a renderer to the window
+ */
+void Window::addRenderer(const ModelRenderer *renderer) {
+	this->models.insert(renderer);
+};
+
+/*
+ * Removes a renderer from the window
+ */
+void Window::removeRenderer(const ModelRenderer *renderer) {
+	this->models.erase(renderer);
+};
+
+/*
+ * Adds all renderers in a vector
+ */
+void Window::addRenderers(std::vector<const ModelRenderer*> &renderers) {
+	for(const ModelRenderer *renderer : renderers) {
+		this->models.insert(renderer);
+	};
+};
+
+
+/*
  * Draw entire window
  */
 void Window::draw() const {
 	if(!this->visible) return;
 
+	Engine::log.log("Drawing window");
+
 	this->drawBackground(this->windowBB);
 
 	//IModelables (Entities)
-	for(ModelRenderer *m : this->models) {
+	for(const ModelRenderer *m : this->models) {
 		m->draw();
 	};
 
@@ -80,8 +149,10 @@ void Window::draw() const {
 void Window::redraw() const {
 	if(!this->visible) return;
 
+	Engine::log.log("Redrawing window");
+
 	//IModelables (Entities)
-	for(ModelRenderer *m : this->models) {
+	for(const ModelRenderer *m : this->models) {
 		//TODO: Use redraw for animation?
 		if(m->dirty()) {
 			BoundingBox covered = m->getLastRegion();
@@ -123,6 +194,8 @@ void Window::show(bool visible) {
 		cInfo.bVisible = true;
 		SetConsoleCursorInfo(hOut, &cInfo);
 	};
+
+	this->visible = visible;
 };
 
 
@@ -140,9 +213,9 @@ void Window::drawBackground(BoundingBox bb) const {
 				j == this->windowBB.low.y ||
 				j == this->windowBB.high.y
 			) {
-				this->border.draw(currentPos);
+				this->border->draw(currentPos);
 			} else {
-				this->background.draw(currentPos);
+				this->background->draw(currentPos);
 			};
 		};
 	};
