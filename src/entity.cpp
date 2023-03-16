@@ -177,6 +177,18 @@ std::vector<Entity*> EntityManager::getEntities() const {
 };
 
 /*
+ * Get a vector of renderers
+ */
+std::vector<const ModelRenderer*> EntityManager::getRenderers() const {
+	std::vector<const ModelRenderer*> renderers;
+
+	for(Entity *entity : this->entities)
+		renderers.push_back(entity);
+
+	return std::move(renderers);
+};
+
+/*
  * Get pointer to entity vector
  */
 const std::vector<Entity*>* EntityManager::getEntitiesList() const {

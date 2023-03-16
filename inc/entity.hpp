@@ -128,6 +128,7 @@ public:
 	//Get information
 	Entity* getEntityAt(Coord) const;
 	std::vector<Entity*> getEntities() const;
+	std::vector<const ModelRenderer*> getRenderers() const;
 	const std::vector<Entity*>* getEntitiesList() const;
 
 	//Add/remove from list
