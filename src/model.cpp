@@ -6,9 +6,13 @@
 
 #include "model.hpp"
 
+#include "log.hpp"
+
 #include <iostream>
 
 #include <windows.h>
+
+#include "engine.hpp"
 
 
 /*
@@ -77,6 +81,10 @@ const Model* ModelRenderer::getModel() const {
  * Changes the model that this renderer will draw
  */
 void ModelRenderer::setModel(const Model *model) {
+	Engine::log.log("Set Model");
+
+	this->changed = this->model != model;
+
 	this->model = model;
 };
 
@@ -91,18 +99,26 @@ BoundingBox ModelRenderer::getLastRegion() const {
  * Draws the model
  */
 void ModelRenderer::draw() const {
+	Engine::log.log("Drawing model");
+
 	this->model->draw(this->pos);
 
 	this->lastPos = this->pos;
+	this->changed = false;
 };
 
 /*
  * Draws the model
  */
 void ModelRenderer::redraw() const {
+	Engine::log.log("Redrawing model");
+
+	if(this->dirty()) this->clear();
+
 	this->model->redraw(this->pos);
 
 	this->lastPos = this->pos;
+	this->changed = false;
 };
 
 /*
@@ -116,7 +132,7 @@ void ModelRenderer::clear() const {
  * Returns whether the model has changed since last (re)draw
  */
 bool ModelRenderer::dirty() const {
-	return this->pos != this->lastPos;
+	return this->pos != this->lastPos || this->changed;
 };
 
 /*

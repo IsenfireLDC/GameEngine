@@ -59,6 +59,7 @@ protected:
 	Coord pos;
 
 	mutable Coord lastPos;
+	mutable bool changed;
 };
 
 #endif
