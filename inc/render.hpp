@@ -68,17 +68,22 @@ enum TermColor : unsigned char {
  */
 class Renderer {
 public:
-	virtual void draw() const = 0;
-	virtual void redraw() const = 0;
-	virtual void clear(std::function<void(BoundingBox)>) const = 0;
-
-//protected:
 	//Rendering helper methods
 	static void setCursorPos(Coord);
 	static Coord getCursorPos();
 
 	static void setTermColor(unsigned char);
 	static void resetTermColor();
+
+public:
+	virtual void draw() const = 0;
+	virtual void redraw() const = 0;
+	virtual void clear() const = 0;
+
+	virtual void setBackground(std::function<void(BoundingBox)>);
+
+protected:
+	std::function<void(BoundingBox)> bgFunc;
 };
 
 #endif

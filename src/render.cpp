@@ -30,3 +30,11 @@ void Renderer::setTermColor(unsigned char color) {
 void Renderer::resetTermColor() {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), TermColor::GRAY);
 };
+
+
+/*
+ * Sets the background drawing function for the renderer
+ */
+void Renderer::setBackground(std::function<void(BoundingBox)> bgFunc) {
+	this->bgFunc = bgFunc;
+};
