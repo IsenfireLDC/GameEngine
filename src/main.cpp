@@ -139,14 +139,14 @@ int gameTest() {
 	EntityManager manager = EntityManager(&field);
 
 	//Create window
-	std::vector<const ModelRenderer*> renderers = manager.getRenderers();
+	//std::vector<const ModelRenderer*> renderers = manager.getRenderers();
 	//const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
 	//Window window = Window(&field, modelable);
 
 	RectArea windowArea = RectArea(Coord(0,0), Coord(25, 20));
 	Window window = Window(windowArea, Coord(2,1));
 
-	window.addRenderers(renderers);
+	window.addRenderer(&manager);
 
 	//Create input
 	Input input = Input();
