@@ -83,7 +83,9 @@ public:
 	virtual void setBackground(std::function<void(BoundingBox)>);
 
 protected:
-	std::function<void(BoundingBox)> bgFunc;
+	static void defaultBGFunc(BoundingBox);
+
+	std::function<void(BoundingBox)> bgFunc = defaultBGFunc;
 };
 
 #endif

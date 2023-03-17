@@ -38,3 +38,20 @@ void Renderer::resetTermColor() {
 void Renderer::setBackground(std::function<void(BoundingBox)> bgFunc) {
 	this->bgFunc = bgFunc;
 };
+
+
+/*
+ * Provides default background function
+ */
+void Renderer::defaultBGFunc(BoundingBox bb) {
+	Renderer::resetTermColor();
+
+	for(short i = bb.low.x; i <= bb.high.x; ++i) {
+		for(short j = bb.low.y; j <= bb.high.y; ++j) {
+			Coord currentPos = { .x=i, .y=j };
+			Renderer::setCursorPos(currentPos);
+
+			std::cout << ' ';
+		};
+	};
+};
