@@ -144,7 +144,7 @@ void Window::draw() const {
 
 	std::cout << this->size() << std::endl;
 
-	Renderer::setTermColor(TermColor::BRIGHT_RED);
+	Renderer::setTermColor(TermColor::LIGHT_BLUE);
 	if(this->msg) std::cout << this->msg << std::endl;
 	Renderer::resetTermColor();
 };
@@ -169,7 +169,7 @@ void Window::redraw() const {
 
 	std::cout << this->size() << std::endl;
 
-	Renderer::setTermColor(TermColor::BRIGHT_RED);
+	Renderer::setTermColor(TermColor::LIGHT_BLUE);
 	if(this->msg) std::cout << this->msg << std::endl;
 	Renderer::resetTermColor();
 };
