@@ -66,7 +66,6 @@ public:
 	Entity(Coord=Coord(), EntityType* =nullptr, const char* =Entity::dName, const Model* =&Entity::defaultModel);
 
 	//Setters
-	void setModel(Model*);
 	void setData(EntityData);
 
 	//Getters
@@ -81,7 +80,6 @@ public:
 	virtual bool moveInto(Entity*);
 
 	//IModelable interface
-	Model* getModel() const;
 	Coord getPos() const;
 	Coord getLastPos();
 	bool isDirty();

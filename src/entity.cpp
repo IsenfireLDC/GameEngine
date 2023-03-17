@@ -8,7 +8,11 @@
 
 #include "utils.hpp"
 
+#include "log.hpp"
+
 #include <iostream>
+
+#include "engine.hpp"
 
 
 /****	        Entity     	****/
@@ -32,12 +36,16 @@ Entity::Entity(Coord pos, EntityType *type, const char *name, const Model *model
 
 	this->type = type;
 	this->data = {Utils::nextID(&Entity::gID), 0, name};
+
+	this->ModelRenderer::move(pos);
 };
 
 /*
  * Moves entity, checking for collision if registered to manager
  */
 bool Entity::move(Coord pos) {
+	Engine::log.log("Attempting to move entity");
+
 	//Check if entity at pos
 	Entity* other = nullptr;
 	if(this->manager) {
@@ -50,20 +58,14 @@ bool Entity::move(Coord pos) {
 
 	//Move entity
 	if(move) {
+		Engine::log.log("Moving entity");
+		this->ModelRenderer::move(pos);
 		this->pos = pos;
 	};
 
 	this->dirty = move;
 
 	return move;
-};
-
-/*
- * Setter for entity model
- */
-void Entity::setModel(Model *model) {
-	this->dirty = true;
-	this->model = model;
 };
 
 /*
@@ -89,13 +91,6 @@ Coord Entity::getLastPos() {
 	this->lastPos = this->pos;
 
 	return lastPos;
-};
-
-/*
- * Getter for model
- */
-Model* Entity::getModel() const {
-	return this->model;
 };
 
 /*
