@@ -106,6 +106,13 @@ void ModelRenderer::redraw() const {
 };
 
 /*
+ * Allows the region to be cleared
+ */
+void ModelRenderer::clear(std::function<void(BoundingBox)> func) const {
+	func(this->getLastRegion());
+};
+
+/*
  * Returns whether the model has changed since last (re)draw
  */
 bool ModelRenderer::dirty() const {

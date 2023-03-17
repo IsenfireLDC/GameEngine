@@ -132,6 +132,7 @@ public:
 	//Renderer
 	void draw() const;
 	void redraw() const;
+	void clear(std::function<void(BoundingBox)>) const;
 
 	//Add/remove from list
 	bool registerEntity(Entity*);

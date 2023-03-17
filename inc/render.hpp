@@ -8,8 +8,10 @@
 #define _RENDER_HPP_
 
 #include "pos.hpp"
+#include "area.hpp"
 
 #include <vector>
+#include <functional>
 
 /*
  * Interface for renderable objects
@@ -68,7 +70,7 @@ class Renderer {
 public:
 	virtual void draw() const = 0;
 	virtual void redraw() const = 0;
-	//virtual void clear() const = 0;
+	virtual void clear(std::function<void(BoundingBox)>) const = 0;
 
 //protected:
 	//Rendering helper methods

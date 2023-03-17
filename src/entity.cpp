@@ -175,6 +175,15 @@ void EntityManager::redraw() const {
 	};
 };
 
+/*
+ * Allows the regions to be cleared
+ */
+void EntityManager::clear(std::function<void(BoundingBox)> func) const {
+	for(Entity *entity : this->entities) {
+		entity->clear(func);
+	};
+};
+
 
 /*
  * Finds first entity at given coordinates (1 max at coords)
