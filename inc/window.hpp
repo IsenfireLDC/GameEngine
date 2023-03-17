@@ -38,14 +38,18 @@ public:
 	void setBorderModel(BasicModel*);
 	void setBackgroundModel(BasicModel*);
 
-	void addRenderer(const ModelRenderer*);
-	void removeRenderer(const ModelRenderer*);
+	void addRenderer(Renderer*);
+	void removeRenderer(Renderer*);
 
-	void addRenderers(std::vector<const ModelRenderer*>&);
+	void addRenderers(std::vector<Renderer*>&);
 
 	//Rendering
 	void draw() const;
 	void redraw() const;
+	void clear() const;
+
+
+	std::function<void(BoundingBox)> getBackground() const;
 
 	void show(bool);
 
@@ -62,7 +66,7 @@ private:
 
 	bool visible;
 
-	std::unordered_set<const ModelRenderer*> models;
+	std::unordered_set<const Renderer*> models;
 
 	const char * msg = nullptr;
 };

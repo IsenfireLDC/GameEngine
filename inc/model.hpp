@@ -49,7 +49,7 @@ public:
 
 	void draw() const;
 	void redraw() const;
-	void clear(std::function<void(BoundingBox)>) const;
+	void clear() const;
 
 	bool dirty() const;
 	void move(Coord);
@@ -59,9 +59,6 @@ protected:
 	Coord pos;
 
 	mutable Coord lastPos;
-
-private:
-	void clear() const;
 };
 
 #endif

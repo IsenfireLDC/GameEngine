@@ -108,8 +108,8 @@ void ModelRenderer::redraw() const {
 /*
  * Allows the region to be cleared
  */
-void ModelRenderer::clear(std::function<void(BoundingBox)> func) const {
-	func(this->getLastRegion());
+void ModelRenderer::clear() const {
+	this->bgFunc(this->getLastRegion());
 };
 
 /*

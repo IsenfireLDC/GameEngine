@@ -178,9 +178,22 @@ void EntityManager::redraw() const {
 /*
  * Allows the regions to be cleared
  */
-void EntityManager::clear(std::function<void(BoundingBox)> func) const {
+void EntityManager::clear() const {
 	for(Entity *entity : this->entities) {
-		entity->clear(func);
+		entity->clear();
+	};
+};
+
+/*
+ * [Override]
+ * Sets the background function for every entity managed
+ */
+void EntityManager::setBackground(std::function<void(BoundingBox)> bgFunc) {
+	//Currently unnecessary
+	this->Renderer::setBackground(bgFunc);
+
+	for(Entity *entity : this->entities) {
+		entity->setBackground(bgFunc);
 	};
 };
 

@@ -132,7 +132,9 @@ public:
 	//Renderer
 	void draw() const;
 	void redraw() const;
-	void clear(std::function<void(BoundingBox)>) const;
+	void clear() const;
+
+	void setBackground(std::function<void(BoundingBox)>);
 
 	//Add/remove from list
 	bool registerEntity(Entity*);

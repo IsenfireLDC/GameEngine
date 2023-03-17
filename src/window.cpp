@@ -13,13 +13,15 @@
 #include "engine.hpp"
 
 BasicModel Window::defaultBorder{'#', TermColor::GRAY};
-BasicModel Window::defaultBackground{' ', TermColor::BG_DARK_GRAY};
+BasicModel Window::defaultBackground{' ', TermColor::BG_BLACK};
 
 Window::Window(RectArea area, Coord scale, BasicModel *border, BasicModel *background) : border(border), background(background) {
 	this->area = area;
 	this->scale = scale;
 
 	this->windowBB = this->area.getBoundingBox() * this->scale;
+
+	this->Renderer::setBackground(std::bind(Window::drawBackground, this, std::placeholders::_1));
 };
 
 
@@ -95,22 +97,26 @@ void Window::setBackgroundModel(BasicModel *background) {
 /*
  * Adds a renderer to the window
  */
-void Window::addRenderer(const ModelRenderer *renderer) {
+void Window::addRenderer(Renderer *renderer) {
+	renderer->setBackground(this->bgFunc);
+
 	this->models.insert(renderer);
 };
 
 /*
  * Removes a renderer from the window
  */
-void Window::removeRenderer(const ModelRenderer *renderer) {
+void Window::removeRenderer(Renderer *renderer) {
 	this->models.erase(renderer);
 };
 
 /*
  * Adds all renderers in a vector
  */
-void Window::addRenderers(std::vector<const ModelRenderer*> &renderers) {
-	for(const ModelRenderer *renderer : renderers) {
+void Window::addRenderers(std::vector<Renderer*> &renderers) {
+	for(Renderer *renderer : renderers) {
+		renderer->setBackground(this->bgFunc);
+
 		this->models.insert(renderer);
 	};
 };
@@ -127,7 +133,7 @@ void Window::draw() const {
 	this->drawBackground(this->windowBB);
 
 	//IModelables (Entities)
-	for(const ModelRenderer *m : this->models) {
+	for(const Renderer *m : this->models) {
 		m->draw();
 	};
 
@@ -152,14 +158,8 @@ void Window::redraw() const {
 	Engine::log.log("Redrawing window");
 
 	//IModelables (Entities)
-	for(const ModelRenderer *m : this->models) {
-		//TODO: Use redraw for animation?
-		if(m->dirty()) {
-			BoundingBox covered = m->getLastRegion();
-			this->drawBackground(covered);
-
-			m->redraw();
-		};
+	for(const Renderer *m : this->models) {
+		m->redraw();
 	};
 
 
@@ -173,6 +173,22 @@ void Window::redraw() const {
 	if(this->msg) std::cout << this->msg << std::endl;
 	Renderer::resetTermColor();
 };
+
+/*
+ * Clear the window
+ */
+void Window::clear() const {
+	this->bgFunc(this->windowBB);
+};
+
+
+/*
+ * Returns the background drawing function
+ */
+std::function<void(BoundingBox)> Window::getBackground() const {
+	return this->bgFunc;
+};
+
 
 /*
  * Sets whether the window is shown
