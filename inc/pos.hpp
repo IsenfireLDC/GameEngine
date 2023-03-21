@@ -24,6 +24,11 @@ struct Coord {
 		this->y = y;
 	};
 
+	Coord(COORD p) {
+		this->x = p.X;
+		this->y = p.Y;
+	};
+
 	bool operator==(Coord a) {
 		return this->x == a.x && this->y == a.y;
 	};
@@ -38,6 +43,8 @@ struct Coord {
 
 Coord operator+(const Coord&, const Coord&);
 Coord operator*(const Coord&, const Coord&);
+bool operator==(const Coord&, const Coord&);
+bool operator!=(const Coord&, const Coord&);
 
 
 #endif

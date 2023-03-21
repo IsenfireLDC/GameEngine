@@ -9,18 +9,20 @@
 #include <string>
 #include <chrono>
 
+enum LogLevel{None=0, Debug=1, Info=2, Warning=3, Error=4, Fatal=5};
+
 class Log {
 public:
 	struct Entry {
 		std::chrono::system_clock::time_point timestamp;
-		enum LogType{None, Debug, Info, Warning, Error, Fatal} severity;
+		LogLevel severity;
 		std::string message;
 		std::string sender;
 
 		friend std::ostream& operator<<(std::ostream&, const Entry&);
 	};
 
-	static Entry makeEntry(std::string, Entry::LogType, std::string);
+	static Entry makeEntry(std::string, LogLevel, std::string);
 	static Entry makeEntry(Entry, std::string);
 
 	Log(std::string, std::string);
@@ -29,9 +31,12 @@ public:
 
 	void setParent(Log*);
 
+	void setMinLevel(LogLevel);
+	LogLevel getMinLevel() const;
+
 	void log(std::string);
-	void log(std::string, Entry::LogType);
-	void log(std::string, Entry::LogType, std::string);
+	void log(std::string, LogLevel);
+	void log(std::string, LogLevel, std::string);
 
 	friend void operator<<(Log&, const std::string&);
 	friend void operator<<(Log&, const Entry&);
@@ -43,10 +48,8 @@ private:
 	std::ofstream logfile;
 
 	Log *parent;
-};
 
-namespace Engine {
-	extern Log log;
+	LogLevel minimumLevel;
 };
 
 #endif

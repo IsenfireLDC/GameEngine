@@ -1,2 +1,12 @@
+# Build files
 bin/
+*.exe
+
+# Don't need to push logs
 logs/
+
+# Exclude vim swap files
+.*.swp
+
+# Hidden files
+.*

@@ -8,7 +8,11 @@
 
 #include "utils.hpp"
 
+#include "log.hpp"
+
 #include <iostream>
+
+#include "engine.hpp"
 
 
 /****	        Entity     	****/
@@ -17,41 +21,7 @@ int Entity::gID = 0;
 
 const Coord Entity::origin = Coord(1,1);
 const char Entity::dName[] = "Entity";
-
-/*
- * Constructor for default entity
- */
-Entity::Entity() {
-	this->pos = Entity::origin;
-	this->lastPos = Entity::origin;
-
-	this->type = 0;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
-
-/*
- * Constructor for typed entity
- */
-Entity::Entity(EntityType *type) {
-	this->pos = Entity::origin;
-	this->lastPos = Entity::origin;
-
-	this->type = type;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
-
-/*
- * Constructor for new entity with default data
- *
- * Coord pos		: Position struct for new entity
- */
-Entity::Entity(EntityType *type, Coord pos) {
-	this->pos = pos;
-	this->lastPos = pos;
-
-	this->type = type;
-	this->data = {Utils::nextID(&Entity::gID), 0, Entity::dName};
-};
+const BasicModel Entity::defaultModel{'x', TermColor::BLACK | TermColor::BG_RED};
 
 /*
  * Constructor for new entity
@@ -60,18 +30,22 @@ Entity::Entity(EntityType *type, Coord pos) {
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(EntityType *type, Coord pos, const char *name) {
+Entity::Entity(Coord pos, EntityType *type, const char *name, const Model *model) : ModelRenderer(model) {
 	this->pos = pos;
 	this->lastPos = pos;
 
 	this->type = type;
 	this->data = {Utils::nextID(&Entity::gID), 0, name};
+
+	this->ModelRenderer::move(pos);
 };
 
 /*
  * Moves entity, checking for collision if registered to manager
  */
 bool Entity::move(Coord pos) {
+	Engine::log.log("Attempting to move entity");
+
 	//Check if entity at pos
 	Entity* other = nullptr;
 	if(this->manager) {
@@ -84,20 +58,14 @@ bool Entity::move(Coord pos) {
 
 	//Move entity
 	if(move) {
+		Engine::log.log("Moving entity");
+		this->ModelRenderer::move(pos);
 		this->pos = pos;
 	};
 
 	this->dirty = move;
 
 	return move;
-};
-
-/*
- * Setter for entity model
- */
-void Entity::setModel(Model *model) {
-	this->dirty = true;
-	this->model = model;
 };
 
 /*
@@ -123,13 +91,6 @@ Coord Entity::getLastPos() {
 	this->lastPos = this->pos;
 
 	return lastPos;
-};
-
-/*
- * Getter for model
- */
-Model* Entity::getModel() const {
-	return this->model;
 };
 
 /*
@@ -177,6 +138,8 @@ EntityManager::EntityManager() {
 EntityManager::EntityManager(Field* field) {
 	this->field = field;
 
+	this->field->setScale(Coord(2,1));
+
 	this->entities = std::vector<Entity*>();
 };
 
@@ -189,6 +152,48 @@ EntityManager::~EntityManager() {
 	for(int i = this->entities.size()-1; i >= 0; --i)
 		this->unregisterEntity(this->entities[i]);
 };
+
+
+/*
+ * Draw all managed entities
+ */
+void EntityManager::draw() const {
+	for(Entity *entity : this->entities) {
+		entity->draw();
+	};
+};
+
+/*
+ * Redraw all managed entities
+ */
+void EntityManager::redraw() const {
+	for(Entity *entity : this->entities) {
+		entity->redraw();
+	};
+};
+
+/*
+ * Allows the regions to be cleared
+ */
+void EntityManager::clear() const {
+	for(Entity *entity : this->entities) {
+		entity->clear();
+	};
+};
+
+/*
+ * [Override]
+ * Sets the background function for every entity managed
+ */
+void EntityManager::setBackground(std::function<void(BoundingBox)> bgFunc) {
+	//Currently unnecessary
+	this->Renderer::setBackground(bgFunc);
+
+	for(Entity *entity : this->entities) {
+		entity->setBackground(bgFunc);
+	};
+};
+
 
 /*
  * Finds first entity at given coordinates (1 max at coords)
@@ -208,13 +213,6 @@ Entity* EntityManager::getEntityAt(Coord pos) const {
  */
 std::vector<Entity*> EntityManager::getEntities() const {
 	return this->entities;
-};
-
-/*
- * Get pointer to entity vector
- */
-const std::vector<Entity*>* EntityManager::getEntitiesList() const {
-	return &this->entities;
 };
 
 /*

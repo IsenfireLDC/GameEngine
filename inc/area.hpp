@@ -10,36 +10,32 @@
 #include "pos.hpp"
 
 
-struct Rect {
-	Coord c1;
-	Coord c2;
-
-	Rect() {
-		this->c1 = Coord(0,0);
-		this->c2 = Coord(0,0);
-	};
-
-	Rect(Coord c1, Coord c2) {
-		this->c1 = c1;
-		this->c2 = c2;
-	};
+struct BoundingBox {
+	Coord low;
+	Coord high;
 };
+
+BoundingBox operator*(const BoundingBox&, const short);
+BoundingBox operator*(const BoundingBox&, const Coord&);
+BoundingBox operator+(const BoundingBox&, const Coord&);
 
 class Area {
 public:
-	//Constructor
-	Area();
-	Area(Rect);
+	virtual BoundingBox getBoundingBox() const = 0;
+	virtual bool contains(Coord, bool = false) const = 0;
+};
 
-	//Getter
-	Rect getRect() const;
+class RectArea : public Area {
+public:
+	RectArea();
+	RectArea(Coord, Coord);
 
-	//Queries
-	virtual bool contains(Coord) const;
-	virtual bool contains(Coord, bool) const;
+	BoundingBox getBoundingBox() const;
+	bool contains(Coord, bool) const;
 
 private:
-	Rect area;
+	Coord c1;
+	Coord c2;
 };
 
 #endif

@@ -15,15 +15,17 @@ FLAGS+=$(LIBS)
 
 OBJECTS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.o, $(wildcard $(SRC_DIR)*.cpp))
 DEPENDS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.d, $(wildcard $(SRC_DIR)*.cpp))
-OUTFILE=$(OUT_DIR)TerminalEngine.exe
+OUTFILE=./TerminalEngine.exe
 
-all: $(OBJECTS)
-	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
+all: $(OUTFILE)
 
 debug: FLAGS += $(DEBUG)
 debug: all
 
 -include $(DEPENDS)
+
+$(OUTFILE): $(OBJECTS)
+	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
 
 $(OUT_DIR)%.o : $(SRC_DIR)%.cpp
 	g++ -MMD -MP $(FLAGS) -c $< -o $@

@@ -40,6 +40,7 @@ public:
 		Left = 75,
 		Down = 80,
 		Right = 77,
+		Interrupt = 70,
 		Escape = 1,
 		Null = 0
 	};

@@ -6,6 +6,10 @@
 
 #include <typeinfo>
 
+#include "log.hpp"
+
+#include "engine.hpp"
+
 //Engine event bus (global)
 Events Engine::eventBus;
 
@@ -21,6 +25,7 @@ Event::~Event() {};
  * In both cases, the id of the event is returned
  */
 int Events::registerEventType(Event *event) {
+	Engine::log.log("Registering new event type", LogLevel::Debug, "Events");
 	int eventID = this->getEventID(event);
 	if(eventID < 0) {
 		eventID = Utils::nextID(&Events::gID);
@@ -60,6 +65,7 @@ void Events::queueEvent(Event *event) {
  * Is thread-safe with calls to queueEvent
  */
 void Events::handleEvents() {
+	Engine::log.log("Handling queued events", LogLevel::Debug, "Events");
 	while(this->events.size() > 0) {
 		this->eventsLock.lock();
 		Event *event = this->events.front();
@@ -82,5 +88,6 @@ void Events::handleEvents() {
  * The same event type cannot have more than one handler
  */
 void Events::registerEventHandler(int eventID, EventHandler handler) {
+	Engine::log.log("Register event handler", LogLevel::Debug, "Events");
 	this->handlers[eventID] = handler;
 };

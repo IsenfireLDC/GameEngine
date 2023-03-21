@@ -9,7 +9,9 @@
 #include <conio.h>
 #include <winuser.h>
 
-using LogType = Log::Entry::LogType;
+#include <sstream>
+
+#include "engine.hpp"
 
 Log Input::log{"Input", "./logs/input.log"};
 
@@ -38,7 +40,15 @@ static void aMove(Entity *target, int input) {
 	target->move(ePos);
 };
 
+static void aExit(Entity *target, int input) {
+	std::cerr << "Keyboard interrupt" << std::endl;
+	Engine::log.log("Keyboard interrupt", LogLevel::Fatal, "Input");
+
+	exit(1);
+};
+
 Action MoveAction = aMove;
+Action ExitAction = aExit;
 
 const std::unordered_map<int, Action> defaultMap = {
 	{Input::Key::W, MoveAction},
@@ -202,7 +212,7 @@ void Input::removeActionMapping(int input) {
  * Thread exits on generating QuitEvent
  */
 void Input::threadHandler() {
-	Input::log.log("Input thread started", LogType::Info, "Handler");
+	Input::log.log("Input thread started", LogLevel::Info, "Handler");
 	while(this->active) {
 		INPUT_RECORD input = getInput(10000, this->intrHandle);
 		int scanCode;
@@ -222,6 +232,8 @@ void Input::threadHandler() {
 				case Input::Key::Escape:
 					event = new QuitEvent(this);
 					break;
+				case Input::Key::Interrupt:
+					aExit(nullptr, 0);
 				case Input::Key::Null:
 					continue;
 				default:
@@ -230,7 +242,11 @@ void Input::threadHandler() {
 		};
 		Engine::eventBus.queueEvent(event);
 
-		Input::log.log("Received keypress", LogType::Debug, "Handler");
+		std::stringstream key{};
+		key << "Received keypress ";
+		if(input.Event.KeyEvent.wVirtualKeyCode > 16) key << "\"" << (char)input.Event.KeyEvent.wVirtualKeyCode << "\" ";
+		key << ": " << scanCode;
+		Input::log.log(key.str(), LogLevel::Debug, "Handler");
 	
 		//Select action and queue event
 		//Have quit event contain pointer to Input

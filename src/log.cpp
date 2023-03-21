@@ -8,6 +8,8 @@
 
 #include <ctime>
 
+#include "engine.hpp"
+
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable
@@ -17,7 +19,7 @@ Log Engine::log{"Master", "./logs/master.log", nullptr};
  * Creates entry with given message, severity, and sender
  * Sets timestamp to current time
  */
-Log::Entry Log::makeEntry(std::string message, Log::Entry::LogType severity, std::string sender) {
+Log::Entry Log::makeEntry(std::string message, LogLevel severity, std::string sender) {
 	return Log::Entry{system_clock::now(), severity, message, sender};
 };
 
@@ -48,21 +50,33 @@ void Log::setParent(Log *parent) {
 	this->parent = parent;
 };
 
-void Log::log(std::string message) {
-	this->log(message, Log::Entry::LogType::Info, "Default");
+void Log::setMinLevel(LogLevel level) {
+	this->minimumLevel = level;
 };
 
-void Log::log(std::string message, Log::Entry::LogType severity) {
+LogLevel Log::getMinLevel() const {
+	return this->minimumLevel;
+};
+
+void Log::log(std::string message) {
+	this->log(message, LogLevel::Info, "Default");
+};
+
+void Log::log(std::string message, LogLevel severity) {
 	this->log(message, severity, "Default");
 };
 
-void Log::log(std::string message, Log::Entry::LogType severity, std::string sender) {
+void Log::log(std::string message, LogLevel severity, std::string sender) {
+	if(severity < this->minimumLevel) return;
+
 	Entry entry{system_clock::now(), severity, message, sender};
 
 	this->writeEntry(entry);
 };
 
 void Log::writeEntry(Entry entry) {
+	if(entry.severity < this->minimumLevel) return;
+
 	this->logfile << entry << std::endl;
 
 	if(this->parent) {
@@ -78,22 +92,22 @@ std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
 	os << str << " -- ";
 
 	switch(entry.severity) {
-		case Log::Entry::LogType::None:
+		case LogLevel::None:
 			os << "None";
 			break;
-		case Log::Entry::LogType::Debug:
+		case LogLevel::Debug:
 			os << "Debug";
 			break;
-		case Log::Entry::LogType::Info:
+		case LogLevel::Info:
 			os << "Info";
 			break;
-		case Log::Entry::LogType::Warning:
+		case LogLevel::Warning:
 			os << "Warning";
 			break;
-		case Log::Entry::LogType::Error:
+		case LogLevel::Error:
 			os << "Error";
 			break;
-		case Log::Entry::LogType::Fatal:
+		case LogLevel::Fatal:
 			os << "Fatal";
 			break;
 	};

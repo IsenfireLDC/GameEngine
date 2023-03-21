@@ -7,57 +7,88 @@
 #ifndef _RENDER_HPP_
 #define _RENDER_HPP_
 
-#include "field.hpp"
 #include "pos.hpp"
-
-#include "model.hpp"
+#include "area.hpp"
 
 #include <vector>
+#include <functional>
 
 /*
  * Interface for renderable objects
  *
  * Supplies necessary getters
  */
-class IModelable {
-public:
-	virtual Model* getModel() const = 0;
-	virtual Coord getPos() const = 0;
-	
-	virtual Coord getLastPos() = 0;
-	virtual bool isDirty() = 0;
+//class IModelable {
+//public:
+//	virtual Model* getModel() const = 0;
+//	virtual Coord getPos() const = 0;
+//	
+//	virtual Coord getLastPos() = 0;
+//	virtual bool isDirty() = 0;
+//};
+
+enum TermColor : unsigned char {
+	BLACK = 0x0,
+	BLUE = 0x1,
+	GREEN = 0x2,
+	ORANGE = 0x3,
+	RED = 0x4,
+	PURPLE = 0x5,
+	CYAN = 0x6,
+	GRAY = 0x7,
+	DARK_GRAY = 0x8,
+	LIGHT_BLUE = 0x9,
+	LIME = 0xa,
+	YELLOW = 0xb,
+	BRIGHT_RED = 0xc,
+	MAGENTA = 0xd,
+	BRIGHT_CYAN = 0xe,
+	WHITE = 0xf,
+	BG_BLACK = 0x00,
+	BG_BLUE = 0x10,
+	BG_GREEN = 0x20,
+	BG_ORANGE = 0x30,
+	BG_RED = 0x40,
+	BG_PURPLE = 0x50,
+	BG_CYAN = 0x60,
+	BG_GRAY = 0x70,
+	BG_DARK_GRAY = 0x80,
+	BG_LIGHT_BLUE = 0x90,
+	BG_LIME = 0xa0,
+	BG_YELLOW = 0xb0,
+	BG_BRIGHT_RED = 0xc0,
+	BG_MAGENTA = 0xd0,
+	BG_BRIGHT_CYAN = 0xe0,
+	BG_WHITE = 0xf0
 };
 
+
 /*
- * Handles drawing output and passing back input
+ * Interface for classes that handle rendering
  */
-class Window {
+class Renderer {
 public:
-	//Constructors
-	Window();
-	Window(Field*, const std::vector<IModelable*>*);
+	//Rendering helper methods
+	static void setCursorPos(Coord);
+	static Coord getCursorPos();
 
-	//Getters
-	Field* getField() const;
+	static void setTermColor(unsigned char);
+	static void resetTermColor();
 
-	//Setters
-	void setField(Field*);
-	void setMsg(const char*);
+public:
+	virtual void draw() const = 0;
+	virtual void redraw() const = 0;
+	virtual void clear() const = 0;
 
-	//Rendering
-	void render();
-	void render(bool) const;
+	virtual void setBackground(std::function<void(BoundingBox)>);
+	virtual void setScaling(Coord);
 
-private:
-	Field *field;
-	const std::vector<IModelable*> *modelableList;
+protected:
+	static void defaultBGFunc(BoundingBox);
+	static Coord defaultScale;
 
-	Model *mBorder = new Model('#', 0b1111);
-	Model *mBackground = new Model(' ', 0b0000);
-
-	const char * msg = nullptr;
-
-	bool firstRender = true;
+	std::function<void(BoundingBox)> bgFunc = defaultBGFunc;
+	Coord scale = defaultScale;
 };
 
 #endif
