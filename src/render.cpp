@@ -32,11 +32,21 @@ void Renderer::resetTermColor() {
 };
 
 
+//Default coordinate scaling
+Coord Renderer::defaultScale{2,1};
+
 /*
  * Sets the background drawing function for the renderer
  */
 void Renderer::setBackground(std::function<void(BoundingBox)> bgFunc) {
 	this->bgFunc = bgFunc;
+};
+
+/*
+ * Sets the coordinate scaling for the renderer
+ */
+void Renderer::setScaling(Coord scale) {
+	this->scale = scale;
 };
 
 

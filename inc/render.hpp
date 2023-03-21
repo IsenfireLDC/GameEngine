@@ -81,11 +81,14 @@ public:
 	virtual void clear() const = 0;
 
 	virtual void setBackground(std::function<void(BoundingBox)>);
+	virtual void setScaling(Coord);
 
 protected:
 	static void defaultBGFunc(BoundingBox);
+	static Coord defaultScale;
 
 	std::function<void(BoundingBox)> bgFunc = defaultBGFunc;
+	Coord scale = defaultScale;
 };
 
 #endif

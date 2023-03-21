@@ -138,6 +138,8 @@ EntityManager::EntityManager() {
 EntityManager::EntityManager(Field* field) {
 	this->field = field;
 
+	this->field->setScale(Coord(2,1));
+
 	this->entities = std::vector<Entity*>();
 };
 

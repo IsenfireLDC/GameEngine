@@ -92,7 +92,7 @@ void ModelRenderer::setModel(const Model *model) {
  * Returns the area that should be cleared before the model is drawn
  */
 BoundingBox ModelRenderer::getLastRegion() const {
-	return this->model->getBoundingBox() + this->lastPos;
+	return (this->model->getBoundingBox() + this->lastPos) * this->scale;
 };
 
 /*
@@ -101,7 +101,7 @@ BoundingBox ModelRenderer::getLastRegion() const {
 void ModelRenderer::draw() const {
 	Engine::log.log("Drawing model");
 
-	this->model->draw(this->pos);
+	this->model->draw(this->pos * this->scale);
 
 	this->lastPos = this->pos;
 	this->changed = false;
@@ -115,7 +115,7 @@ void ModelRenderer::redraw() const {
 
 	if(this->dirty()) this->clear();
 
-	this->model->redraw(this->pos);
+	this->model->redraw(this->pos * this->scale);
 
 	this->lastPos = this->pos;
 	this->changed = false;
