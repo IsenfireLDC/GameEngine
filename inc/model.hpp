@@ -8,58 +8,36 @@
 #define _MODEL_HPP_
 
 #include "pos.hpp"
-#include "area.hpp"
 
 #include "render.hpp"
-
-#include <iostream>
-#include <vector>
+#include "component.hpp"
 
 class Model {
 public:
-	virtual void draw(Coord) const = 0;
-	virtual void redraw(Coord) const = 0;
+	Model(Texture* = nullptr, Coord = Coord(0,0));
 
-	virtual const BoundingBox getBoundingBox() const = 0;
-};
+	void setTexture(Texture*);
+	Texture* getTexture() const;
 
-class BasicModel : public Model {
-public:
-	BasicModel(char, unsigned char);
+	void setOrigin(Coord);
+	Coord getOrigin() const;
 
-	void draw(Coord) const;
-	void redraw(Coord) const;
-	const BoundingBox getBoundingBox() const;
+	//Draw with SDL_RenderCopy
 
-	friend std::ostream& operator<<(std::ostream&, const BasicModel&);
 private:
-	const char model;
-	const unsigned char color;
+	Texture *texture;
+	Coord origin;
 };
 
-
-class ModelRenderer : public Renderer {
+class ModelComponent : public Component<ModelComponent> {
 public:
-	ModelRenderer(const Model*);
+	ModelComponent(Model*);
 
-	const Model* getModel() const;
-	void setModel(const Model*);
+	void setModel(Model*);
+	Model* getModel() const;
 
-	BoundingBox getLastRegion() const;
-
-	void draw() const;
-	void redraw() const;
-	void clear() const;
-
-	bool dirty() const;
-	void move(Coord);
-
-protected:
-	const Model *model;
-	Coord pos;
-
-	mutable Coord lastPos;
-	mutable bool changed;
+private:
+	Model *model;
 };
 
 #endif
