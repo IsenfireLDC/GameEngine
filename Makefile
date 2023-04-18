@@ -17,10 +17,10 @@ SHARCDIR=$(SHLIBSDIR)/static
 SHINCDIR=$(SHLIBSDIR)/headers
 
 # Build files
-SRCS=$(wildcard $(SRCDIR)/*.c)
-OBJS=$(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
-SHOBJS=$(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.so,$(SRCS))
-DEPS=$(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
+SRCS=$(wildcard $(SRCDIR)/*.cpp)
+OBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
+SHOBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
+DEPS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
 
 # Output files
 SHLIB=$(OBJDIR)/lib$(NAME).dll
@@ -77,10 +77,10 @@ $(OBJDIR)/lib%.dll: $(filter-out $(OBJDIR)/main.so, $(SHOBJS))
 	g++ $^ -shared $(FLAGS) -o $@
 
 
-$(OBJDIR)/%.so : $(SRCDIR)/%.c
+$(OBJDIR)/%.so : $(SRCDIR)/%.cpp
 	g++ -MMD -MP -fpic $(FLAGS) -c $< -o $@
 
-$(OBJDIR)/%.o : $(SRCDIR)/%.c
+$(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	g++ -MMD -MP $(FLAGS) -c $< -o $@
 
 
