@@ -92,6 +92,7 @@ public:
 	template<typename T> std::set<T*> getComponents();
 
 	template<typename T, class... Args> T* createComponent(Args...);
+	template<typename T> void destroyComponent(T*);
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
@@ -211,6 +212,25 @@ T* Entity::createComponent(Args... args) {
 	this->components[componentID].insert(v);
 
 	return v;
+};
+
+/*
+ * Destroys an attached component
+ */
+template<typename T>
+void Entity::destroyComponent(T *component) {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID) == 0) return;
+
+	typename decltype(this->components)::iterator iter = this->components[componentID].find(component);
+
+	//Ensure that the component is attached to this entity
+	if(iter == this->components.end()) return;
+
+	delete *iter;
+
+	this->components.erase(component);
 };
 
 #endif
