@@ -20,8 +20,7 @@
 int Entity::gID = 0;
 
 const Coord Entity::origin = Coord(1,1);
-const char Entity::dName[] = "Entity";
-const BasicModel Entity::defaultModel{'x', TermColor::BLACK | TermColor::BG_RED};
+const std::string Entity::dName = "Entity";
 
 /*
  * Constructor for new entity
@@ -30,14 +29,12 @@ const BasicModel Entity::defaultModel{'x', TermColor::BLACK | TermColor::BG_RED}
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(Coord pos, EntityType *type, const char *name, const Model *model) : ModelRenderer(model) {
+Entity::Entity(Coord pos, EntityType *type, std::string name) : Update() {
 	this->pos = pos;
 	this->lastPos = pos;
 
 	this->type = type;
 	this->data = {Utils::nextID(&Entity::gID), 0, name};
-
-	this->ModelRenderer::move(pos);
 };
 
 /*
@@ -59,21 +56,12 @@ bool Entity::move(Coord pos) {
 	//Move entity
 	if(move) {
 		Engine::log.log("Moving entity");
-		this->ModelRenderer::move(pos);
 		this->pos = pos;
 	};
 
 	this->dirty = move;
 
 	return move;
-};
-
-/*
- * Setter for entity data
- */
-void Entity::setData(EntityData data) {
-	this->dirty = true;
-	this->data = data;
 };
 
 /*
@@ -91,13 +79,6 @@ Coord Entity::getLastPos() {
 	this->lastPos = this->pos;
 
 	return lastPos;
-};
-
-/*
- * Getter for data
- */
-EntityData Entity::getData() const {
-	return this->data;
 };
 
 /*
@@ -120,6 +101,33 @@ bool Entity::isDirty() {
 
 	return changed;
 };
+
+
+/*
+ * Attaches the given component to this entity
+ */
+void Entity::attachComponent(ComponentBase *component) {
+	int componentID = component->componentID();
+	if(this->components.count(componentID) == 0) {
+		this->components.emplace();
+	};
+
+	this->components[componentID].insert(component);
+};
+
+/*
+ * Detaches the given component from this entity
+ */
+void Entity::detachComponent(ComponentBase *component) {
+	int componentID = component->componentID();
+	if(this->components.count(componentID) == 0) return;
+	
+	if(this->components[componentID].count(component) == 0) return;
+
+	this->components[componentID].erase(component);
+};
+
+
 
 
 /****	     EntityManager	****/
@@ -151,47 +159,6 @@ EntityManager::EntityManager(Field* field) {
 EntityManager::~EntityManager() {
 	for(int i = this->entities.size()-1; i >= 0; --i)
 		this->unregisterEntity(this->entities[i]);
-};
-
-
-/*
- * Draw all managed entities
- */
-void EntityManager::draw() const {
-	for(Entity *entity : this->entities) {
-		entity->draw();
-	};
-};
-
-/*
- * Redraw all managed entities
- */
-void EntityManager::redraw() const {
-	for(Entity *entity : this->entities) {
-		entity->redraw();
-	};
-};
-
-/*
- * Allows the regions to be cleared
- */
-void EntityManager::clear() const {
-	for(Entity *entity : this->entities) {
-		entity->clear();
-	};
-};
-
-/*
- * [Override]
- * Sets the background function for every entity managed
- */
-void EntityManager::setBackground(std::function<void(BoundingBox)> bgFunc) {
-	//Currently unnecessary
-	this->Renderer::setBackground(bgFunc);
-
-	for(Entity *entity : this->entities) {
-		entity->setBackground(bgFunc);
-	};
 };
 
 

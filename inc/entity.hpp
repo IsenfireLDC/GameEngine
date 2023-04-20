@@ -12,14 +12,17 @@
 
 #include <functional>
 #include <unordered_map>
+#include <set>
 
 #include "area.hpp"
 #include "field.hpp"
 #include "pos.hpp"
 
 #include "model.hpp"
+#include "update.hpp"
 
 #include "render.hpp"
+#include "component.hpp"
 
 /*	Types		*/
 class EntityManager;
@@ -28,7 +31,7 @@ class Entity;
 struct EntityData {
 	int id;
 	int state;
-	const char* name;
+	std::string name;
 };
 
 struct EntityAction {
@@ -53,30 +56,27 @@ struct EntityType {
 	};
 };
 
-class Entity : public ModelRenderer {
+/*
+ * Reduce Entity to basic info (pos, name, etc.)
+ * Allow collision, physics, model, etc. to be attached
+ */
+class Entity : public Update {
 public:
 	friend class EntityManager;
 
 	//Constants
 	const static Coord origin;
-	const static char dName[];
-	const static BasicModel defaultModel;
+	const static std::string dName;
 
 	//Constructors
-	Entity(Coord=Coord(), EntityType* =nullptr, const char* =Entity::dName, const Model* =&Entity::defaultModel);
-
-	//Setters
-	void setData(EntityData);
-
-	//Getters
-	EntityData getData() const;
+	Entity(Coord=Coord(), EntityType* =nullptr, std::string=Entity::dName);
 
 	//Action
 	int sendAction(Entity*, EntityAction);
 	int receiveAction(EntityAction);
 
+	//Interaction
 	virtual bool move(Coord);
-
 	virtual bool moveInto(Entity*);
 
 	//IModelable interface
@@ -84,14 +84,18 @@ public:
 	Coord getLastPos();
 	bool isDirty();
 
+	//Components
+	void attachComponent(ComponentBase*);
+	void detachComponent(ComponentBase*);
+
+	template<typename T> T* getComponent();
+	template<typename T> std::set<T*> getComponents();
+
+	template<typename T, class... Args> T* createComponent(Args...);
+
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
 		out << entity.data.name;
-		if(entity.model && &out == &std::cout) {
-			out << "(";
-			entity.model->draw(Renderer::getCursorPos());
-			out << ")";
-		};
 		out << " id=" << (int)entity.data.id;
 		out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;
@@ -105,17 +109,17 @@ private:
 	Coord pos;
 	Coord lastPos;
 
-	Model* model;
-
 	EntityData data;
 	EntityType *type;
+
+	std::unordered_map<int, std::unordered_set<ComponentBase*>> components;
 
 	EntityManager *manager = nullptr;
 
 	bool dirty = false;
 };
 
-class EntityManager : public Renderer {
+class EntityManager {
 public:
 	//Constructors
 	EntityManager();
@@ -126,13 +130,6 @@ public:
 	//Get information
 	Entity* getEntityAt(Coord) const;
 	std::vector<Entity*> getEntities() const;
-
-	//Renderer
-	void draw() const;
-	void redraw() const;
-	void clear() const;
-
-	void setBackground(std::function<void(BoundingBox)>);
 
 	//Add/remove from list
 	bool registerEntity(Entity*);
@@ -166,6 +163,54 @@ private:
 
 	Field* field;
 	std::vector<Entity*> entities;
+};
+
+
+
+
+/********** TEMPLATE METHODS **********/
+
+template<typename T>
+T* Entity::getComponent() {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID) == 0)
+		return nullptr;
+
+	std::set<ComponentBase*> components = this->components[componentID];
+
+	if(components.size() == 0)
+		return nullptr;
+
+	return dynamic_cast<T*>(*components.begin());
+};
+
+template<typename T>
+std::set<T*> Entity::getComponents() {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID))
+		return reinterpret_cast<std::set<T*>>(this->components[componentID]);
+	else
+		return std::set<T*>();
+};
+
+
+/*
+ * Creates and attaches a component
+ */
+template<typename T, class... Args>
+T* Entity::createComponent(Args... args) {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID) == 0)
+		this->components.emplace();
+
+	T* v = new T(args...);
+
+	this->components[componentID].insert(v);
+
+	return v;
 };
 
 #endif
