@@ -25,8 +25,8 @@ public:
 	static Entry makeEntry(std::string, LogLevel, std::string);
 	static Entry makeEntry(Entry, std::string);
 
-	Log(std::string, std::string);
-	Log(std::string, std::string, Log*);
+	Log(std::string, std::string, LogLevel=LogLevel::Info);
+	Log(std::string, std::string, Log*, LogLevel=LogLevel::Info);
 	virtual ~Log();
 
 	void setParent(Log*);
@@ -46,6 +46,8 @@ private:
 
 	std::string name;
 	std::ofstream logfile;
+
+	LogLevel level;
 
 	Log *parent;
 

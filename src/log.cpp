@@ -32,12 +32,18 @@ Log::Entry Log::makeEntry(Log::Entry base, std::string message) {
 };
 
 
-Log::Log(std::string name, std::string logfile) : Log(name, logfile, &Engine::log){};
+Log::Log(std::string name, std::string logfile, LogLevel level) : Log(name, logfile, &Engine::log, level){};
 
-Log::Log(std::string name, std::string logfile, Log *parent) {
+/*
+ * Create new log with given name, logfile, and parent log
+ * Sets the default log level to level
+ */
+Log::Log(std::string name, std::string logfile, Log *parent, LogLevel level) {
 	this->name = name;
 	Utils::create_directories(logfile.substr(0, logfile.rfind("/")));
 	this->logfile.open(logfile, std::ios::out | std::ios::app);
+
+	this->level = level;
 
 	this->parent = parent;
 };
@@ -59,7 +65,7 @@ LogLevel Log::getMinLevel() const {
 };
 
 void Log::log(std::string message) {
-	this->log(message, LogLevel::Info, "Default");
+	this->log(message, this->level, "Default");
 };
 
 void Log::log(std::string message, LogLevel severity) {
