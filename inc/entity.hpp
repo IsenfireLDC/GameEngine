@@ -24,8 +24,10 @@
 #include "render.hpp"
 #include "component.hpp"
 
+#include "level.hpp"
+#include "engine.hpp"
+
 /*	Types		*/
-class EntityManager;
 class Entity;
 
 struct EntityData {
@@ -56,33 +58,23 @@ struct EntityType {
 	};
 };
 
+
 /*
  * Reduce Entity to basic info (pos, name, etc.)
  * Allow collision, physics, model, etc. to be attached
  */
 class Entity : public Update {
 public:
-	friend class EntityManager;
-
 	//Constants
 	const static Coord origin;
 	const static std::string dName;
 
 	//Constructors
-	Entity(Coord=Coord(), EntityType* =nullptr, std::string=Entity::dName);
+	Entity(class Level* = &Engine::level, Coord=Coord(), EntityType* =nullptr, std::string=Entity::dName);
 
 	//Action
-	int sendAction(Entity*, EntityAction);
-	int receiveAction(EntityAction);
-
-	//Interaction
-	virtual bool move(Coord);
-	virtual bool moveInto(Entity*);
-
-	//IModelable interface
-	Coord getPos() const;
-	Coord getLastPos();
-	bool isDirty();
+	//int sendAction(Entity*, EntityAction);
+	//int receiveAction(EntityAction);
 
 	//Components
 	void attachComponent(ComponentBase*);
@@ -100,70 +92,23 @@ public:
 		out << " id=" << (int)entity.data.id;
 		out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;
-		if(entity.manager) out << " managed by " << entity.manager;
 		return out;
 	};
+
+
+	Coord pos;
 
 private:
 	static int gID;
 
-	Coord pos;
-	Coord lastPos;
-
 	EntityData data;
 	EntityType *type;
 
+	Level *level;
+
 	std::unordered_map<int, std::unordered_set<ComponentBase*>> components;
 
-	EntityManager *manager = nullptr;
-
 	bool dirty = false;
-};
-
-class EntityManager {
-public:
-	//Constructors
-	EntityManager();
-	EntityManager(Field*);
-
-	virtual ~EntityManager();
-
-	//Get information
-	Entity* getEntityAt(Coord) const;
-	std::vector<Entity*> getEntities() const;
-
-	//Add/remove from list
-	bool registerEntity(Entity*);
-	bool unregisterEntity(Entity*);
-
-	//Take action
-	bool moveEntity(Entity*, Coord);
-
-	//Query
-	bool inBounds(Coord) const;
-	bool canPlaceAt(Coord) const;
-	unsigned int findEntity(Entity*) const;
-
-	friend std::ostream& operator<<(std::ostream& out, const EntityManager& manager) {
-		out << "EntityManager with ";
-		if(manager.field) out << "field(" << manager.field << ")and ";
-		unsigned int nEnt = manager.entities.size();
-		out << nEnt << " registered entities";
-		
-		if(nEnt == 0) return out;
-
-		out << "{" << *manager.entities[0];
-		for(unsigned int i = 1; i < nEnt; ++i)
-			out << ", " << *manager.entities[i];
-		out << "}";
-
-		return out;
-	};
-
-private:
-
-	Field* field;
-	std::vector<Entity*> entities;
 };
 
 
