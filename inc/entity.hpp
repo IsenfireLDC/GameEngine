@@ -24,9 +24,6 @@
 #include "render.hpp"
 #include "component.hpp"
 
-#include "level.hpp"
-#include "engine.hpp"
-
 /*	Types		*/
 class Entity;
 
@@ -54,10 +51,11 @@ class Entity : public Update {
 public:
 	//Constants
 	const static Coord origin;
-	const static std::string dName;
+	const static std::string defaultName;
+	static class Level *const defaultLevel;
 
 	//Constructors
-	Entity(class Level* = &Engine::level, Coord=Entity::origin, std::string=Entity::dName);
+	Entity(class Level* = Entity::defaultLevel, Coord=Entity::origin, std::string=Entity::defaultName);
 
 	//Action
 	//int sendAction(Entity*, EntityAction);

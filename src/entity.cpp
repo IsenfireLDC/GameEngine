@@ -21,7 +21,8 @@
 int Entity::gID = 0;
 
 const Coord Entity::origin = Coord(1,1);
-const std::string Entity::dName = "Entity";
+const std::string Entity::defaultName = "Entity";
+Level *const Entity::defaultLevel = &Engine::level;
 
 /*
  * Constructor for new entity
