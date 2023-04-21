@@ -38,8 +38,8 @@ public:
 	void log(std::string, LogLevel);
 	void log(std::string, LogLevel, std::string);
 
-	friend void operator<<(Log&, const std::string&);
-	friend void operator<<(Log&, const Entry&);
+	friend Log& operator<<(Log&, const std::string&);
+	friend Log& operator<<(Log&, const Entry&);
 
 private:
 	void writeEntry(Entry);

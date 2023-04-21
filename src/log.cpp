@@ -126,10 +126,14 @@ std::ostream& operator<<(std::ostream &os, const Log::Entry &entry) {
 	return os;
 };
 
-void operator<<(Log &log, const std::string &message) {
+Log& operator<<(Log &log, const std::string &message) {
 	log.log(message);
+
+	return log;
 };
 
-void operator<<(Log &log, const Log::Entry &entry) {
+Log& operator<<(Log &log, const Log::Entry &entry) {
 	log.writeEntry(entry);
+
+	return log;
 };
