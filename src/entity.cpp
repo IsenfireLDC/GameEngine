@@ -30,14 +30,15 @@ const std::string Entity::dName = "Entity";
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(Level *level, Coord pos, EntityType *type, std::string name) : Update() {
+Entity::Entity(Level *level, Coord pos, std::string name) : Update() {
 	level->addEntity(this);
 	this->level = level;
 
 	this->pos = pos;
 
-	this->type = type;
-	this->data = {Utils::nextID(&Entity::gID), 0, name};
+	this->id = Utils::nextID(&Entity::gID);
+	this->state = 0;
+	this->name = name;
 };
 
 

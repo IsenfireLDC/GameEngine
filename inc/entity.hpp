@@ -43,20 +43,7 @@ struct EntityAction {
 };
 
 typedef std::function<int(Entity*, EntityAction)> EntityActionHandler;
-
-//Singleton type
-struct EntityType {
-	int id;
-	const char* name;
-	std::unordered_map<int, EntityActionHandler> handlers;
-
-	EntityType(int id, const char *name) {
-		this->id = id;
-		this->name = name;
-
-		this->handlers = std::unordered_map<int, EntityActionHandler>();
-	};
-};
+//std::unordered_map<int, EntityActionHandler> handlers; //Map example for handlers
 
 
 /*
@@ -70,7 +57,7 @@ public:
 	const static std::string dName;
 
 	//Constructors
-	Entity(class Level* = &Engine::level, Coord=Coord(), EntityType* =nullptr, std::string=Entity::dName);
+	Entity(class Level* = &Engine::level, Coord=Entity::origin, std::string=Entity::dName);
 
 	//Action
 	//int sendAction(Entity*, EntityAction);
@@ -88,9 +75,9 @@ public:
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
-		out << entity.data.name;
-		out << " id=" << (int)entity.data.id;
-		out << " type=" << (int)entity.type->id;
+		out << entity.name;
+		out << " id=" << (int)entity.id;
+		//out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;
 		return out;
 	};
@@ -101,10 +88,11 @@ public:
 private:
 	static int gID;
 
-	EntityData data;
-	EntityType *type;
-
 	Level *level;
+
+	int id;
+	int state;
+	std::string name;
 
 	std::unordered_map<int, std::unordered_set<ComponentBase*>> components;
 
