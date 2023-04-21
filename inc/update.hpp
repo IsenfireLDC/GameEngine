@@ -71,6 +71,16 @@ public:
 template<typename T> std::unordered_set<T*> UpdateController<T>::members{};
 
 /*
+ * Create a controller instance attached to the given thread pool
+ * Uses Engine::threadPool by default
+ */
+template<typename T>
+UpdateController<T>::UpdateController(ThreadPool *threadPool) : threadPool(threadPool) {};
+
+template<typename T>
+UpdateController<T>::~UpdateController() {};
+
+/*
  * Update all registered objects with the controller's thread pool
  */
 template<typename T>
