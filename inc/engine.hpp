@@ -47,4 +47,16 @@ namespace Engine {
 #endif
 #endif
 
+/*
+ * level.hpp
+ *
+ * Default level
+ */
+#ifdef _LEVEL_HPP_
+#ifndef _ENGINE_LEVEL
+#define _ENGINE_LEVEL
+	extern Level level;
+#endif
+#endif
+
 };
