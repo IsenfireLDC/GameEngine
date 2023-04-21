@@ -36,6 +36,18 @@ namespace Engine {
 #endif
 
 /*
+ * input.hpp
+ *
+ * Global input state
+ */
+#ifdef _INPUT_HPP_
+#ifndef _ENGINE_INPUT
+#define _ENGINE_INPUT
+	extern Input input;
+#endif
+#endif
+
+/*
  * threads.hpp
  *
  * Default thread pool
