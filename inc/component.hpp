@@ -7,7 +7,6 @@
 class ComponentBase;
 
 namespace Engine {
-	extern std::vector<std::unordered_set<ComponentBase*>> components;
 	extern int GCID;
 };
 
