@@ -7,93 +7,70 @@
 #ifndef _EVENTS_HPP_
 #define _EVENTS_HPP_
 
-#include "utils.hpp"
-
-#include <functional>
-#include <unordered_map>
-#include <queue>
-#include <mutex>
+#include <SDL2/SDL_events.h>
 
 #include <string>
 
-/*
- * Basic Event List:
- * ============================================================================
- * InputEvent		: General un-mapped input
- * QuitEvent		: Close game
- * ActionEvent		: Action to handle (maybe just use event handler?)
- * CollisionEvent	: Entity attempted to move onto another
- * MoveEvent		: Moved an entity
- */
+class EventBase {
+public:
+//	virtual unsigned int eventID() const = 0;
 
-/*
- * Event needs:
- *  - type of event -> how to handle
- *  - data -> what to do
- *    - sender
- *    - message
- */
-
-/*
- * Event:
- *  - Trigger	: class?/id?	: Who sent this?/Why was this sent?
- *  - Metadata	: members	: What is this?
- *    - Id			: Event type
- *    - Data			: Event data/context
- *  - Blocking?	: member	: Should I wait?
- *
- * On trigger, send event to queue:
- *  - Set approprate metedata
- *  - Check return data
- *    - If none; continue execution
- *    - Else wait for response
- *
- * Handle event:
- *  - Check for registered handler
- *    - If handler exists, call it
- *    - ElseIf default handler exists, call it
- *    - Else ignore
- *  - If something is waiting on the event, notify it
- */
-
-#define Event_MgetHash(x) typeid(x).hash_code()
-
-struct Event {
-	friend class Events;
-
-	Event() {};
-	virtual ~Event();
-
-	virtual int getHash() = 0;
 	virtual std::string getInfo() = 0;
 };
 
-typedef std::function<void(Event*)> EventHandler;
-
-class Events {
+template<typename T>
+class Event : public EventBase {
 public:
-	int registerEventType(Event*);
-	int getEventID(Event*);
+	static const unsigned int id;
 
-	void queueEvent(Event*);
-	void handleEvents();
+	Event();
+	virtual ~Event();
 
-	Event* getFirstEvent() const {
-		if(this->events.size()>0)
-			return this->events.front();
-		return nullptr;
+	/*
+	 * These arguments are part of the SDL_UserEvent struct
+	 *
+	 * The remaining data member of the struct will have a pointer to the Event object
+	 */
+	void push(int = 0, void* = nullptr) const;
+
+//private:
+//	unsigned int eventID() const { return Event<T>::id; };
+};
+
+
+/********** TEMPLATE METHODS **********/
+
+/*
+ * Uses lazy initialization of static members to automatically register the class
+ */
+template<typename T>
+const unsigned int Event<T>::id = SDL_RegisterEvents(1);
+
+template<typename T>
+Event<T>::Event() {};
+
+template<typename T>
+Event<T>::~Event() {};
+
+/*
+ * Push event to SDL event queue
+ *
+ * Passes SDL_UserEvent with these members:
+ * 	type	: Event id
+ * 	code	: <code> argument (default: 0)
+ * 	data1	: Event object
+ * 	data2	: <data> argument (default: nullptr)
+ */
+template<typename T>
+void Event<T>::push(int code, void *data) const {
+	SDL_UserEvent event = {
+		.type = Event<T>::id,
+		.code = code,
+		.data1 = this,
+		.data2 = data
 	};
 
-	void registerEventHandler(int, EventHandler);
-
-private:
-	std::unordered_map<int, EventHandler> handlers;
-	std::unordered_map<int, int> eventIDs;
-
-	std::queue<Event*> events;
-	std::mutex eventsLock;
-
-	static int gID;
+	SDL_PushEvent((SDL_Event*)&event);
 };
 
 #endif
