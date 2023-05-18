@@ -57,8 +57,6 @@ public:
 	//Constructors
 	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Coord=Entity::origin);
 
-	std::string getName(void) const;
-
 	//Action
 	//int sendAction(Entity*, EntityAction);
 	//int receiveAction(EntityAction);
@@ -84,6 +82,7 @@ public:
 
 
 	Coord pos;
+	std::string name;
 
 private:
 	static int gID;
@@ -92,7 +91,6 @@ private:
 
 	int id;
 	int state;
-	std::string name;
 
 	std::unordered_map<int, std::unordered_set<ComponentBase*>> components;
 

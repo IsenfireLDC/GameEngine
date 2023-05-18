@@ -44,14 +44,6 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update() {
 
 
 /*
- * Gets the name of this entity
- */
-std::string Entity::getName(void) const {
-	return this->name;
-};
-
-
-/*
  * Attaches the given component to this entity
  */
 void Entity::attachComponent(ComponentBase *component) {
