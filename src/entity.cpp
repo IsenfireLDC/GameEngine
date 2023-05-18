@@ -31,7 +31,7 @@ Level *const Entity::defaultLevel = &Engine::level;
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(Level *level, Coord pos, std::string name) : Update() {
+Entity::Entity(std::string name, Level *level, Coord pos) : Update() {
 	level->addEntity(this);
 	this->level = level;
 
@@ -40,6 +40,14 @@ Entity::Entity(Level *level, Coord pos, std::string name) : Update() {
 	this->id = Utils::nextID(&Entity::gID);
 	this->state = 0;
 	this->name = name;
+};
+
+
+/*
+ * Gets the name of this entity
+ */
+std::string Entity::getName(void) const {
+	return this->name;
 };
 
 

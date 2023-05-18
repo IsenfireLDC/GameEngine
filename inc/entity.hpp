@@ -55,7 +55,9 @@ public:
 	static class Level *const defaultLevel;
 
 	//Constructors
-	Entity(class Level* = Entity::defaultLevel, Coord=Entity::origin, std::string=Entity::defaultName);
+	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Coord=Entity::origin);
+
+	std::string getName(void) const;
 
 	//Action
 	//int sendAction(Entity*, EntityAction);
