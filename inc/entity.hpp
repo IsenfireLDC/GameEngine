@@ -56,6 +56,7 @@ public:
 
 	//Constructors
 	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Coord=Entity::origin);
+	Entity(std::string=Entity::defaultName, Coord=Entity::origin, class Level* = Entity::defaultLevel);
 
 	//Action
 	//int sendAction(Entity*, EntityAction);

@@ -24,6 +24,8 @@ const Coord Entity::origin = Coord(1,1);
 const std::string Entity::defaultName = "Entity";
 Level *const Entity::defaultLevel = &Engine::level;
 
+Entity *Engine::player = nullptr;
+
 /*
  * Constructor for new entity
  *
@@ -41,6 +43,12 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update(level) {
 	this->state = 0;
 	this->name = name;
 };
+
+
+/*
+ * Constructor overload with different argument order
+ */
+Entity::Entity(std::string nname, Coord pos, Level *level) : Entity(name, level, pos) {};
 
 
 /*
