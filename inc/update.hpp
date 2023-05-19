@@ -2,8 +2,10 @@
 #define _UPDATE_HPP_
 
 #include <unordered_set>
+#include <unordered_map>
 
 #include "threads.hpp"
+#include "level.hpp"
 
 #include "engine.hpp"
 
@@ -20,7 +22,7 @@ class UpdateController {
 public:
 	friend UpdateBase<T>;
 
-	UpdateController(ThreadPool* = &Engine::threadPool);
+	UpdateController(Level* = &Engine::level, ThreadPool* = &Engine::threadPool);
 	~UpdateController();
 
 	/*
@@ -29,9 +31,10 @@ public:
 	void update(float);
 
 private:
+	Level *level;
 	ThreadPool *threadPool;
 
-	static std::unordered_set<T*> members;
+	static std::unordered_map<Level*, std::unordered_set<T*>> members;
 };
 
 /*
@@ -44,13 +47,14 @@ class UpdateBase {
 public:
 	friend UpdateController<T>;
 
-	UpdateBase();
+	UpdateBase(Level*);
 	virtual ~UpdateBase();
 
 	virtual void update(float) = 0;
 
 protected:
 	bool doUpdate;
+	Level *level;
 };
 
 
@@ -59,7 +63,7 @@ protected:
  */
 class Update : public UpdateBase<Update> {
 public:
-	Update();
+	Update(Level*);
 	virtual ~Update();
 
 	virtual void update(float) = 0;
@@ -68,14 +72,14 @@ public:
 
 /********** TEMPLATE METHODS **********/
 
-template<typename T> std::unordered_set<T*> UpdateController<T>::members{};
+template<typename T> std::unordered_map<Level*, std::unordered_set<T*>> UpdateController<T>::members{};
 
 /*
  * Create a controller instance attached to the given thread pool
  * Uses Engine::threadPool by default
  */
 template<typename T>
-UpdateController<T>::UpdateController(ThreadPool *threadPool) : threadPool(threadPool) {};
+UpdateController<T>::UpdateController(Level *level, ThreadPool *threadPool) : threadPool(threadPool), level(level) {};
 
 template<typename T>
 UpdateController<T>::~UpdateController() {};
@@ -85,7 +89,7 @@ UpdateController<T>::~UpdateController() {};
  */
 template<typename T>
 void UpdateController<T>::update(float delta) {
-	for(UpdateBase<T> *update : UpdateController<T>::members) {
+	for(UpdateBase<T> *update : UpdateController<T>::members[this->level]) {
 		if(update->doUpdate)
 			this->threadPool->add(std::bind(update->update, update, delta));
 	};
@@ -96,10 +100,11 @@ void UpdateController<T>::update(float delta) {
  * Registers this object to the update controller for this type
  */
 template<typename T>
-UpdateBase<T>::UpdateBase() {
-	UpdateController<T>::members.insert(static_cast<T*>(this));
+UpdateBase<T>::UpdateBase(Level *level) {
+	UpdateController<T>::members[level].insert(static_cast<T*>(this));
 
 	this->doUpdate = true;
+	this->level = level;
 };
 
 /*
@@ -107,7 +112,7 @@ UpdateBase<T>::UpdateBase() {
  */
 template<typename T>
 UpdateBase<T>::~UpdateBase() {
-	UpdateController<T>::members.erase(static_cast<T*>(this));
+	UpdateController<T>::members[this->level].erase(static_cast<T*>(this));
 };
 
 #endif
