@@ -71,4 +71,16 @@ namespace Engine {
 #endif
 #endif
 
+/*
+ * entity.hpp
+ *
+ * Player entity
+ */
+#ifdef _ENTITY_HPP_
+#ifndef _ENGINE_PLAYER
+#define _ENGINE_PLAYER
+	extern Entity *player;
+#endif
+#endif
+
 };
