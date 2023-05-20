@@ -2,7 +2,7 @@
 NAME=GameEngine
 
 STATIC_LIBS=
-SHARED_LIBS=mingw32 SDL2main SDL2
+SHARED_LIBS=mingw32 SDL2main SDL2 image
 
 # Project directories
 SRCDIR=src
