@@ -9,6 +9,7 @@
 
 //includes
 #include "render.hpp"
+#include "render/static_texture.hpp"
 #include "window.hpp"
 #include "entity.hpp"
 #include "input.hpp"
@@ -33,7 +34,6 @@
 #include "engine.hpp"
 
 static bool running = true;
-static Entity *primary;
 
 static std::string message;
 /*
@@ -41,6 +41,7 @@ static void aExit(Entity *target, int input) {
 	if(input == Input::Key::Escape) running = false;
 };*/
 
+/*
 static void inputHandler(Event *event) {
 	InputEvent *inputEvent = (InputEvent*)event;
 
@@ -108,28 +109,29 @@ void getKBCodes() {
 		Sleep(100);
 	}
 };
+*/
 
 int gameTest() {
 	Engine::log.log("-------------------- Log Start --------------------");
 	gen.seed(rd());
 
 	//Create player
-	const char nEntType[20] = "Entity";
-	EntityType tEntity = EntityType(0, nEntType);
-	tEntity.handlers[1] = exHandler;
-	const char nPlayer[20] = "Player";
-	Entity player = Entity(Entity::origin, &tEntity, nPlayer);
-	BasicModel mPlayer = BasicModel('~', TermColor::LIME);
-	player.setModel(&mPlayer);
+	Entity player{"Player"};
 
-	//Set player as primary
-	primary = &player;
+	//TODO: This is kind of wordy; maybe try to streamline?
+	StaticTexture playerTexture{"assets/player.tga"};
+	Model playerModel{&playerTexture};
+	player.createComponent<ModelComponent>(&playerModel);
+
+	//Set player entity as the player
+	Engine::player = &player;
 
 	//Create non-player
-	const char nNPC[20] = "NPC";
-	Entity npc = Entity({3,4}, &tEntity, nNPC);
-	BasicModel mNPC = BasicModel('!', TermColor::LIGHT_BLUE | TermColor::BG_GRAY);
-	npc.setModel(&mNPC);
+	Entity npc{"NPC", {3,4}};
+
+	StaticTexture npcTexture{"assets/npc.tga"};
+	Model npcModel{&npcTexture};
+	npc.createComponent<ModelComponent>(&npcModel);
 
 	//Create field
 	RectArea fieldArea{Coord(), Coord(25, 20)};
