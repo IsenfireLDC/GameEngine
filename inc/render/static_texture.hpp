@@ -8,6 +8,8 @@
 
 #include "render.hpp"
 
+#include "image.h"
+
 #include <string>
 
 class StaticTexture : public Texture {
@@ -18,7 +20,7 @@ public:
 	SDL_Texture* getTexture() const;
 
 private:
-	SDL_Texture *texture;
+	SDL_Texture *texture = nullptr;
 };
 
 #endif
