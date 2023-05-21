@@ -31,7 +31,13 @@
 
 #include <random>
 
+#include <SDL2/SDL.h>
+
 #include "engine.hpp"
+
+//TODO: Move somewhere else
+SDL_Window *Engine::window = nullptr;
+SDL_Renderer *Engine::renderer = nullptr;
 
 static bool running = true;
 
@@ -110,10 +116,48 @@ void getKBCodes() {
 	}
 };
 */
+int initSDL() {
+	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+		Engine::log.log("Failed to initialize SDL", LogLevel::Error);
+		return 1;
+	};
+
+	Engine::window = SDL_CreateWindow(
+		"Game Engine 0.1",
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		640, 480,
+		0
+	);
+
+	if(!Engine::window) {
+		Engine::log.log("Failed to create window", LogLevel::Error);
+		return 1;
+	};
+
+	Engine::renderer = SDL_CreateRenderer(Engine::window, -1, 0);
+
+	if(!Engine::renderer) {
+		Engine::log.log("Failed to create renderer", LogLevel::Error);
+		return 1;
+	};
+
+	return 0;
+};
+
+int uninitSDL() {
+	SDL_DestroyRenderer(Engine::renderer);
+	SDL_DestroyWindow(Engine::window);
+	SDL_Quit();
+
+	return 0;
+};
 
 int gameTest() {
 	Engine::log.log("-------------------- Log Start --------------------");
 	gen.seed(rd());
+
+	//Init SDL: Create window and renderer; TODO: Move somewhere else
+	if(initSDL() != 0) return 1;
 
 	//Create player
 	Entity player{"Player"};
