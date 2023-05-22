@@ -72,24 +72,15 @@ namespace Engine {
 #endif
 
 /*
- * ???.hpp
+ * window.hpp
  *
- * SDL Window; SDL Renderer
+ * SDL window and renderer
  */
-//#ifdef _???_HPP_
-#ifdef SDL_video_h_
+#ifdef _WINDOW_HPP_
 #ifndef _ENGINE_WINDOW
 #define _ENGINE_WINDOW
-	extern SDL_Window *window;
+	extern Window window;
 #endif
 #endif
-
-#ifdef SDL_render_h_
-#ifndef _ENGINE_RENDERER
-#define _ENGINE_RENDERER
-	extern SDL_Renderer *renderer;
-#endif
-#endif
-//#endif
 
 };
