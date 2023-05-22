@@ -4,9 +4,6 @@
 #include <unordered_set>
 #include <string>
 
-//Predeclare so it is available for entity
-class Level;
-
 //Need access to Entity methods in template
 #include "entity.hpp"
 
