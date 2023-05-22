@@ -1,5 +1,6 @@
 #include "render/static_texture.hpp"
 
+#include "window.hpp"
 #include "log.hpp"
 
 #include "image.h"
@@ -19,7 +20,7 @@ StaticTexture::StaticTexture(std::string filename) {
 			Engine::log.log("Failed to load bmp", LogLevel::Error, "StaticTexture");
 			return;
 		};
-		this->texture = SDL_CreateTextureFromSurface(Engine::renderer, surface);
+		this->texture = SDL_CreateTextureFromSurface(Engine::window.getRenderer(), surface);
 
 		//Free temporary surface
 		SDL_FreeSurface(surface);
@@ -43,7 +44,7 @@ StaticTexture::StaticTexture(std::string filename) {
 			Engine::log.log("Failed to load other file", LogLevel::Error, "StaticTexture");
 			return;
 		};
-		this->texture = SDL_CreateTextureFromSurface(Engine::renderer, isurface.surface);
+		this->texture = SDL_CreateTextureFromSurface(Engine::window.getRenderer(), isurface.surface);
 
 		//Free temporary surface
 		SDL_FreeSurface(isurface.surface);
