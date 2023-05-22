@@ -10,21 +10,17 @@
 #include <vector>
 #include <iostream>
 
-#include <functional>
 #include <unordered_map>
 #include <set>
 
-#include "area.hpp"
-#include "field.hpp"
 #include "pos.hpp"
 
-#include "model.hpp"
 #include "update.hpp"
 
-#include "render.hpp"
 #include "component.hpp"
 
 /*	Types		*/
+/*
 class Entity;
 
 struct EntityData {
@@ -41,6 +37,7 @@ struct EntityAction {
 
 typedef std::function<int(Entity*, EntityAction)> EntityActionHandler;
 //std::unordered_map<int, EntityActionHandler> handlers; //Map example for handlers
+*/
 
 
 /*
@@ -56,7 +53,10 @@ public:
 
 	//Constructors
 	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Coord=Entity::origin);
-	Entity(std::string=Entity::defaultName, Coord=Entity::origin, class Level* = Entity::defaultLevel);
+	Entity(std::string, Coord, class Level* = Entity::defaultLevel);
+
+	//Update
+	void update(float);
 
 	//Action
 	//int sendAction(Entity*, EntityAction);
@@ -88,7 +88,7 @@ public:
 private:
 	static int gID;
 
-	Level *level;
+	class Level *level;
 
 	int id;
 	int state;

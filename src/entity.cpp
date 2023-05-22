@@ -6,12 +6,12 @@
 
 #include "entity.hpp"
 
-#include "level.hpp"
-
 #include "utils.hpp"
 #include "log.hpp"
 
 #include <iostream>
+
+#include "level.hpp"
 
 #include "engine.hpp"
 
@@ -49,6 +49,12 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update(level) {
  * Constructor overload with different argument order
  */
 Entity::Entity(std::string nname, Coord pos, Level *level) : Entity(name, level, pos) {};
+
+
+/*
+ * Updates this entity
+ */
+void Entity::update(float delta) {};
 
 
 /*
