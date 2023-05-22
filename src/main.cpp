@@ -35,10 +35,6 @@
 
 #include "engine.hpp"
 
-//TODO: Move somewhere else
-SDL_Window *Engine::window = nullptr;
-SDL_Renderer *Engine::renderer = nullptr;
-
 static bool running = true;
 
 static std::string message;
@@ -116,37 +112,28 @@ void getKBCodes() {
 	}
 };
 */
+
+int filter(void *data, SDL_Event *event) {
+	if(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
+		Engine::input.setState(event->keysym, event->state == SDL_PRESSED);
+		return 0;
+	};
+
+	return 1;
+};
+
 int initSDL() {
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-		Engine::log.log("Failed to initialize SDL", LogLevel::Error);
+		Engine::log.log("Failed to initialize SDL", LogLevel::Fatal);
 		return 1;
 	};
 
-	Engine::window = SDL_CreateWindow(
-		"Game Engine 0.1",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		640, 480,
-		0
-	);
-
-	if(!Engine::window) {
-		Engine::log.log("Failed to create window", LogLevel::Error);
-		return 1;
-	};
-
-	Engine::renderer = SDL_CreateRenderer(Engine::window, -1, 0);
-
-	if(!Engine::renderer) {
-		Engine::log.log("Failed to create renderer", LogLevel::Error);
-		return 1;
-	};
+	SDL_SetEventFilter(&filter, 0);
 
 	return 0;
 };
 
 int uninitSDL() {
-	SDL_DestroyRenderer(Engine::renderer);
-	SDL_DestroyWindow(Engine::window);
 	SDL_Quit();
 
 	return 0;
@@ -177,81 +164,33 @@ int gameTest() {
 	Model npcModel{&npcTexture};
 	npc.createComponent<ModelComponent>(&npcModel);
 
-	//Create field
-	RectArea fieldArea{Coord(), Coord(25, 20)};
-	Field field = Field(fieldArea, Coord(2,1));
-
-	//Create player manager
-	EntityManager manager = EntityManager(&field);
-
-	//Create window
-	//std::vector<const ModelRenderer*> renderers = manager.getRenderers();
-	//const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
-	//Window window = Window(&field, modelable);
-
-	RectArea windowArea = RectArea(Coord(0,0), Coord(25, 20));
-	Window window = Window(windowArea, Coord(2,1));
-
-	window.addRenderer(&manager);
-
-	//Create input
-	Input input = Input();
 	//Action ExitAction = aExit;
 	//input.addActionMapping(Input::Key::Escape, ExitAction);
-
-	//Add player to manager
-	manager.registerEntity(&player);
-	manager.registerEntity(&npc);
 
 	//Render window
 	window.show(true);
 	window.draw();
 
-	//Test log
-	Log testLog{"Test", "./logs/test.log"};
-	LogLevel testLogLevel = LogLevel::Debug;
-	testLog.log("Testing nested log", LogLevel::Info, "Main");
-	testLog << "Testing log insertion operator for message";
-	Log::Entry testLogEntry = Log::makeEntry("BaseEntry", testLogLevel, "Main");
-	testLog << Log::makeEntry(testLogEntry, "Test log insertion operator for Entry");
-	Engine::log.log("Initialization complete", LogLevel::Info, "Main");
-
-	//Print out manager
-	std::stringstream sstr{};
-	sstr << manager;
-	testLog.log(sstr.str(), testLogLevel, "Manager");
-
 	//Attempt to move player
 	Coord testCoord = {2,5};
-	manager.moveEntity(&player, testCoord);
+	Engine::player->pos = testCoord;
 
-
-	if(manager.getEntityAt(testCoord)) {
-		window.setMsg("Moved player succesfully");
-	} else {
-		window.setMsg("Failed to move player");
-	};
-
-	Sleep(1000);
+	SDL_Delay(1000);
 
 	//Render window
-	window.redraw();
+	window.draw();
 
 	//Print out list of entities
-	std::vector<Entity*> playerList = manager.getEntities();
+	std::vector<std::string> playerList = {
+		"Player",
+		"NPC"
+	};
 
 	testLog.log("Printing entities", testLogLevel, "Main");
 	for(unsigned int i = 0; i < playerList.size(); ++i) {
 		sstr.str("\t");
-		sstr << *playerList[i];
+		sstr << Engine::level.findEntity(playerList[i]);
 		testLog.log(sstr.str(), testLogLevel, "Main");
-	};
-
-	//Get inputs
-	testLog.log("Spawning thread...", LogLevel::Info, "Main");
-	if(!input.spawnThread()) {
-		testLog.log("Failed, exiting", LogLevel::Fatal, "Main");
-		return 1;
 	};
 
 	//Setup event handling
