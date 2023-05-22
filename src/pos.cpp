@@ -22,3 +22,28 @@ bool operator==(const Coord& c1, const Coord& c2) {
 bool operator!=(const Coord& c1, const Coord& c2) {
 	return c1.x != c2.x || c1.y != c2.y;
 };
+
+
+SDL_Rect operator*(const SDL_Rect& r, const Coord& c) {
+	//Rudimentary scaling
+	SDL_Rect rect = {
+		.x = (int)(r.x * c.x),
+		.y = (int)(r.y * c.y),
+		.w = (int)(r.w * c.x),
+		.h = (int)(r.h * c.y)
+	};
+
+	return rect;
+};
+
+SDL_FRect operator*(const SDL_FRect& r, const Coord& c) {
+	//Rudimentary scaling
+	SDL_FRect rect = {
+		.x = r.x * c.x,
+		.y = r.y * c.y,
+		.w = r.w * c.x,
+		.h = r.h * c.y
+	};
+
+	return rect;
+};

@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include <SDL2/SDL_rect.h>
+
 struct Coord {
 	float x;
 	float y;
@@ -37,6 +39,9 @@ Coord operator+(const Coord&, const Coord&);
 Coord operator*(const Coord&, const Coord&);
 bool operator==(const Coord&, const Coord&);
 bool operator!=(const Coord&, const Coord&);
+
+SDL_Rect operator*(const SDL_Rect&, const Coord&);
+SDL_FRect operator*(const SDL_FRect&, const Coord&);
 
 
 #endif
