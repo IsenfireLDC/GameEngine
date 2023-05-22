@@ -5,13 +5,13 @@
 
 #include "engine.hpp"
 
-Level *UpdateControllerBase::defaultLevel = &Engine::level;
-ThreadPool *UpdateControllerBase::defaultThreadPool = &Engine::threadPool;
+Level *const UpdateControllerBase::defaultLevel = &Engine::level;
+ThreadPool *const UpdateControllerBase::defaultThreadPool = &Engine::threadPool;
 
 /*
  * Perform initialization
  */
-Update::Update() {};
+Update::Update(Level *level) : UpdateBase(level) {};
 
 /*
  * Perform cleanup

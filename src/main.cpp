@@ -10,8 +10,11 @@
 //includes
 #include "render.hpp"
 #include "render/static_texture.hpp"
+#include "model.hpp"
 #include "window.hpp"
+
 #include "entity.hpp"
+#include "level.hpp"
 #include "input.hpp"
 #include "events.hpp"
 #include "log.hpp"
@@ -91,11 +94,6 @@ struct Ticker : ITick {
 
 
 
-std::random_device rd;
-std::default_random_engine gen;
-std::uniform_int_distribution<int> randMove(0, 3);
-int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
-
 void getKBCodes() {
 	int kb_code = 0;
 
@@ -113,9 +111,14 @@ void getKBCodes() {
 };
 */
 
+//std::random_device rd;
+//std::default_random_engine gen;
+//std::uniform_int_distribution<int> randMove(0, 3);
+//int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
+
 int filter(void *data, SDL_Event *event) {
 	if(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
-		Engine::input.setState(event->keysym, event->state == SDL_PRESSED);
+		Engine::input.setState(event->key.keysym, event->key.state == SDL_PRESSED);
 		return 0;
 	};
 
@@ -141,7 +144,7 @@ int uninitSDL() {
 
 int gameTest() {
 	Engine::log.log("-------------------- Log Start --------------------");
-	gen.seed(rd());
+	//gen.seed(rd());
 
 	//Init SDL: Create window and renderer; TODO: Move somewhere else
 	if(initSDL() != 0) return 1;
@@ -168,8 +171,8 @@ int gameTest() {
 	//input.addActionMapping(Input::Key::Escape, ExitAction);
 
 	//Render window
-	window.show(true);
-	window.draw();
+	Engine::window.show(true);
+	Engine::window.draw();
 
 	//Attempt to move player
 	Coord testCoord = {2,5};
@@ -178,7 +181,7 @@ int gameTest() {
 	SDL_Delay(1000);
 
 	//Render window
-	window.draw();
+	Engine::window.draw();
 
 	//Print out list of entities
 	std::vector<std::string> playerList = {
@@ -186,13 +189,15 @@ int gameTest() {
 		"NPC"
 	};
 
-	testLog.log("Printing entities", testLogLevel, "Main");
+	std::stringstream sstr;
+	Engine::log.log("Printing entities", LogLevel::Info, "Main");
 	for(unsigned int i = 0; i < playerList.size(); ++i) {
 		sstr.str("\t");
 		sstr << Engine::level.findEntity(playerList[i]);
-		testLog.log(sstr.str(), testLogLevel, "Main");
+		Engine::log.log(sstr.str(), LogLevel::Info, "Main");
 	};
 
+	/*
 	//Setup event handling
 	//InputEvent
 	InputEvent ieType = InputEvent(Input::Key::Null);
@@ -223,6 +228,7 @@ int gameTest() {
 	//Stall main until the game is done
 	while(running) std::this_thread::yield();
 	game.run(false);
+	*/
 
 	/*
 	while(running) {
@@ -240,6 +246,8 @@ int gameTest() {
 		Sleep(100);
 	};
 	*/
+
+	uninitSDL();
 
 	return 0;
 };
@@ -315,7 +323,7 @@ void threadTest2() {
 	tp1.join();
 };
 
-int main() {
+int main(int argc, char* argv[]) {
 	int ret = 0;
 
 	ret = gameTest();

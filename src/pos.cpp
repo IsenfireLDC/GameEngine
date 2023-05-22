@@ -42,10 +42,10 @@ SDL_Rect operator*(const SDL_Rect& r, const Coord& c) {
 
 SDL_Rect operator*=(SDL_Rect& r, const Coord& c) {
 	//Rudimentary scaling
-	r.x = (int)(r.x * c.x),
-	r.y = (int)(r.y * c.y),
-	r.w = (int)(r.w * c.x),
-	r.h = (int)(r.h * c.y)
+	r.x = (int)(r.x * c.x);
+	r.y = (int)(r.y * c.y);
+	r.w = (int)(r.w * c.x);
+	r.h = (int)(r.h * c.y);
 
 	return r;
 };
@@ -64,10 +64,10 @@ SDL_FRect operator*(const SDL_FRect& r, const Coord& c) {
 
 SDL_FRect operator*=(SDL_FRect& r, const Coord& c) {
 	//Rudimentary scaling
-	r.x = r.x * c.x,
-	r.y = r.y * c.y,
-	r.w = r.w * c.x,
-	r.h = r.h * c.y
+	r.x = r.x * c.x;
+	r.y = r.y * c.y;
+	r.w = r.w * c.x;
+	r.h = r.h * c.y;
 
 	return r;
 };

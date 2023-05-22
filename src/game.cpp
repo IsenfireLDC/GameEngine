@@ -5,6 +5,7 @@
 #include "game.hpp"
 
 #include "update.hpp"
+#include "level.hpp"
 #include "log.hpp"
 
 #include "engine.hpp"
