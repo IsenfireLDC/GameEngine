@@ -79,7 +79,7 @@ template<typename T> std::unordered_map<Level*, std::unordered_set<T*>> UpdateCo
  * Uses Engine::threadPool by default
  */
 template<typename T>
-UpdateController<T>::UpdateController(Level *level, ThreadPool *threadPool) : threadPool(threadPool), level(level) {};
+UpdateController<T>::UpdateController(Level *level, ThreadPool *threadPool) : level(level), threadPool(threadPool) {};
 
 template<typename T>
 UpdateController<T>::~UpdateController() {};
