@@ -23,16 +23,20 @@ public:
 template<typename T>
 class Component : public ComponentBase {
 public:
-	Component() : id(getComponentID<T>()) {};
+	Component() : id(_getComponentID<T>()) {};
 
 	int componentID() const {
 		return this->id;
 	};
 
-public:
+	static int getComponentID() {
+		return _getComponentID<T>();
+	};
+
+private:
 	//6365115
 	template<typename D>
-	static int getComponentID() {
+	static int _getComponentID() {
 		static int id = ++Engine::GCID;
 		return id;
 	};

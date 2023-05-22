@@ -110,7 +110,7 @@ T* Entity::getComponent() {
 	if(this->components.count(componentID) == 0)
 		return nullptr;
 
-	std::set<ComponentBase*> components = this->components[componentID];
+	std::unordered_set<ComponentBase*> components = this->components[componentID];
 
 	if(components.size() == 0)
 		return nullptr;
