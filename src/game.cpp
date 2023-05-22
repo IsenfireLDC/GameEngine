@@ -12,7 +12,7 @@
 /*
  * Creates game with empty tickables set at 30 fps
  */
-Game::Game() : updateController(&Engine::threadPool)/*, scheduler(&Engine::threadPool)*/ {
+Game::Game() : updateController(&Engine::level, &Engine::threadPool)/*, scheduler(&Engine::threadPool)*/ {
 	//this->setFPS(30);
 };
 
