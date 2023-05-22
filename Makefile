@@ -17,7 +17,7 @@ SHARCDIR=$(SHLIBSDIR)/static
 SHINCDIR=$(SHLIBSDIR)/headers
 
 # Build files
-SRCS=$(wildcard $(SRCDIR)/*.cpp)
+SRCS=$(foreach dir,$(shell find $(SRCDIR) -type d),$(wildcard $(dir)/*.cpp))
 OBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 SHOBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
 DEPS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
