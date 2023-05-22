@@ -2,71 +2,51 @@
 #define _WINDOW_HPP_
 
 #include "render.hpp"
-#include "model.hpp"
+#include "pos.hpp"
 
 #include <unordered_set>
+#include <string>
 
 /*
  * Represents a drawable window
  *
  * Handles drawing output and passing back input
  */
-class Window : public Renderer {
-public:
-	static BasicModel defaultBorder;
-	static BasicModel defaultBackground;
+class Window {
+private:
+	static class Level *defaultLevel;
+	static std::string defaultName;
 
-	//Constructors
-	Window(RectArea = RectArea(), Coord = Coord(1,1),
-		BasicModel* = &defaultBorder,
-		BasicModel* = &defaultBackground
-	);
+public:
+	Window(class Level* = Window::defaultLevel, std::string = Window::defaultName, Coord = Coord(1,1));
+	~Window();
 
 	//Getters
 	Coord size() const;
 	Coord getScale() const;
 
-	BasicModel* getBorderModel() const;
-	BasicModel* getBackgroundModel() const;
+	SDL_Window* getWindow() const;
+	SDL_Renderer* getRenderer() const;
 
 	//Setters
-	void setMsg(const char*);
-
 	void resize(Coord);
 	void setScale(Coord);
 
-	void setBorderModel(BasicModel*);
-	void setBackgroundModel(BasicModel*);
-
-	void addRenderer(Renderer*);
-	void removeRenderer(Renderer*);
-
-	void addRenderers(std::vector<Renderer*>&);
-
 	//Rendering
 	void draw() const;
-	void redraw() const;
 	void clear() const;
-
-
-	std::function<void(BoundingBox)> getBackground() const;
 
 	void show(bool);
 
 private:
-	void drawBackground(BoundingBox) const;
+	SDL_Window *window;
+	SDL_Renderer *renderer;
 
-	RectArea area;
 	Coord scale;
-
-	BoundingBox windowBB;
-
-	BasicModel *border;
-	BasicModel *background;
 
 	bool visible;
 
-	std::unordered_set<const Renderer*> models;
+	class Level *level;
 
 	const char * msg = nullptr;
 };
