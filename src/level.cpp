@@ -10,7 +10,9 @@ Level Engine::level{};
  * Create new level
  * Initialize empty set of entities
  */
-Level::Level() {};
+Level::Level() {
+	this->modification = 0;
+};
 
 /*
  * Destructor
@@ -22,6 +24,9 @@ Level::~Level() {};
  * Add an entity to the level
  */
 void Level::addEntity(Entity *entity) {
+	if(this->entities.count(entity) != 0) return;
+
+	++this->modification;
 	this->entities.insert(entity);
 };
 
@@ -29,6 +34,9 @@ void Level::addEntity(Entity *entity) {
  * Remove an entity from the level
  */
 void Level::removeEntity(Entity *entity) {
+	if(this->entities.count(entity) == 0) return;
+
+	++this->modification;
 	this->entities.erase(entity);
 };
 
