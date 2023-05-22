@@ -12,18 +12,6 @@
 namespace Engine {
 
 /*
- * events.hpp
- *
- * Global event bus
- */
-#ifdef _EVENTS_HPP_
-#ifndef _ENGINE_EVENTS
-#define _ENGINE_EVENTS
-	extern Events eventBus;
-#endif
-#endif
-
-/*
  * log.hpp
  *
  * Global log
