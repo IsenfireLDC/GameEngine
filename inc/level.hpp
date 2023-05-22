@@ -32,6 +32,12 @@ private:
 };
 
 
+
+
+
+
+/********** TEMPLATE METHODS **********/
+
 template<typename T>
 std::unordered_set<Entity*> Level::findEntitiesWithComponent() {
 	static int validFor = -1;
