@@ -13,15 +13,23 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
 
+#include <functional>
 #include <unordered_map>
 
+/*
+ * Handles passing input to the program
+ *
+ * Allows using event-based input or polling
+ */
 class Input {
+public:
+	using Handler = std::function<void(SDL_KeyboardEvent*)>;
 public:
 	Input();
 	~Input();
 
-	//Set the state of the key
-	void setState(SDL_Keysym&, bool);
+	//Set handler for a key
+	Input& setHandler(SDL_Scancode, Handler);
 
 	//Get the state of the key from the scancode/keycode
 	bool pressed(SDL_Scancode) const;
@@ -32,8 +40,9 @@ public:
 private:
 	static Log log;
 
-	std::unordered_map<SDL_Scancode, bool> scancodes;
-	std::unordered_map<SDL_Keycode, bool> keycodes;
+	static int listener(void*, SDL_Event*);
+
+	std::unordered_map<SDL_Scancode, Input::Handler> handlers;
 
 	SDL_Keymod modifiers;
 };
