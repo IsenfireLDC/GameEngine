@@ -116,6 +116,7 @@ void getKBCodes() {
 //std::uniform_int_distribution<int> randMove(0, 3);
 //int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
 
+/* Unneeded
 int filter(void *data, SDL_Event *event) {
 	if(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
 		Engine::input.setState(event->key.keysym, event->key.state == SDL_PRESSED);
@@ -124,6 +125,7 @@ int filter(void *data, SDL_Event *event) {
 
 	return 1;
 };
+*/
 
 int initSDL() {
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -131,7 +133,7 @@ int initSDL() {
 		return 1;
 	};
 
-	SDL_SetEventFilter(&filter, 0);
+	//SDL_SetEventFilter(&filter, 0);
 
 	return 0;
 };
