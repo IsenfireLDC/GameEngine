@@ -21,6 +21,7 @@ std::string Window::defaultName = "Game Engine 0.1";
 Window Engine::window{};
 
 Window::Window(Level *level, std::string name, Coord scale) {
+	this->level = level;
 	this->scale = scale;
 
 	this->window = SDL_CreateWindow(
