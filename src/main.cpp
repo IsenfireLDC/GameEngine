@@ -185,6 +185,13 @@ int gameTest() {
 	//Render window
 	Engine::window.draw();
 
+	bool go = true;
+	while(go) {
+		SDL_Event e;
+		while(SDL_PollEvent(&e)) {
+		};
+	};
+
 	//Print out list of entities
 	std::vector<std::string> playerList = {
 		"Player",
