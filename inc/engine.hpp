@@ -12,6 +12,27 @@
 namespace Engine {
 
 /*
+ * engine.cpp
+ *
+ * Initializes SDL
+ */
+#ifndef _ENGINE_INSTANCE
+#define _ENGINE_INSTANCE
+	class Instance {
+	public:
+		Instance();
+		~Instance();
+
+		bool good() const { return this->initialized; };
+
+	private:
+		static bool initialized;
+	};
+
+	extern Instance instance;
+#endif
+
+/*
  * log.hpp
  *
  * Global log
