@@ -1,10 +1,51 @@
 #include "components/movement.hpp"
 
+#include "level.hpp"
+#include "input.hpp"
+#include "pos.hpp"
+
+#include "engine.hpp"
+
+using namespace Engine;
+
 //TODO: Create something usable
 //Currently, this is a dump spot for code removed from Entity
 
-MovementComponent::MovementComponent() {};
+MovementComponent::MovementComponent() : Update(&Engine::level) {
+	//Get the state of these keys so they are tracked
+	input.pressed(SDL_SCANCODE_W);
+	input.pressed(SDL_SCANCODE_A);
+	input.pressed(SDL_SCANCODE_S);
+	input.pressed(SDL_SCANCODE_D);
+};
+
 MovementComponent::~MovementComponent() {};
+
+
+void MovementComponent::update(float delta) {
+	if(!this->entity) return;
+
+	Coord move;
+
+	if(input.pressed(SDL_SCANCODE_W))
+		move += Coord(0, 1);
+
+	if(input.pressed(SDL_SCANCODE_A))
+		move += Coord(-1, 0);
+
+	if(input.pressed(SDL_SCANCODE_S))
+		move += Coord(0, -1);
+
+	if(input.pressed(SDL_SCANCODE_D))
+		move += Coord(1, 0);
+
+	this->entity->pos += move * delta;
+};
+
+
+
+/************************* CODE FROM ENTITY *************************/
+
 /*
  * Moves entity, checking for collision if registered to manager
  */
