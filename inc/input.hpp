@@ -32,8 +32,9 @@ public:
 	Input& setHandler(SDL_Scancode, Handler);
 
 	//Get the state of the key from the scancode/keycode
-	bool pressed(SDL_Scancode) const;
-	bool pressed(SDL_Keycode) const;
+	//TODO: Add explicit key tracking/untracking
+	bool pressed(SDL_Scancode);
+	bool pressed(SDL_Keycode);
 
 	SDL_Keymod getModifiers() const;
 
@@ -42,10 +43,14 @@ private:
 
 	static int listener(void*, SDL_Event*);
 
+	bool isPressed(SDL_Scancode) const;
+
+	std::unordered_map<SDL_Scancode, bool> keys;
 	std::unordered_map<SDL_Scancode, Input::Handler> handlers;
 
 	SDL_Keymod modifiers;
 };
+
 
 //struct ActionEvent : Event {
 //	Action action;

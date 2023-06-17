@@ -43,26 +43,24 @@ Input& Input::setHandler(SDL_Scancode key, Handler handler) {
 /*
  * Gets the state of a key from the scancode
  */
-bool Input::pressed(SDL_Scancode key) const {
-	int keymax;
-	const Uint8 *keyboard = SDL_GetKeyboardState(&keymax);
+bool Input::pressed(SDL_Scancode key) {
+	if(this->keys.count(key) == 0) {
+		int keymax;
+		const Uint8 *keyboard = SDL_GetKeyboardState(&keymax);
 
-	if(key > keymax) return false;
+		if(key > keymax) return false;
 
-	return keyboard[key];
+		this->keys[key] = keyboard[key];
+	};
+
+	return this->keys.at(key);
 };
 
 /*
  * Gets the state of a key from the keycode
  */
-bool Input::pressed(SDL_Keycode key) const {
-	int keymax;
-	const Uint8 *keyboard = SDL_GetKeyboardState(&keymax);
-
-	SDL_Scancode scan = SDL_GetScancodeFromKey(key);
-	if(scan > keymax) return false;
-
-	return keyboard[scan];
+bool Input::pressed(SDL_Keycode key) {
+	return this->pressed(SDL_GetScancodeFromKey(key));
 };
 
 
@@ -82,6 +80,9 @@ int Input::listener(void *v_this, SDL_Event *event) {
 
 	Input *self = (Input*)v_this;
 
+	if(self->keys.count(event->key.keysym.scancode) > 0)
+		self->keys[event->key.keysym.scancode] = event->key.state;
+
 	if(self->handlers.count(event->key.keysym.scancode) > 0)
 		self->handlers[event->key.keysym.scancode](&event->key);
 
@@ -93,10 +94,23 @@ int Input::listener(void *v_this, SDL_Event *event) {
 	return 0;
 };
 
+/*
+ * Gets the state of a key from the scancode
+ */
+bool Input::isPressed(SDL_Scancode key) const {
+	int keymax;
+	const Uint8 *keyboard = SDL_GetKeyboardState(&keymax);
+
+	if(key > keymax) return false;
+
+	return keyboard[key];
+};
+
 
 
 /*************** DEFAULT HANDLERS ***************/
 
+//TODO: Non-functional
 static void quitHandler(SDL_KeyboardEvent *event) {
 	SDL_QuitEvent quit = {
 		.type = SDL_QUIT,
