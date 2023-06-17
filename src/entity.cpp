@@ -48,7 +48,7 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update(level) {
 /*
  * Constructor overload with different argument order
  */
-Entity::Entity(std::string nname, Coord pos, Level *level) : Entity(name, level, pos) {};
+Entity::Entity(std::string name, Coord pos, Level *level) : Entity(name, level, pos) {};
 
 
 /*
