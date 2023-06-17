@@ -26,6 +26,9 @@ public:
 	Event();
 	virtual ~Event();
 
+	virtual void setInfo(std::string);
+	virtual std::string getInfo();
+
 	/*
 	 * These arguments are part of the SDL_UserEvent struct
 	 *
@@ -33,6 +36,8 @@ public:
 	 */
 	void push(int = 0, void* = nullptr) const;
 
+private:
+	std::string info;
 //private:
 //	unsigned int eventID() const { return Event<T>::id; };
 };
@@ -51,6 +56,16 @@ Event<T>::Event() {};
 
 template<typename T>
 Event<T>::~Event() {};
+
+template<typename T>
+void Event<T>::setInfo(std::string info) {
+	this->info = info;
+};
+
+template<typename T>
+std::string Event<T>::getInfo() {
+	return this->info;
+};
 
 /*
  * Push event to SDL event queue
