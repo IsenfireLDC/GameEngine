@@ -41,6 +41,13 @@ Coord operator*(const Coord&, const Coord&);
 bool operator==(const Coord&, const Coord&);
 bool operator!=(const Coord&, const Coord&);
 
+Coord operator+=(Coord&, const Coord&);
+Coord operator-=(Coord&, const Coord&);
+Coord operator*=(Coord&, const Coord&);
+
+Coord operator*(const Coord&, const float&);
+Coord operator*=(Coord&, const float&);
+
 SDL_Rect operator*(const SDL_Rect&, const Coord&);
 SDL_Rect operator*=(SDL_Rect&, const Coord&);
 SDL_FRect operator*(const SDL_FRect&, const Coord&);

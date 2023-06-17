@@ -28,6 +28,36 @@ bool operator!=(const Coord& c1, const Coord& c2) {
 };
 
 
+Coord operator+=(Coord &c1, const Coord &c2) {
+	c1.x += c2.x;
+	c1.y += c2.y;
+	return c1;
+};
+
+Coord operator-=(Coord &c1, const Coord &c2) {
+	c1.x -= c2.x;
+	c1.y -= c2.y;
+	return c1;
+};
+
+Coord operator*=(Coord &c1, const Coord &c2) {
+	c1.x *= c2.x;
+	c1.y *= c2.y;
+	return c1;
+};
+
+
+Coord operator*(const Coord &c, const float &f) {
+	return Coord(c.x * f, c.y * f);
+};
+
+Coord operator*=(Coord &c, const float &f) {
+	c.x *= f;
+	c.y *= f;
+	return c;
+};
+
+
 SDL_Rect operator*(const SDL_Rect& r, const Coord& c) {
 	//Rudimentary scaling
 	SDL_Rect rect = {
