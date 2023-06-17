@@ -10,7 +10,7 @@ INCDIR=inc
 OBJDIR=bin
 
 # Custom library directories
-SHLIBSDIR=C:/MyPrograms/Libs
+SHLIBSDIR=$(CUSTOM_LIBS_DIR)
 
 SHLIBDIR=$(SHLIBSDIR)/shared
 SHARCDIR=$(SHLIBSDIR)/static
