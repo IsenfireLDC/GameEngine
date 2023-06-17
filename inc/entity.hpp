@@ -137,7 +137,7 @@ T* Entity::createComponent(Args... args) {
 	int componentID = Component<T>::getComponentID();
 
 	if(this->components.count(componentID) == 0)
-		this->components.emplace();
+		this->components.emplace(componentID, std::unordered_set<ComponentBase*>());
 
 	T* v = new T(args...);
 
