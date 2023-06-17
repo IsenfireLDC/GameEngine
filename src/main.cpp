@@ -145,11 +145,14 @@ int uninitSDL() {
 };
 
 int gameTest() {
+	Engine::log.setMinLevel(LogLevel::Debug);
+
 	Engine::log.log("-------------------- Log Start --------------------");
 	//gen.seed(rd());
 
 	//Init SDL: Create window and renderer; TODO: Move somewhere else
-	if(initSDL() != 0) return 1;
+	//if(initSDL() != 0) return 1;
+	if(!Engine::instance.good()) return 1;
 
 	//Create player
 	Entity player{"Player"};
