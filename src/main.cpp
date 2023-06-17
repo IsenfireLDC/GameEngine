@@ -180,7 +180,7 @@ int gameTest() {
 	Engine::window.draw();
 
 	//Attempt to move player
-	Coord testCoord = {2,5};
+	Coord testCoord = {20,50};
 	Engine::player->pos = testCoord;
 
 	SDL_Delay(1000);
