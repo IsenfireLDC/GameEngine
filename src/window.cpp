@@ -24,6 +24,11 @@ Window::Window(Level *level, std::string name, Coord scale) {
 	this->level = level;
 	this->scale = scale;
 
+	if(!Engine::instance.good()) {
+		Engine::log.log("SDL not initialized", LogLevel::Fatal, "Window");
+		return;
+	};
+
 	this->window = SDL_CreateWindow(
 		name.c_str(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -42,6 +47,8 @@ Window::Window(Level *level, std::string name, Coord scale) {
 		Engine::log.log("Failed to create renderer", LogLevel::Error, "Window");
 		return;
 	};
+
+	Engine::log.log("Created window", LogLevel::Debug, "Window");
 };
 
 Window::~Window() {
@@ -133,6 +140,8 @@ void Window::draw() const {
 
 		SDL_RenderCopy(this->renderer, tex, 0, &to);
 	};
+
+	SDL_RenderPresent(this->renderer);
 };
 
 /*
