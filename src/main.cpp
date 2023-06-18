@@ -14,6 +14,8 @@
 #include "window.hpp"
 
 #include "entity.hpp"
+#include "components/movement.hpp"
+
 #include "level.hpp"
 #include "input.hpp"
 #include "events.hpp"
@@ -161,6 +163,7 @@ int gameTest() {
 	StaticTexture playerTexture{"assets/player.tga"};
 	Model playerModel{&playerTexture};
 	player.createComponent<ModelComponent>(&playerModel);
+	player.createComponent<MovementComponent>();
 
 	//Set player entity as the player
 	Engine::player = &player;
@@ -171,6 +174,9 @@ int gameTest() {
 	StaticTexture npcTexture{"assets/npc.tga"};
 	Model npcModel{&npcTexture};
 	npc.createComponent<ModelComponent>(&npcModel);
+
+
+	UpdateController<Update> controller{};
 
 	//Action ExitAction = aExit;
 	//input.addActionMapping(Input::Key::Escape, ExitAction);
@@ -188,12 +194,20 @@ int gameTest() {
 	//Render window
 	Engine::window.draw();
 
+	Engine::threadPool.start();
+
 	bool go = true;
 	while(go) {
 		SDL_Event e;
 		while(SDL_PollEvent(&e)) {
 			if(e.type == SDL_QUIT) go = false;
 		};
+
+		controller.update(0.01f);
+
+		Engine::window.draw();
+
+		SDL_Delay(10);
 	};
 
 	//Print out list of entities
