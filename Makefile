@@ -93,7 +93,7 @@ update: shlib stlib
 	cp -r $(INCDIR)
 
 clean:
-	rm $(OBJS) $(SHOBJS) $(DEPS) $(SHLIB) $(STLIB) $(EXEC)
+	rm -f $(OBJS) $(SHOBJS) $(DEPS) $(SHLIB) $(STLIB) $(EXEC)
 
 
 #Run program using winpty
