@@ -18,7 +18,7 @@
 Level *Window::defaultLevel = &Engine::level;
 std::string Window::defaultName = "Game Engine 0.1";
 
-Window __attribute__((init_priority(17))) Engine::window{};
+Window __attribute__((init_priority(175))) Engine::window{};
 
 Window::Window(Level *level, std::string name, Coord scale) {
 	this->level = level;
