@@ -141,6 +141,8 @@ T* Entity::createComponent(Args... args) {
 
 	T* v = new T(args...);
 
+	v->entity = this;
+
 	this->components[componentID].insert(v);
 
 	return v;
