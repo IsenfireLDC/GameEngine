@@ -13,7 +13,7 @@
 using std::chrono::system_clock;
 
 //Must construct in-place because ofstream is non-copyable
-Log Engine::log{"Master", "./logs/master.log", nullptr};
+Log __attribute__((init_priority(150))) Engine::log{"Master", "./logs/master.log", nullptr};
 
 /*
  * Creates entry with given message, severity, and sender

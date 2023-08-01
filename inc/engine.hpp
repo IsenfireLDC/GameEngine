@@ -12,6 +12,18 @@
 namespace Engine {
 
 /*
+ * log.hpp
+ *
+ * Global log
+ */
+#ifdef _LOG_HPP_
+#ifndef _ENGINE_LOG
+#define _ENGINE_LOG
+	extern Log log;
+#endif
+#endif
+
+/*
  * engine.cpp
  *
  * Initializes SDL
@@ -30,18 +42,6 @@ namespace Engine {
 	};
 
 	extern Instance instance;
-#endif
-
-/*
- * log.hpp
- *
- * Global log
- */
-#ifdef _LOG_HPP_
-#ifndef _ENGINE_LOG
-#define _ENGINE_LOG
-	extern Log log;
-#endif
 #endif
 
 /*
