@@ -92,9 +92,9 @@ UpdateController<T>::~UpdateController() {};
  */
 template<typename T>
 void UpdateController<T>::update(float delta) {
-	for(UpdateBase<T> *update : UpdateController<T>::members[this->level]) {
+	for(T *update : UpdateController<T>::members[this->level]) {
 		if(update->doUpdate)
-			this->threadPool->add(std::bind(update->update, update, delta));
+			this->threadPool->add(std::bind(&T::update, update, delta));
 	};
 };
 
