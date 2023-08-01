@@ -10,7 +10,7 @@
 #include "engine.hpp"
 
 //Default global thread pool
-ThreadPool Engine::threadPool{10};
+ThreadPool __attribute__((init_priority(165))) Engine::threadPool{10};
 
 namespace mystd {
 
@@ -59,6 +59,8 @@ void ThreadPool::start() {
 	for(unsigned int i = 0; i < threads.size(); ++i) {
 		this->threads[i] = new std::thread(ThreadPool::taskHandler, this);
 	};
+
+	Engine::log.log("Starting thread pool", LogLevel::Debug, "ThreadPool:start");
 };
 
 /*
@@ -70,7 +72,7 @@ void ThreadPool::start() {
 void ThreadPool::add(Task task) {
 	if(this->joining) return;
 
-	Engine::log.log("Adding task to thread pool", LogLevel::Debug, "ThreadPool:add");
+	//Engine::log.log("Adding task to thread pool", LogLevel::Debug, "ThreadPool:add");
 
 	this->lock.lock();
 	this->todo.push(task);

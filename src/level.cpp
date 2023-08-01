@@ -4,7 +4,7 @@
 
 #include "engine.hpp"
 
-Level Engine::level{};
+Level __attribute__((init_priority(170))) Engine::level{};
 
 /*
  * Create new level
