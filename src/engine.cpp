@@ -8,7 +8,7 @@
 #include "engine.hpp"
 
 //Global
-Engine::Instance Engine::instance{};
+Engine::Instance __attribute__((init_priority(155))) Engine::instance{};
 
 //Static member
 bool Engine::Instance::initialized = false;
@@ -23,10 +23,11 @@ Engine::Instance::Instance() {
 
 		//TODO: Exit?
 	} else {
-		//Causes segfault.  Why?
-		//Engine::log.log("Started SDL", LogLevel::Info);
+		Engine::log.log("Started SDL", LogLevel::Info);
 		Instance::initialized = true;
 	};
 };
 
-Engine::Instance::~Instance() {};
+Engine::Instance::~Instance() {
+	SDL_Quit();
+};
