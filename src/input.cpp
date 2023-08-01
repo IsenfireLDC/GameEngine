@@ -16,17 +16,29 @@
 
 static void quitHandler(SDL_KeyboardEvent*);
 
-Log Input::log{"Input", "./logs/input.log", LogLevel::Debug};
+Log __attribute__((init_priority(160))) Input::log{"Input", "./logs/input.log", LogLevel::Debug};
 
-Input Engine::input = Input().setHandler(SDL_SCANCODE_ESCAPE, quitHandler);
+Input Engine::input{true};
 
 
-Input::Input() {
-	SDL_AddEventWatch(&Input::listener, this);
+Input::Input(bool defaultQuit) {
+	if(!Engine::instance.good()) {
+		Input::log.log("SDL not initialized", LogLevel::Fatal, "Input");
+		return;
+	};
+
+	Input::log.log("Input initialized");
+
+	SDL_AddEventWatch((SDL_EventFilter)Input::listener, this);
+
+	if(defaultQuit)
+		this->setHandler(SDL_SCANCODE_ESCAPE, quitHandler);
 };
 
 Input::~Input() {
-	SDL_DelEventWatch(&Input::listener, this);
+	Input::log.log("Input uninitialized");
+
+	SDL_DelEventWatch(Input::listener, this);
 };
 
 
@@ -53,6 +65,16 @@ bool Input::pressed(SDL_Scancode key) {
 		this->keys[key] = keyboard[key];
 	};
 
+	if(this->keys.at(key)) {
+		std::stringstream key_s;
+		key_s << "Key " << key << " pressed";
+		Input::log.log(key_s.str());
+	} else {
+		std::stringstream key_s;
+		key_s << "Key " << key << " not pressed";
+		Input::log.log(key_s.str());
+	};
+
 	return this->keys.at(key);
 };
 
@@ -75,7 +97,9 @@ SDL_Keymod Input::getModifiers() const {
 /*
  * Listener for SDL event watch
  */
-int Input::listener(void *v_this, SDL_Event *event) {
+int SDLCALL Input::listener(void *v_this, SDL_Event *event) {
+	Input::log.log("Key event listener called");
+
 	if(event->type != SDL_KEYDOWN && event->type != SDL_KEYUP) return 1;
 
 	Input *self = (Input*)v_this;
@@ -89,7 +113,7 @@ int Input::listener(void *v_this, SDL_Event *event) {
 	std::stringstream key_s;
 	key_s << "Key event for " << event->key.keysym.scancode << ":" << event->key.state;
 
-	Input::log << key_s.str();
+	Input::log.log(key_s.str());
 
 	return 0;
 };

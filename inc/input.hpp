@@ -25,7 +25,7 @@ class Input {
 public:
 	using Handler = std::function<void(SDL_KeyboardEvent*)>;
 public:
-	Input();
+	Input(bool = false);
 	~Input();
 
 	//Set handler for a key
