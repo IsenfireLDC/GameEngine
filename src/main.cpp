@@ -118,42 +118,12 @@ void getKBCodes() {
 //std::uniform_int_distribution<int> randMove(0, 3);
 //int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
 
-/* Unneeded
-int filter(void *data, SDL_Event *event) {
-	if(event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
-		Engine::input.setState(event->key.keysym, event->key.state == SDL_PRESSED);
-		return 0;
-	};
-
-	return 1;
-};
-*/
-
-int initSDL() {
-	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-		Engine::log.log("Failed to initialize SDL", LogLevel::Fatal);
-		return 1;
-	};
-
-	//SDL_SetEventFilter(&filter, 0);
-
-	return 0;
-};
-
-int uninitSDL() {
-	SDL_Quit();
-
-	return 0;
-};
-
 int gameTest() {
 	Engine::log.setMinLevel(LogLevel::Debug);
 
 	Engine::log.log("-------------------- Log Start --------------------");
 	//gen.seed(rd());
 
-	//Init SDL: Create window and renderer; TODO: Move somewhere else
-	//if(initSDL() != 0) return 1;
 	if(!Engine::instance.good()) return 1;
 
 	//Create player
@@ -203,11 +173,11 @@ int gameTest() {
 			if(e.type == SDL_QUIT) go = false;
 		};
 
-		controller.update(0.01f);
+		controller.update(0.018f);
 
 		Engine::window.draw();
 
-		SDL_Delay(10);
+		SDL_Delay(18);
 	};
 
 	//Print out list of entities
@@ -273,8 +243,6 @@ int gameTest() {
 		Sleep(100);
 	};
 	*/
-
-	uninitSDL();
 
 	return 0;
 };
