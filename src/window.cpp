@@ -116,7 +116,10 @@ void Window::setScale(Coord scale) {
 void Window::draw() const {
 	if(!this->visible) return;
 
-	Engine::log.log("Drawing window", LogLevel::Info, "Window");
+	Engine::log.log("Drawing window", LogLevel::Debug, "Window");
+
+	int screenFlip;
+	SDL_GetWindowSize(this->window, 0, &screenFlip);
 
 	//Clear the screen
 	SDL_RenderClear(this->renderer);
@@ -134,6 +137,10 @@ void Window::draw() const {
 
 		SDL_Rect to = {.x=(int)pos.x, .y=(int)pos.y};
 		SDL_QueryTexture(tex, 0, 0, &to.w, &to.h);
+
+		// Flip vertical origin and window coordinates
+		to.y += to.h;
+		to.y = screenFlip - to.y;
 
 		//TODO: Add better scaling
 		to *= this->scale;
