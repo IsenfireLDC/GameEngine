@@ -43,75 +43,6 @@
 static bool running = true;
 
 static std::string message;
-/*
-static void aExit(Entity *target, int input) {
-	if(input == Input::Key::Escape) running = false;
-};*/
-
-/*
-static void inputHandler(Event *event) {
-	InputEvent *inputEvent = (InputEvent*)event;
-
-	message.append(std::to_string(inputEvent->key)+" ");
-};
-
-static void actionHandler(Event *event) {
-	ActionEvent *actionEvent = (ActionEvent*)event;
-
-	actionEvent->action(primary, actionEvent->input);
-};
-
-static void quitHandler(Event *event) {
-	QuitEvent *quitEvent = (QuitEvent*)event;
-
-	char strbuf[100];
-	sprintf(strbuf, "Received QuitEvent from %p\n", quitEvent->input);
-	Engine::log.log(strbuf, LogLevel::Info, "Main");
-	quitEvent->input->runThread(false);
-
-	running = false;
-};
-
-static int exHandler(Entity *target, EntityAction action) {
-	EntityData d = action.sender->getData();
-	d.state += 1;
-	action.sender->setData(d);
-
-	d = target->getData();
-	d.state += 2;
-	target->setData(d);
-
-	return 0;
-};
-
-
-struct Ticker : ITick {
-	std::function<void(void)> tf;
-
-	void tick(Engine::Units::Time t) {
-		tf();
-	};
-};
-
-
-
-
-void getKBCodes() {
-	int kb_code = 0;
-
-	std::cout << "Hit a key" << std::endl;
-
-	while(true) {
-		kb_code = Input::getInputKey();
-
-		if(kb_code != 0) std::cout << kb_code << std::endl;
-
-		if(kb_code == 27) break;
-
-		Sleep(100);
-	}
-};
-*/
 
 //std::random_device rd;
 //std::default_random_engine gen;
@@ -194,56 +125,6 @@ int gameTest() {
 		sstr << Engine::level.findEntity(playerList[i]);
 		Engine::log.log(sstr.str(), LogLevel::Info, "Main");
 	};
-
-	/*
-	//Setup event handling
-	//InputEvent
-	InputEvent ieType = InputEvent(Input::Key::Null);
-	int typeIEID = Engine::eventBus.registerEventType(&ieType);
-	Engine::eventBus.registerEventHandler(typeIEID, &inputHandler);
-	//ActionEvent
-	ActionEvent aeType = ActionEvent(0, 0);
-	int typeAEID = Engine::eventBus.registerEventType(&aeType);
-	Engine::eventBus.registerEventHandler(typeAEID, &actionHandler);
-	//QuitEvent
-	QuitEvent qeType = QuitEvent(0);
-	int typeQEID = Engine::eventBus.registerEventType(&qeType);
-	Engine::eventBus.registerEventHandler(typeQEID, &quitHandler);
-
-	Ticker ticker;
-	ticker.tf = [&window, &input, &npc](){
-		Engine::eventBus.handleEvents();
-
-		window.setMsg(message.c_str());
-
-		input.callAction(&npc, inputs[randMove(gen)]);
-		window.redraw();
-	};
-	Game game;
-	game.add(&ticker);
-	game.run(true);
-
-	//Stall main until the game is done
-	while(running) std::this_thread::yield();
-	game.run(false);
-	*/
-
-	/*
-	while(running) {
-		//Event* first = Engine::eventBus.getFirstEvent();
-		//const char* info = 0;
-		//if(first) info = first->getInfo().c_str();
-
-		Engine::eventBus.handleEvents();
-		//if(info) window.setMsg(info);
-		window.setMsg(message.c_str());
-
-		input.callAction(&npc, inputs[randMove(gen)]);
-		window.render();
-
-		Sleep(100);
-	};
-	*/
 
 	return 0;
 };
