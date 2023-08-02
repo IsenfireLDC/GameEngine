@@ -119,7 +119,8 @@ void getKBCodes() {
 //int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
 
 int gameTest() {
-	Engine::log.setMinLevel(LogLevel::Debug);
+	//Engine::log.setMinLevel(LogLevel::Debug);
+	Engine::log.setMinLevel(LogLevel::Info);
 
 	Engine::log.log("-------------------- Log Start --------------------");
 	//gen.seed(rd());
