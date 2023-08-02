@@ -4,12 +4,11 @@
 #include "input.hpp"
 #include "pos.hpp"
 
+#include "log.hpp"
+
 #include "engine.hpp"
 
-using namespace Engine;
-
-//TODO: Create something usable
-//Currently, this is a dump spot for code removed from Entity
+using namespace Engine; // For Engine::input
 
 MovementComponent::MovementComponent() : Update(&Engine::level) {
 	//Get the state of these keys so they are tracked
@@ -25,6 +24,9 @@ MovementComponent::~MovementComponent() {};
 void MovementComponent::update(float delta) {
 	if(!this->entity) return;
 
+	Engine::log.log("Updating MovementComponent", LogLevel::Debug, "MovementComponent");
+
+	float speed = 50.f;
 	Coord move;
 
 	if(input.pressed(SDL_SCANCODE_W))
@@ -39,7 +41,7 @@ void MovementComponent::update(float delta) {
 	if(input.pressed(SDL_SCANCODE_D))
 		move += Coord(1, 0);
 
-	this->entity->pos += move * delta;
+	this->entity->pos += move * speed * delta;
 };
 
 
