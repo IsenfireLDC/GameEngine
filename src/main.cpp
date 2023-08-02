@@ -14,7 +14,7 @@
 #include "window.hpp"
 
 #include "entity.hpp"
-#include "components/movement.hpp"
+#include "components/basic_movement.hpp"
 
 #include "level.hpp"
 #include "input.hpp"
@@ -134,7 +134,7 @@ int gameTest() {
 	StaticTexture playerTexture{"assets/player.tga"};
 	Model playerModel{&playerTexture};
 	player.createComponent<ModelComponent>(&playerModel);
-	player.createComponent<MovementComponent>();
+	player.createComponent<BasicMovementComponent>();
 
 	//Set player entity as the player
 	Engine::player = &player;

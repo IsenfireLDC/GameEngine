@@ -1,4 +1,4 @@
-#include "components/movement.hpp"
+#include "components/basic_movement.hpp"
 
 #include "level.hpp"
 #include "input.hpp"
@@ -10,7 +10,7 @@
 
 using namespace Engine; // For Engine::input
 
-MovementComponent::MovementComponent() : Update(&Engine::level) {
+BasicMovementComponent::BasicMovementComponent() : Update(&Engine::level) {
 	//Get the state of these keys so they are tracked
 	input.pressed(SDL_SCANCODE_W);
 	input.pressed(SDL_SCANCODE_A);
@@ -18,13 +18,13 @@ MovementComponent::MovementComponent() : Update(&Engine::level) {
 	input.pressed(SDL_SCANCODE_D);
 };
 
-MovementComponent::~MovementComponent() {};
+BasicMovementComponent::~BasicMovementComponent() {};
 
 
-void MovementComponent::update(float delta) {
+void BasicMovementComponent::update(float delta) {
 	if(!this->entity) return;
 
-	Engine::log.log("Updating MovementComponent", LogLevel::Debug, "MovementComponent");
+	Engine::log.log("Updating BasicMovementComponent", LogLevel::Debug, "BasicMovementComponent");
 
 	float speed = 50.f;
 	Coord move;
