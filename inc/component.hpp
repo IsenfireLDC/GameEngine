@@ -23,7 +23,13 @@ public:
 template<typename T>
 class Component : public ComponentBase {
 public:
-	Component() : id(_getComponentID<T>()) {};
+	Component() : id(_getComponentID<T>()) {
+		Component<T>::instances.insert(static_cast<T*>(this));
+	};
+
+	virtual ~Component() {
+		Component<T>::instances.erase(static_cast<T*>(this));
+	};
 
 	int componentID() const {
 		return this->id;
@@ -32,6 +38,9 @@ public:
 	static int getComponentID() {
 		return _getComponentID<T>();
 	};
+
+	// TODO: Attach this to a level?
+	static std::unordered_set<T*> instances;
 
 private:
 	//6365115
@@ -44,5 +53,8 @@ private:
 private:
 	const int id;
 };
+
+template<typename T>
+std::unordered_set<T*> Component<T>::instances{};
 
 #endif
