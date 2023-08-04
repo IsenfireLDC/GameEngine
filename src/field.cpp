@@ -49,7 +49,7 @@ Field::Field(Area &area, Coord scale) : area(area) {
  * Get the bounding box of the field
  */
 BoundingBox Field::getBoundingBox() const {
-	return this->area.getBoundingBox();
+	return this->area.getBoundingBox(Coord(0,0));
 };
 
 /*
@@ -70,7 +70,7 @@ void Field::setScale(Coord scale) {
  * Determines if the given coordinates are out of bounds for this field
  */
 bool Field::contains(Coord pos) const {
-	return this->area.contains(pos);
+	return this->area.contains(Coord(0,0), pos);
 };
 
 /*
