@@ -10,7 +10,6 @@
 #include "pos.hpp"
 
 #include "render.hpp"
-#include "component.hpp"
 
 class Model {
 public:
@@ -27,17 +26,6 @@ public:
 private:
 	Texture *texture;
 	Coord origin;
-};
-
-class ModelComponent : public Component<ModelComponent> {
-public:
-	ModelComponent(Model*);
-
-	void setModel(Model*);
-	Model* getModel() const;
-
-private:
-	Model *model;
 };
 
 #endif

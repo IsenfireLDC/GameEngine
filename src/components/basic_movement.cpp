@@ -3,6 +3,7 @@
 #include "level.hpp"
 #include "input.hpp"
 #include "pos.hpp"
+#include "entity.hpp"
 
 #include "log.hpp"
 
@@ -10,7 +11,7 @@
 
 using namespace Engine; // For Engine::input
 
-BasicMovementComponent::BasicMovementComponent(float speed) : Update(&Engine::level), speed(speed) {
+BasicMovementComponent::BasicMovementComponent(Entity *entity, float speed) : Component(entity), Update(&Engine::level), speed(speed) {
 	//Get the state of these keys so they are tracked
 	input.pressed(SDL_SCANCODE_W);
 	input.pressed(SDL_SCANCODE_A);

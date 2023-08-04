@@ -3,6 +3,8 @@
 
 #include "component.hpp"
 #include "update.hpp"
+#include "pos.hpp"
+#include "area.hpp"
 
 #include <unordered_set>
 
@@ -26,14 +28,14 @@ protected:
 
 class RectCollisionComponent : public Component<RectCollisionComponent>, public CollisionComponent {
 public:
-	RectCollisionComponent(class RectArea*);
+	RectCollisionComponent(class Entity*, Coord);
 	virtual ~RectCollisionComponent();
 
 	// Update
 	void update(float);
 
 private:
-	class RectArea *area;
+	RectArea area;
 };
 
 #endif

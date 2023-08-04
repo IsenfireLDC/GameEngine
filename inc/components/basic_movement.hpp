@@ -6,7 +6,7 @@
 
 class BasicMovementComponent : public Component<BasicMovementComponent>, public Update {
 public:
-	BasicMovementComponent(float = 100.f);
+	BasicMovementComponent(class Entity*, float = 100.f);
 	virtual ~BasicMovementComponent();
 
 	//Update
