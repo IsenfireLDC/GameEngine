@@ -10,7 +10,7 @@
 
 using namespace Engine; // For Engine::input
 
-BasicMovementComponent::BasicMovementComponent() : Update(&Engine::level) {
+BasicMovementComponent::BasicMovementComponent(float speed) : Update(&Engine::level), speed(speed) {
 	//Get the state of these keys so they are tracked
 	input.pressed(SDL_SCANCODE_W);
 	input.pressed(SDL_SCANCODE_A);
@@ -26,7 +26,6 @@ void BasicMovementComponent::update(float delta) {
 
 	Engine::log.log("Updating BasicMovementComponent", LogLevel::Debug, "BasicMovementComponent");
 
-	float speed = 50.f;
 	Coord move;
 
 	if(input.pressed(SDL_SCANCODE_W))
@@ -41,7 +40,7 @@ void BasicMovementComponent::update(float delta) {
 	if(input.pressed(SDL_SCANCODE_D))
 		move += Coord(1, 0);
 
-	this->entity->pos += move * speed * delta;
+	this->entity->pos += move * this->speed * delta;
 };
 
 

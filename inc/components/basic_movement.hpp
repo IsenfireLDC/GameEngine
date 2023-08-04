@@ -6,13 +6,13 @@
 
 class BasicMovementComponent : public Component<BasicMovementComponent>, public Update {
 public:
-	BasicMovementComponent();
+	BasicMovementComponent(float = 100.f);
 	virtual ~BasicMovementComponent();
 
 	//Update
 	void update(float);
 
-private:
+	float speed;
 };
 
 #endif
