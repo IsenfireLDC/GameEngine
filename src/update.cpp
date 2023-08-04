@@ -18,3 +18,8 @@ Update::Update(Level *level) : UpdateBase(level) {};
  */
 Update::~Update() {};
 
+
+
+FixedUpdate::FixedUpdate(Level *level) : UpdateBase(level) {};
+
+FixedUpdate::~FixedUpdate() {};

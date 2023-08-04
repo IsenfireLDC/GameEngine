@@ -72,6 +72,17 @@ public:
 	virtual void update(float) = 0;
 };
 
+/*
+ * Update class for fixed-interval (physics) updates
+ */
+class FixedUpdate : public UpdateBase<FixedUpdate> {
+public:
+	FixedUpdate(class Level*);
+	virtual ~FixedUpdate();
+
+	virtual void update(float) = 0;
+};
+
 
 /********** TEMPLATE METHODS **********/
 
