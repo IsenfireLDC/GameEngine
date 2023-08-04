@@ -6,7 +6,7 @@
 
 #include <unordered_set>
 
-class CollisionComponent : public Update {
+class CollisionComponent : public FixedUpdate {
 public:
 	CollisionComponent();
 	virtual ~CollisionComponent();

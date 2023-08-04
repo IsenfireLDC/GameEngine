@@ -6,7 +6,7 @@
 
 #include "engine.hpp"
 
-CollisionComponent::CollisionComponent() : Update(&Engine::level) {};
+CollisionComponent::CollisionComponent() : FixedUpdate(&Engine::level) {};
 
 CollisionComponent::~CollisionComponent() {};
 
