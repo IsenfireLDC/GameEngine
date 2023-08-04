@@ -39,36 +39,26 @@ BoundingBox operator+(const BoundingBox &bb, const Coord &translate) {
 /*
  * Default constructor
  */
-RectArea::RectArea() : c1(0, 0), c2(0, 0) {};
+RectArea::RectArea() : size(0, 0) {};
 
 /*
  * Constructor for RectArea from bounding box corners
  */
-RectArea::RectArea(Coord c1, Coord c2) {
-		this->c1 = c1;
-		this->c2 = c2;
+RectArea::RectArea(Coord size) {
+	this->size = size;
+};
+
+RectArea::RectArea(float w, float h) {
+	this->size = Coord(w, h);
 };
 
 /*
  * Returns ordered bounding box
  */
-BoundingBox RectArea::getBoundingBox() const {
-	BoundingBox bb;
-
-	if(c1.x < c2.x) {
-		bb.low.x = c1.x;
-		bb.high.x = c2.x;
-	} else {
-		bb.low.x = c2.x;
-		bb.high.x = c1.x;
-	};
-
-	if(c1.y < c2.y) {
-		bb.low.y = c1.y;
-		bb.high.y = c2.y;
-	} else {
-		bb.low.y = c2.y;
-		bb.high.y = c1.y;
+BoundingBox RectArea::getBoundingBox(Coord origin) const {
+	BoundingBox bb = {
+		.low = origin,
+		.high = origin + this->size
 	};
 
 	return bb;
@@ -79,12 +69,12 @@ BoundingBox RectArea::getBoundingBox() const {
  *
  * Does not include edges by default
  */
-bool RectArea::contains(Coord c, bool edges = false) const {
-	int a = this->c1.x - c.x;
-	int b = this->c2.x - c.x;
+bool RectArea::contains(Coord origin, Coord c, bool edges = false) const {
+	int a = origin.x - c.x;
+	int b = origin.x + this->size.x - c.x;
 	if(a*b > 0 || (!edges && a*b == 0)) return false;
 
-	a = this->c1.y - c.y;
-	b = this->c2.y - c.y;
+	a = origin.y - c.y;
+	b = origin.y + this->size.y - c.y;
 	return a*b < 0 || (edges && a*b == 0);
 };
