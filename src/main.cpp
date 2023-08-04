@@ -14,7 +14,9 @@
 #include "window.hpp"
 
 #include "entity.hpp"
+#include "components/model.hpp"
 #include "components/basic_movement.hpp"
+#include "components/collision.hpp"
 
 #include "level.hpp"
 #include "input.hpp"
@@ -67,6 +69,10 @@ int gameTest() {
 	player.createComponent<ModelComponent>(&playerModel);
 	player.createComponent<BasicMovementComponent>(120.f);
 
+	int w, h;
+	SDL_QueryTexture(playerTexture.getTexture(), 0, 0, &w, &h);
+	RectCollisionComponent *rcc = player.createComponent<RectCollisionComponent>(Coord(w, h));
+
 	//Set player entity as the player
 	Engine::player = &player;
 
@@ -76,6 +82,9 @@ int gameTest() {
 	StaticTexture npcTexture{"assets/npc.tga"};
 	Model npcModel{&npcTexture};
 	npc.createComponent<ModelComponent>(&npcModel);
+
+	SDL_QueryTexture(npcTexture.getTexture(), 0, 0, &w, &h);
+	npc.createComponent<RectCollisionComponent>(Coord(w, h));
 
 
 	UpdateController<Update> controller{};
@@ -89,7 +98,7 @@ int gameTest() {
 	Engine::window.draw();
 
 	//Attempt to move player
-	Coord testCoord = {20,50};
+	Coord testCoord = {20,80};
 	Engine::player->pos = testCoord;
 
 	SDL_Delay(1000);
@@ -108,6 +117,8 @@ int gameTest() {
 
 		fixedController.update(0.018f);
 		controller.update(0.018f);
+
+		if(rcc->isCollidingWith(&npc)) Engine::log.log("BONK");
 
 		Engine::window.draw();
 
