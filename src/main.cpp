@@ -65,7 +65,7 @@ int gameTest() {
 	StaticTexture playerTexture{"assets/player.tga"};
 	Model playerModel{&playerTexture};
 	player.createComponent<ModelComponent>(&playerModel);
-	player.createComponent<BasicMovementComponent>();
+	player.createComponent<BasicMovementComponent>(120.f);
 
 	//Set player entity as the player
 	Engine::player = &player;
@@ -79,6 +79,7 @@ int gameTest() {
 
 
 	UpdateController<Update> controller{};
+	UpdateController<FixedUpdate> fixedController{};
 
 	//Action ExitAction = aExit;
 	//input.addActionMapping(Input::Key::Escape, ExitAction);
@@ -105,6 +106,7 @@ int gameTest() {
 			if(e.type == SDL_QUIT) go = false;
 		};
 
+		fixedController.update(0.018f);
 		controller.update(0.018f);
 
 		Engine::window.draw();
