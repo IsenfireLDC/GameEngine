@@ -12,6 +12,8 @@ namespace Engine {
 
 class ComponentBase {
 public:
+	ComponentBase(class Entity*);
+
 	virtual int componentID() const = 0;
 
 	class Entity *entity = nullptr;
@@ -23,7 +25,7 @@ public:
 template<typename T>
 class Component : public ComponentBase {
 public:
-	Component() : id(_getComponentID<T>()) {
+	Component(class Entity *entity) : ComponentBase(entity), id(_getComponentID<T>()) {
 		Component<T>::instances.insert(static_cast<T*>(this));
 	};
 
