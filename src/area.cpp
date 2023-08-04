@@ -44,21 +44,23 @@ RectArea::RectArea() : size(0, 0) {};
 /*
  * Constructor for RectArea from bounding box corners
  */
-RectArea::RectArea(Coord size) {
+RectArea::RectArea(const Coord *origin, Coord size) {
+	this->origin = origin;
 	this->size = size;
 };
 
-RectArea::RectArea(float w, float h) {
+RectArea::RectArea(const Coord *origin, float w, float h) {
+	this->origin = origin;
 	this->size = Coord(w, h);
 };
 
 /*
  * Returns ordered bounding box
  */
-BoundingBox RectArea::getBoundingBox(Coord origin) const {
+BoundingBox RectArea::getBoundingBox() const {
 	BoundingBox bb = {
-		.low = origin,
-		.high = origin + this->size
+		.low = *this->origin,
+		.high = *this->origin + this->size
 	};
 
 	return bb;
@@ -69,12 +71,23 @@ BoundingBox RectArea::getBoundingBox(Coord origin) const {
  *
  * Does not include edges by default
  */
-bool RectArea::contains(Coord origin, Coord c, bool edges = false) const {
-	int a = origin.x - c.x;
-	int b = origin.x + this->size.x - c.x;
+bool RectArea::contains(Coord c, bool edges = false) const {
+	int a = this->origin->x - c.x;
+	int b = this->origin->x + this->size.x - c.x;
 	if(a*b > 0 || (!edges && a*b == 0)) return false;
 
-	a = origin.y - c.y;
-	b = origin.y + this->size.y - c.y;
+	a = this->origin->y - c.y;
+	b = this->origin->y + this->size.y - c.y;
 	return a*b < 0 || (edges && a*b == 0);
+};
+
+
+
+
+bool RectArea::overlaps(const RectArea *other) const {
+	return
+		this->origin->x + this->size.x >= other->origin->x &&
+		this->origin->x <= other->origin->x + other->size.x &&
+		this->origin->y + this->size.y >= other->origin->y &&
+		this->origin->y <= other->origin->y + other->size.y;
 };

@@ -21,20 +21,23 @@ BoundingBox operator+(const BoundingBox&, const Coord&);
 
 class Area {
 public:
-	virtual BoundingBox getBoundingBox(Coord) const = 0;
-	virtual bool contains(Coord, Coord, bool = false) const = 0;
+	virtual BoundingBox getBoundingBox() const = 0;
+	virtual bool contains(Coord, bool = false) const = 0;
 };
 
 class RectArea : public Area {
 public:
 	RectArea();
-	RectArea(Coord);
-	RectArea(float, float);
+	RectArea(const Coord*, Coord);
+	RectArea(const Coord*, float, float);
 
-	BoundingBox getBoundingBox(Coord) const;
-	bool contains(Coord, Coord, bool) const;
+	BoundingBox getBoundingBox() const;
+	bool contains(Coord, bool) const;
 
-private:
+	bool overlaps(const RectArea*) const;
+
+protected:
+	const Coord *origin;
 	Coord size;
 };
 
