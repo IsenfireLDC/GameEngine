@@ -9,6 +9,8 @@
 #include "render.hpp"
 #include "model.hpp"
 
+#include "components/model.hpp"
+
 #include "level.hpp"
 #include "entity.hpp"
 #include "log.hpp"

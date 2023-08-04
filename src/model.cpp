@@ -42,27 +42,3 @@ void Model::setOrigin(Coord origin) {
 Coord Model::getOrigin() const {
 	return this->origin;
 };
-
-
-
-/*
- * Create component with the given model
- */
-ModelComponent::ModelComponent(Model *model) {
-	this->model = model;
-};
-
-
-/*
- * Attach a new model to the component
- */
-void ModelComponent::setModel(Model *model) {
-	this->model = model;
-};
-
-/*
- * Return the model attached to this component
- */
-Model* ModelComponent::getModel() const {
-	return this->model;
-};
