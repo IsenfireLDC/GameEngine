@@ -54,6 +54,11 @@ public:
 	//Constructors
 	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Vector2D=Entity::origin);
 	Entity(std::string, Vector2D, class Level* = Entity::defaultLevel);
+	virtual ~Entity();
+
+	// No copy constructor/assignment operator
+	Entity(const Entity&) = delete;
+	Entity operator=(const Entity&) = delete;
 
 	//Update
 	void update(float);
@@ -122,10 +127,13 @@ template<typename T>
 std::unordered_set<T*> Entity::getComponents() {
 	int componentID = Component<T>::getComponentID();
 
-	if(this->components.count(componentID))
-		// TODO: Ewwwww
-		return std::unordered_set<T*>(*reinterpret_cast<std::unordered_set<T*>*>(&this->components[componentID]));
-	else
+	if(this->components.count(componentID)) {
+		std::unordered_set<T*> typeSet;
+
+		for(ComponentBase *base : this->components[componentID]) typeSet.insert((T*)base);
+
+		return typeSet;
+	} else
 		return std::unordered_set<T*>();
 };
 

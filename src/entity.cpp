@@ -50,6 +50,11 @@ Entity::Entity(std::string name, Level *level, Vector2D pos) : Update(level), na
 Entity::Entity(std::string name, Vector2D pos, Level *level) : Entity(name, level, pos) {};
 
 
+Entity::~Entity() {
+	this->level->removeEntity(this);
+};
+
+
 /*
  * Updates this entity
  */
