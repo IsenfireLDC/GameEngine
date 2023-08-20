@@ -49,7 +49,7 @@ public:
 	void update(float);
 
 private:
-	RectCollider collider;
+	const RectCollider collider;
 };
 
 

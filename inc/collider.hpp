@@ -6,38 +6,14 @@
 #include <unordered_set>
 
 
-class ColliderList;
-
 /*
  * Base class for colliders
  */
 class Collider {
 public:
-	Collider();
-	virtual ~Collider();
-
 	virtual bool isCollidingWith(const class RectCollider*) const = 0;
 	virtual bool isCollidingWith(const class CircleCollider*) const = 0;
 	virtual bool isCollidingWith(const class PolyCollider*) const = 0;
-
-	static ColliderList colliders;
-};
-
-
-/*
- * Collider list class
- *
- * TODO: Add location-based culling for possibilities
- */
-class ColliderList {
-public:
-	void insert(const Collider*);
-	void erase(const Collider*);
-
-	const std::unordered_set<const Collider*>& getColliders(const Collider* = nullptr) const;
-
-private:
-	std::unordered_set<const Collider*> colliders;
 };
 
 
@@ -52,7 +28,7 @@ public:
 	bool isCollidingWith(const class PolyCollider*) const;
 
 private:
-	const Vector2D *position;
+	const Vector2D *const position;
 	const Vector2D size;
 };
 
