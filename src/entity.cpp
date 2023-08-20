@@ -20,7 +20,7 @@
 
 int Entity::gID = 0;
 
-const Coord Entity::origin = Coord(1,1);
+const Vector2D Entity::origin = Vector2D(1,1);
 const std::string Entity::defaultName = "Entity";
 Level *const Entity::defaultLevel = &Engine::level;
 
@@ -29,11 +29,11 @@ Entity *Engine::player = nullptr;
 /*
  * Constructor for new entity
  *
- * Coord pos		: Position struct
+ * Vector2D pos		: Position struct
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(std::string name, Level *level, Coord pos) : Update(level), name(name) {
+Entity::Entity(std::string name, Level *level, Vector2D pos) : Update(level), name(name) {
 	level->addEntity(this);
 	this->level = level;
 
@@ -47,7 +47,7 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update(level), name(
 /*
  * Constructor overload with different argument order
  */
-Entity::Entity(std::string name, Coord pos, Level *level) : Entity(name, level, pos) {};
+Entity::Entity(std::string name, Vector2D pos, Level *level) : Entity(name, level, pos) {};
 
 
 /*

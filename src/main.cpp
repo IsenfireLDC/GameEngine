@@ -71,7 +71,7 @@ int gameTest() {
 
 	int w, h;
 	SDL_QueryTexture(playerTexture.getTexture(), 0, 0, &w, &h);
-	RectCollisionComponent *rcc = player.createComponent<RectCollisionComponent>(Coord(w, h));
+	RectCollisionComponent *rcc = player.createComponent<RectCollisionComponent>(Vector2D(w, h));
 
 	//Set player entity as the player
 	Engine::player = &player;
@@ -84,7 +84,7 @@ int gameTest() {
 	npc.createComponent<ModelComponent>(&npcModel);
 
 	SDL_QueryTexture(npcTexture.getTexture(), 0, 0, &w, &h);
-	npc.createComponent<RectCollisionComponent>(Coord(w, h));
+	npc.createComponent<RectCollisionComponent>(Vector2D(w, h));
 
 
 	UpdateController<Update> controller{};
@@ -98,8 +98,8 @@ int gameTest() {
 	Engine::window.draw();
 
 	//Attempt to move player
-	Coord testCoord = {20,80};
-	Engine::player->pos = testCoord;
+	Vector2D testVector2D = {20,80};
+	Engine::player->pos = testVector2D;
 
 	SDL_Delay(1000);
 

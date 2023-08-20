@@ -1,64 +1,64 @@
 /*
  * pos.cpp
  *
- * Contains Coord datatype
+ * Contains Vector2D datatype
  */
 
 #include "pos.hpp"
 
 
-Coord operator+(const Coord& c1, const Coord& c2) {
-	return Coord(c1.x+c2.x, c1.y+c2.y);
+Vector2D operator+(const Vector2D& c1, const Vector2D& c2) {
+	return Vector2D(c1.x+c2.x, c1.y+c2.y);
 };
 
-Coord operator-(const Coord& c1, const Coord& c2) {
-	return Coord(c1.x-c2.x, c1.y-c2.y);
+Vector2D operator-(const Vector2D& c1, const Vector2D& c2) {
+	return Vector2D(c1.x-c2.x, c1.y-c2.y);
 };
 
-Coord operator*(const Coord& c1, const Coord& c2) {
-	return Coord(c1.x*c2.x, c1.y*c2.y);
+Vector2D operator*(const Vector2D& c1, const Vector2D& c2) {
+	return Vector2D(c1.x*c2.x, c1.y*c2.y);
 };
 
-bool operator==(const Coord& c1, const Coord& c2) {
+bool operator==(const Vector2D& c1, const Vector2D& c2) {
 	return c1.x == c2.x && c1.y == c2.y;
 };
 
-bool operator!=(const Coord& c1, const Coord& c2) {
+bool operator!=(const Vector2D& c1, const Vector2D& c2) {
 	return c1.x != c2.x || c1.y != c2.y;
 };
 
 
-Coord operator+=(Coord &c1, const Coord &c2) {
+Vector2D operator+=(Vector2D &c1, const Vector2D &c2) {
 	c1.x += c2.x;
 	c1.y += c2.y;
 	return c1;
 };
 
-Coord operator-=(Coord &c1, const Coord &c2) {
+Vector2D operator-=(Vector2D &c1, const Vector2D &c2) {
 	c1.x -= c2.x;
 	c1.y -= c2.y;
 	return c1;
 };
 
-Coord operator*=(Coord &c1, const Coord &c2) {
+Vector2D operator*=(Vector2D &c1, const Vector2D &c2) {
 	c1.x *= c2.x;
 	c1.y *= c2.y;
 	return c1;
 };
 
 
-Coord operator*(const Coord &c, const float &f) {
-	return Coord(c.x * f, c.y * f);
+Vector2D operator*(const Vector2D &c, const float &f) {
+	return Vector2D(c.x * f, c.y * f);
 };
 
-Coord operator*=(Coord &c, const float &f) {
+Vector2D operator*=(Vector2D &c, const float &f) {
 	c.x *= f;
 	c.y *= f;
 	return c;
 };
 
 
-SDL_Rect operator*(const SDL_Rect& r, const Coord& c) {
+SDL_Rect operator*(const SDL_Rect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	SDL_Rect rect = {
 		.x = (int)(r.x * c.x),
@@ -70,7 +70,7 @@ SDL_Rect operator*(const SDL_Rect& r, const Coord& c) {
 	return rect;
 };
 
-SDL_Rect operator*=(SDL_Rect& r, const Coord& c) {
+SDL_Rect operator*=(SDL_Rect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	r.x = (int)(r.x * c.x);
 	r.y = (int)(r.y * c.y);
@@ -80,7 +80,7 @@ SDL_Rect operator*=(SDL_Rect& r, const Coord& c) {
 	return r;
 };
 
-SDL_FRect operator*(const SDL_FRect& r, const Coord& c) {
+SDL_FRect operator*(const SDL_FRect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	SDL_FRect rect = {
 		.x = r.x * c.x,
@@ -92,7 +92,7 @@ SDL_FRect operator*(const SDL_FRect& r, const Coord& c) {
 	return rect;
 };
 
-SDL_FRect operator*=(SDL_FRect& r, const Coord& c) {
+SDL_FRect operator*=(SDL_FRect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	r.x = r.x * c.x;
 	r.y = r.y * c.y;

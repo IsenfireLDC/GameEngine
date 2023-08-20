@@ -7,7 +7,7 @@
 #include "model.hpp"
 
 
-Model::Model(Texture *texture, Coord origin) {
+Model::Model(Texture *texture, Vector2D origin) {
 	this->texture = texture;
 	this->origin = origin;
 };
@@ -30,15 +30,15 @@ Texture* Model::getTexture() const {
 
 /*
  * Sets the origin point for the model
- * Coordinates are from top left corner
+ * Vector2Dinates are from top left corner
  */
-void Model::setOrigin(Coord origin) {
+void Model::setOrigin(Vector2D origin) {
 	this->origin = origin;
 };
 
 /*
  * Returns the origin point for the model
  */
-Coord Model::getOrigin() const {
+Vector2D Model::getOrigin() const {
 	return this->origin;
 };

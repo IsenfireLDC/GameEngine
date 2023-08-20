@@ -44,7 +44,7 @@ private:
 // TODO: How should these get the location?
 class RectCollider : public Collider {
 public:
-	RectCollider(const Coord*, Coord);
+	RectCollider(const Vector2D*, Vector2D);
 	~RectCollider();
 
 	bool isCollidingWith(const class RectCollider*) const;
@@ -52,14 +52,14 @@ public:
 	bool isCollidingWith(const class PolyCollider*) const;
 
 private:
-	const Coord *position;
-	const Coord size;
+	const Vector2D *position;
+	const Vector2D size;
 };
 
 
 class CircleCollider : public Collider {
 public:
-	CircleCollider(Coord*, Coord);
+	CircleCollider(Vector2D*, Vector2D);
 	virtual ~CircleCollider();
 
 	bool isCollidingWith(const class RectCollider*) const;
@@ -70,7 +70,7 @@ public:
 
 class PolyCollider : public Collider {
 public:
-	PolyCollider(Coord*, Coord);
+	PolyCollider(Vector2D*, Vector2D);
 	virtual ~PolyCollider();
 
 	bool isCollidingWith(const class RectCollider*) const;

@@ -1,7 +1,7 @@
 /*
  * pos.hpp
  *
- * Contains Coord datatype
+ * Contains Vector2D datatype
  */
 
 #ifndef _POS_HPP_
@@ -11,47 +11,47 @@
 
 #include <SDL2/SDL_rect.h>
 
-struct Coord {
+struct Vector2D {
 	float x;
 	float y;
 
-	Coord() {
+	Vector2D() {
 		this->x = 0;
 		this->y = 0;
 	};
 
-	Coord(float x, float y) {
+	Vector2D(float x, float y) {
 		this->x = x;
 		this->y = y;
 	};
 
-	bool operator==(Coord a) {
+	bool operator==(Vector2D a) {
 		return this->x == a.x && this->y == a.y;
 	};
 
-	friend std::ostream& operator<<(std::ostream &out, const Coord &coord) {
+	friend std::ostream& operator<<(std::ostream &out, const Vector2D &coord) {
 		out << "(" << coord.x << ", " << coord.y << ")";
 		return out;
 	};
 };
 
-Coord operator+(const Coord&, const Coord&);
-Coord operator-(const Coord&, const Coord&);
-Coord operator*(const Coord&, const Coord&);
-bool operator==(const Coord&, const Coord&);
-bool operator!=(const Coord&, const Coord&);
+Vector2D operator+(const Vector2D&, const Vector2D&);
+Vector2D operator-(const Vector2D&, const Vector2D&);
+Vector2D operator*(const Vector2D&, const Vector2D&);
+bool operator==(const Vector2D&, const Vector2D&);
+bool operator!=(const Vector2D&, const Vector2D&);
 
-Coord operator+=(Coord&, const Coord&);
-Coord operator-=(Coord&, const Coord&);
-Coord operator*=(Coord&, const Coord&);
+Vector2D operator+=(Vector2D&, const Vector2D&);
+Vector2D operator-=(Vector2D&, const Vector2D&);
+Vector2D operator*=(Vector2D&, const Vector2D&);
 
-Coord operator*(const Coord&, const float&);
-Coord operator*=(Coord&, const float&);
+Vector2D operator*(const Vector2D&, const float&);
+Vector2D operator*=(Vector2D&, const float&);
 
-SDL_Rect operator*(const SDL_Rect&, const Coord&);
-SDL_Rect operator*=(SDL_Rect&, const Coord&);
-SDL_FRect operator*(const SDL_FRect&, const Coord&);
-SDL_FRect operator*=(SDL_FRect&, const Coord&);
+SDL_Rect operator*(const SDL_Rect&, const Vector2D&);
+SDL_Rect operator*=(SDL_Rect&, const Vector2D&);
+SDL_FRect operator*(const SDL_FRect&, const Vector2D&);
+SDL_FRect operator*=(SDL_FRect&, const Vector2D&);
 
 
 #endif

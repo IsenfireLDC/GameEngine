@@ -9,7 +9,7 @@
 
 BoundingBox operator*(const BoundingBox &bb, const short scale) {
 	BoundingBox bb_s;
-	Coord c_scale{scale, scale};
+	Vector2D c_scale{scale, scale};
 
 	bb_s.low = bb.low * c_scale;
 	bb_s.high = bb.high * c_scale;
@@ -17,7 +17,7 @@ BoundingBox operator*(const BoundingBox &bb, const short scale) {
 	return bb_s;
 };
 
-BoundingBox operator*(const BoundingBox &bb, const Coord &scale) {
+BoundingBox operator*(const BoundingBox &bb, const Vector2D &scale) {
 	BoundingBox bb_s;
 
 	bb_s.low = bb.low * scale;
@@ -26,7 +26,7 @@ BoundingBox operator*(const BoundingBox &bb, const Coord &scale) {
 	return bb_s;
 };
 
-BoundingBox operator+(const BoundingBox &bb, const Coord &translate) {
+BoundingBox operator+(const BoundingBox &bb, const Vector2D &translate) {
 	BoundingBox bb_s;
 
 	bb_s.low = bb.low + translate;
@@ -44,14 +44,14 @@ RectArea::RectArea() : size(0, 0) {};
 /*
  * Constructor for RectArea from bounding box corners
  */
-RectArea::RectArea(const Coord *origin, Coord size) {
+RectArea::RectArea(const Vector2D *origin, Vector2D size) {
 	this->origin = origin;
 	this->size = size;
 };
 
-RectArea::RectArea(const Coord *origin, float w, float h) {
+RectArea::RectArea(const Vector2D *origin, float w, float h) {
 	this->origin = origin;
-	this->size = Coord(w, h);
+	this->size = Vector2D(w, h);
 };
 
 /*
@@ -67,11 +67,11 @@ BoundingBox RectArea::getBoundingBox() const {
 };
 
 /*
- * Determenis if this Area contains the given Coord
+ * Determenis if this Area contains the given Vector2D
  *
  * Does not include edges by default
  */
-bool RectArea::contains(Coord c, bool edges = false) const {
+bool RectArea::contains(Vector2D c, bool edges = false) const {
 	int a = this->origin->x - c.x;
 	int b = this->origin->x + this->size.x - c.x;
 	if(a*b > 0 || (!edges && a*b == 0)) return false;

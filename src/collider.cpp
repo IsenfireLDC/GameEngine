@@ -27,7 +27,7 @@ const std::unordered_set<const Collider*>& ColliderList::getColliders(const Coll
 
 
 
-RectCollider::RectCollider(const Coord *position, Coord size) : position(position), size(size) {};
+RectCollider::RectCollider(const Vector2D *position, Vector2D size) : position(position), size(size) {};
 
 RectCollider::~RectCollider() {};
 

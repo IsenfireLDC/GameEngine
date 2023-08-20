@@ -42,7 +42,7 @@ class RectCollisionComponent : public CollisionComponent<RectCollisionComponent>
 public:
 	friend class CollisionComponent;
 
-	RectCollisionComponent(class Entity*, Coord);
+	RectCollisionComponent(class Entity*, Vector2D);
 	~RectCollisionComponent();
 
 	// Fixed Update

@@ -13,19 +13,19 @@
 
 class Model {
 public:
-	Model(Texture* = nullptr, Coord = Coord(0,0));
+	Model(Texture* = nullptr, Vector2D = Vector2D(0,0));
 
 	void setTexture(Texture*);
 	Texture* getTexture() const;
 
-	void setOrigin(Coord);
-	Coord getOrigin() const;
+	void setOrigin(Vector2D);
+	Vector2D getOrigin() const;
 
 	//Draw with SDL_RenderCopy
 
 private:
 	Texture *texture;
-	Coord origin;
+	Vector2D origin;
 };
 
 #endif

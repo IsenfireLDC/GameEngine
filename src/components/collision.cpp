@@ -20,7 +20,7 @@ const std::unordered_set<Entity*>& CollisionComponentBase::getCollisions(void) c
 };
 
 
-RectCollisionComponent::RectCollisionComponent(Entity *entity, Coord size) : CollisionComponent(entity),
+RectCollisionComponent::RectCollisionComponent(Entity *entity, Vector2D size) : CollisionComponent(entity),
 	collider(&entity->pos, size) {};
 
 RectCollisionComponent::~RectCollisionComponent() {};

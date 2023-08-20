@@ -18,19 +18,19 @@ private:
 	static std::string defaultName;
 
 public:
-	Window(class Level* = Window::defaultLevel, std::string = Window::defaultName, Coord = Coord(1,1));
+	Window(class Level* = Window::defaultLevel, std::string = Window::defaultName, Vector2D = Vector2D(1,1));
 	~Window();
 
 	//Getters
-	Coord size() const;
-	Coord getScale() const;
+	Vector2D size() const;
+	Vector2D getScale() const;
 
 	SDL_Window* getWindow() const;
 	SDL_Renderer* getRenderer() const;
 
 	//Setters
-	void resize(Coord);
-	void setScale(Coord);
+	void resize(Vector2D);
+	void setScale(Vector2D);
 
 	//Rendering
 	void draw() const;
@@ -42,7 +42,7 @@ private:
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 
-	Coord scale;
+	Vector2D scale;
 
 	bool visible;
 

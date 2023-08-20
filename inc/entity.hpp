@@ -47,13 +47,13 @@ typedef std::function<int(Entity*, EntityAction)> EntityActionHandler;
 class Entity : public Update {
 public:
 	//Constants
-	const static Coord origin;
+	const static Vector2D origin;
 	const static std::string defaultName;
 	static class Level *const defaultLevel;
 
 	//Constructors
-	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Coord=Entity::origin);
-	Entity(std::string, Coord, class Level* = Entity::defaultLevel);
+	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Vector2D=Entity::origin);
+	Entity(std::string, Vector2D, class Level* = Entity::defaultLevel);
 
 	//Update
 	void update(float);
@@ -82,7 +82,7 @@ public:
 	};
 
 
-	Coord pos;
+	Vector2D pos;
 	std::string name;
 
 	class Level *level;

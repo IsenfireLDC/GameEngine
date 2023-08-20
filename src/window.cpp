@@ -22,7 +22,7 @@ std::string Window::defaultName = "Game Engine 0.1";
 
 Window __attribute__((init_priority(175))) Engine::window{};
 
-Window::Window(Level *level, std::string name, Coord scale) {
+Window::Window(Level *level, std::string name, Vector2D scale) {
 	this->level = level;
 	this->scale = scale;
 
@@ -62,18 +62,18 @@ Window::~Window() {
 /*
  * Get window size
  */
-Coord Window::size() const {
+Vector2D Window::size() const {
 	SDL_Point size;
 
 	SDL_GetWindowSize(this->window, &size.x, &size.y);
 
-	return Coord(size.x, size.y);
+	return Vector2D(size.x, size.y);
 };
 
 /*
  * Get window scale
  */
-Coord Window::getScale() const {
+Vector2D Window::getScale() const {
 	return this->scale;
 };
 
@@ -95,16 +95,16 @@ SDL_Renderer* Window::getRenderer() const {
 /*
  * Changes the size of the window
  *
- * Takes Coord with new width and height
+ * Takes Vector2D with new width and height
  */
-void Window::resize(Coord size) {
+void Window::resize(Vector2D size) {
 	SDL_SetWindowSize(this->window, (int)size.x, (int)size.y);
 };
 
 /*
  * Changes the scaling of the window
  */
-void Window::setScale(Coord scale) {
+void Window::setScale(Vector2D scale) {
 	this->scale = scale;
 };
 
@@ -133,7 +133,7 @@ void Window::draw() const {
 	for(Entity *entity : this->level->findEntitiesWithComponent<ModelComponent>()) {
 		//TODO: Add culling for offscreen entities
 		Model *m = entity->getComponent<ModelComponent>()->getModel();
-		Coord pos = entity->pos - m->getOrigin();
+		Vector2D pos = entity->pos - m->getOrigin();
 
 		SDL_Texture *tex = m->getTexture()->getTexture();
 

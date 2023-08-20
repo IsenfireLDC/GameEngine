@@ -27,19 +27,19 @@ void BasicMovementComponent::update(float delta) {
 
 	Engine::log.log("Updating BasicMovementComponent", LogLevel::Debug, "BasicMovementComponent");
 
-	Coord move;
+	Vector2D move;
 
 	if(input.pressed(SDL_SCANCODE_W))
-		move += Coord(0, 1);
+		move += Vector2D(0, 1);
 
 	if(input.pressed(SDL_SCANCODE_A))
-		move += Coord(-1, 0);
+		move += Vector2D(-1, 0);
 
 	if(input.pressed(SDL_SCANCODE_S))
-		move += Coord(0, -1);
+		move += Vector2D(0, -1);
 
 	if(input.pressed(SDL_SCANCODE_D))
-		move += Coord(1, 0);
+		move += Vector2D(1, 0);
 
 	this->entity->pos += move * this->speed * delta;
 };
@@ -51,7 +51,7 @@ void BasicMovementComponent::update(float delta) {
 /*
  * Moves entity, checking for collision if registered to manager
  */
-//bool Entity::move(Coord pos) {
+//bool Entity::move(Vector2D pos) {
 //	Engine::log.log("Attempting to move entity");
 //
 //	//Check if entity at pos
