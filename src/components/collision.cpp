@@ -6,22 +6,22 @@
 
 #include "engine.hpp"
 
-CollisionComponent::CollisionComponent() : FixedUpdate(&Engine::level) {};
+CollisionComponentBase::CollisionComponentBase() : FixedUpdate(&Engine::level) {};
 
-CollisionComponent::~CollisionComponent() {};
+CollisionComponentBase::~CollisionComponentBase() {};
 
 
-bool CollisionComponent::isCollidingWith(Entity *entity) {
+bool CollisionComponentBase::isCollidingWith(Entity *entity) const {
 	return this->collisions.count(entity) > 0;
 };
 
-const std::unordered_set<Entity*>& CollisionComponent::getCollisions(void) {
+const std::unordered_set<Entity*>& CollisionComponentBase::getCollisions(void) const {
 	return this->collisions;
 };
 
 
-
-RectCollisionComponent::RectCollisionComponent(Entity *entity, Coord size) : Component(entity), area(&this->entity->pos, size) {};
+RectCollisionComponent::RectCollisionComponent(Entity *entity, Coord size) : CollisionComponent(entity),
+	collider(&entity->pos, size) {};
 
 RectCollisionComponent::~RectCollisionComponent() {};
 
@@ -29,9 +29,5 @@ RectCollisionComponent::~RectCollisionComponent() {};
 void RectCollisionComponent::update(float delta) {
 	this->collisions.clear();
 
-	for(RectCollisionComponent *other : Component<RectCollisionComponent>::instances) {
-		if(!other) continue;
-
-		if(this->area.overlaps(&other->area)) this->collisions.insert(other->entity);
-	};
+	this->addCollisions<RectCollisionComponent>(&this->collider);
 };

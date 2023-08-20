@@ -33,7 +33,7 @@ Entity *Engine::player = nullptr;
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(std::string name, Level *level, Coord pos) : Update(level) {
+Entity::Entity(std::string name, Level *level, Coord pos) : Update(level), name(name) {
 	level->addEntity(this);
 	this->level = level;
 
@@ -41,7 +41,6 @@ Entity::Entity(std::string name, Level *level, Coord pos) : Update(level) {
 
 	this->id = Utils::nextID(&Entity::gID);
 	this->state = 0;
-	this->name = name;
 };
 
 

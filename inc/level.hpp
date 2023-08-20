@@ -19,7 +19,7 @@ public:
 	Entity* findEntity(std::string) const;
 
 	template<typename T>
-	std::unordered_set<Entity*> findEntitiesWithComponent();
+	std::unordered_set<Entity*> findEntitiesWithComponent() const;
 
 private:
 	std::unordered_set<Entity*> entities;
@@ -35,8 +35,9 @@ private:
 
 /********** TEMPLATE METHODS **********/
 
+// TODO: Consider returning a const reference for efficiency; should be safe as this should only update once a tick
 template<typename T>
-std::unordered_set<Entity*> Level::findEntitiesWithComponent() {
+std::unordered_set<Entity*> Level::findEntitiesWithComponent() const {
 	static int validFor = -1;
 	static std::unordered_set<Entity*> withT;
 

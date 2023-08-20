@@ -67,7 +67,7 @@ public:
 	void detachComponent(ComponentBase*);
 
 	template<typename T> T* getComponent();
-	template<typename T> std::set<T*> getComponents();
+	template<typename T> std::unordered_set<T*> getComponents();
 
 	template<typename T, class... Args> T* createComponent(Args...);
 	template<typename T> void destroyComponent(T*);
@@ -85,10 +85,10 @@ public:
 	Coord pos;
 	std::string name;
 
+	class Level *level;
+
 private:
 	static int gID;
-
-	class Level *level;
 
 	int id;
 	int state;
@@ -110,7 +110,7 @@ T* Entity::getComponent() {
 	if(this->components.count(componentID) == 0)
 		return nullptr;
 
-	std::unordered_set<ComponentBase*> components = this->components[componentID];
+	std::unordered_set<ComponentBase*> &components = this->components[componentID];
 
 	if(components.size() == 0)
 		return nullptr;
@@ -119,13 +119,14 @@ T* Entity::getComponent() {
 };
 
 template<typename T>
-std::set<T*> Entity::getComponents() {
+std::unordered_set<T*> Entity::getComponents() {
 	int componentID = Component<T>::getComponentID();
 
 	if(this->components.count(componentID))
-		return reinterpret_cast<std::set<T*>>(this->components[componentID]);
+		// TODO: Ewwwww
+		return std::unordered_set<T*>(*reinterpret_cast<std::unordered_set<T*>*>(&this->components[componentID]));
 	else
-		return std::set<T*>();
+		return std::unordered_set<T*>();
 };
 
 
