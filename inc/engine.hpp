@@ -12,18 +12,6 @@
 namespace Engine {
 
 /*
- * events.hpp
- *
- * Global event bus
- */
-#ifdef _EVENTS_HPP_
-#ifndef _ENGINE_EVENTS
-#define _ENGINE_EVENTS
-	extern Events eventBus;
-#endif
-#endif
-
-/*
  * log.hpp
  *
  * Global log
@@ -36,6 +24,39 @@ namespace Engine {
 #endif
 
 /*
+ * engine.cpp
+ *
+ * Initializes SDL
+ */
+#ifndef _ENGINE_INSTANCE
+#define _ENGINE_INSTANCE
+	class Instance {
+	public:
+		Instance();
+		~Instance();
+
+		bool good() const { return this->initialized; };
+
+	private:
+		static bool initialized;
+	};
+
+	extern Instance instance;
+#endif
+
+/*
+ * input.hpp
+ *
+ * Global input state
+ */
+#ifdef _INPUT_HPP_
+#ifndef _ENGINE_INPUT
+#define _ENGINE_INPUT
+	extern Input input;
+#endif
+#endif
+
+/*
  * threads.hpp
  *
  * Default thread pool
@@ -44,6 +65,42 @@ namespace Engine {
 #ifndef _ENGINE_THREADS
 #define _ENGINE_THREADS
 	extern ThreadPool threadPool;
+#endif
+#endif
+
+/*
+ * level.hpp
+ *
+ * Default level
+ */
+#ifdef _LEVEL_HPP_
+#ifndef _ENGINE_LEVEL
+#define _ENGINE_LEVEL
+	extern Level level;
+#endif
+#endif
+
+/*
+ * entity.hpp
+ *
+ * Player entity
+ */
+#ifdef _ENTITY_HPP_
+#ifndef _ENGINE_PLAYER
+#define _ENGINE_PLAYER
+	extern Entity *player;
+#endif
+#endif
+
+/*
+ * window.hpp
+ *
+ * SDL window and renderer
+ */
+#ifdef _WINDOW_HPP_
+#ifndef _ENGINE_WINDOW
+#define _ENGINE_WINDOW
+	extern Window window;
 #endif
 #endif
 

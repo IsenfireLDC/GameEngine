@@ -6,128 +6,39 @@
 
 #include "model.hpp"
 
-#include <iostream>
 
-#include <windows.h>
-
-
-/*
- * Constructor
- *
- * Creates a single colored character
- */
-BasicModel::BasicModel(char model, unsigned char color) : model(model), color(color) {};
-
-/*
- * Draws the model
- *
- * Sets terminal color and prints character to display
- */
-void BasicModel::draw(Coord pos) const {
-	Renderer::setCursorPos(pos);
-	Renderer::setTermColor(this->color);
-	std::cout << this->model;
-};
-
-/*
- * Draws the model
- *
- * Same as BasicModel::draw
- */
-void BasicModel::redraw(Coord pos) const {
-	this->draw(pos);
-};
-
-/*
- * Get bounding box
- *
- * Will always be a single character (0 x 0)
- */
-const BoundingBox BasicModel::getBoundingBox() const {
-	return BoundingBox{Coord(), Coord()};
+Model::Model(Texture *texture, Vector2D origin) {
+	this->texture = texture;
+	this->origin = origin;
 };
 
 
 /*
- * Print the character for the model
+ * Assigns a new texture to this model
  */
-std::ostream& operator<<(std::ostream &out, const BasicModel &model) {
-	out << model.model;
-	return out;
+void Model::setTexture(Texture *texture) {
+	this->texture = texture;
+};
+
+/*
+ * Returns the texture associated with this model
+ */
+Texture* Model::getTexture() const {
+	return this->texture;
 };
 
 
 /*
- * Constructor
- *
- * Attaches a model to this renderer
+ * Sets the origin point for the model
+ * Vector2Dinates are from top left corner
  */
-ModelRenderer::ModelRenderer(const Model *model) : model(model) {
-	//this->model = model;
+void Model::setOrigin(Vector2D origin) {
+	this->origin = origin;
 };
 
 /*
- * Returns the model that this renderer will draw
+ * Returns the origin point for the model
  */
-const Model* ModelRenderer::getModel() const {
-	return this->model;
-};
-
-/*
- * Changes the model that this renderer will draw
- */
-void ModelRenderer::setModel(const Model *model) {
-	this->changed = this->model != model;
-
-	this->model = model;
-};
-
-/*
- * Returns the area that should be cleared before the model is drawn
- */
-BoundingBox ModelRenderer::getLastRegion() const {
-	return (this->model->getBoundingBox() + this->lastPos) * this->scale;
-};
-
-/*
- * Draws the model
- */
-void ModelRenderer::draw() const {
-	this->model->draw(this->pos * this->scale);
-
-	this->lastPos = this->pos;
-	this->changed = false;
-};
-
-/*
- * Draws the model
- */
-void ModelRenderer::redraw() const {
-	if(this->dirty()) this->clear();
-
-	this->model->redraw(this->pos * this->scale);
-
-	this->lastPos = this->pos;
-	this->changed = false;
-};
-
-/*
- * Allows the region to be cleared
- */
-void ModelRenderer::clear() const {
-	this->bgFunc(this->getLastRegion());
-};
-
-/*
- * Returns whether the model has changed since last (re)draw
- */
-bool ModelRenderer::dirty() const {
-	return this->pos != this->lastPos || this->changed;
-};
-
-/*
- * Sets the position of this model
- */
-void ModelRenderer::move(Coord pos) {
-	this->pos = pos;
+Vector2D Model::getOrigin() const {
+	return this->origin;
 };

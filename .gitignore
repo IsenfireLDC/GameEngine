@@ -7,6 +7,11 @@ logs/
 
 # Exclude vim swap files
 .*.swp
+.*.swo
+Session.vim
 
 # Hidden files
 .*
+
+# Debugger files
+gdb.log

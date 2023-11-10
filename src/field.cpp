@@ -9,7 +9,7 @@
 #include "pos.hpp"
 
 const RectArea Field::defaultArea = RectArea();
-const Coord Field::defaultScale = Coord(2,1);
+const Vector2D Field::defaultScale = Vector2D(2,1);
 
 /*
  * Constructor for default field
@@ -38,7 +38,7 @@ Field::Field(Area &area) : area(area) {
  * area - field area
  * scale - x and y scale of field
  */
-Field::Field(Area &area, Coord scale) : area(area) {
+Field::Field(Area &area, Vector2D scale) : area(area) {
 	//this->area = area;
 
 	this->scale = scale;
@@ -55,27 +55,27 @@ BoundingBox Field::getBoundingBox() const {
 /*
  * Getter for scale
  */
-Coord Field::getScale() const {
+Vector2D Field::getScale() const {
 	return this->scale;
 };
 
 /*
  * Setter for scale
  */
-void Field::setScale(Coord scale) {
+void Field::setScale(Vector2D scale) {
 	this->scale = scale;
 };
 
 /*
  * Determines if the given coordinates are out of bounds for this field
  */
-bool Field::contains(Coord pos) const {
+bool Field::contains(Vector2D pos) const {
 	return this->area.contains(pos);
 };
 
 /*
- * Uses the x and y scales to get the transform of a Coord
+ * Uses the x and y scales to get the transform of a Vector2D
  */
-Coord Field::transform(Coord pos) const {
+Vector2D Field::transform(Vector2D pos) const {
 	return pos * this->scale;
 };

@@ -9,7 +9,7 @@
 
 BoundingBox operator*(const BoundingBox &bb, const short scale) {
 	BoundingBox bb_s;
-	Coord c_scale{scale, scale};
+	Vector2D c_scale{scale, scale};
 
 	bb_s.low = bb.low * c_scale;
 	bb_s.high = bb.high * c_scale;
@@ -17,7 +17,7 @@ BoundingBox operator*(const BoundingBox &bb, const short scale) {
 	return bb_s;
 };
 
-BoundingBox operator*(const BoundingBox &bb, const Coord &scale) {
+BoundingBox operator*(const BoundingBox &bb, const Vector2D &scale) {
 	BoundingBox bb_s;
 
 	bb_s.low = bb.low * scale;
@@ -26,7 +26,7 @@ BoundingBox operator*(const BoundingBox &bb, const Coord &scale) {
 	return bb_s;
 };
 
-BoundingBox operator+(const BoundingBox &bb, const Coord &translate) {
+BoundingBox operator+(const BoundingBox &bb, const Vector2D &translate) {
 	BoundingBox bb_s;
 
 	bb_s.low = bb.low + translate;
@@ -39,52 +39,55 @@ BoundingBox operator+(const BoundingBox &bb, const Coord &translate) {
 /*
  * Default constructor
  */
-RectArea::RectArea() : c1(0, 0), c2(0, 0) {};
+RectArea::RectArea() : size(0, 0) {};
 
 /*
  * Constructor for RectArea from bounding box corners
  */
-RectArea::RectArea(Coord c1, Coord c2) {
-		this->c1 = c1;
-		this->c2 = c2;
+RectArea::RectArea(const Vector2D *origin, Vector2D size) {
+	this->origin = origin;
+	this->size = size;
+};
+
+RectArea::RectArea(const Vector2D *origin, float w, float h) {
+	this->origin = origin;
+	this->size = Vector2D(w, h);
 };
 
 /*
  * Returns ordered bounding box
  */
 BoundingBox RectArea::getBoundingBox() const {
-	BoundingBox bb;
-
-	if(c1.x < c2.x) {
-		bb.low.x = c1.x;
-		bb.high.x = c2.x;
-	} else {
-		bb.low.x = c2.x;
-		bb.high.x = c1.x;
-	};
-
-	if(c1.y < c2.y) {
-		bb.low.y = c1.y;
-		bb.high.y = c2.y;
-	} else {
-		bb.low.y = c2.y;
-		bb.high.y = c1.y;
+	BoundingBox bb = {
+		.low = *this->origin,
+		.high = *this->origin + this->size
 	};
 
 	return bb;
 };
 
 /*
- * Determenis if this Area contains the given Coord
+ * Determenis if this Area contains the given Vector2D
  *
  * Does not include edges by default
  */
-bool RectArea::contains(Coord c, bool edges = false) const {
-	int a = this->c1.x - c.x;
-	int b = this->c2.x - c.x;
+bool RectArea::contains(Vector2D c, bool edges = false) const {
+	int a = this->origin->x - c.x;
+	int b = this->origin->x + this->size.x - c.x;
 	if(a*b > 0 || (!edges && a*b == 0)) return false;
 
-	a = this->c1.y - c.y;
-	b = this->c2.y - c.y;
+	a = this->origin->y - c.y;
+	b = this->origin->y + this->size.y - c.y;
 	return a*b < 0 || (edges && a*b == 0);
+};
+
+
+
+
+bool RectArea::overlaps(const RectArea *other) const {
+	return
+		this->origin->x + this->size.x >= other->origin->x &&
+		this->origin->x <= other->origin->x + other->size.x &&
+		this->origin->y + this->size.y >= other->origin->y &&
+		this->origin->y <= other->origin->y + other->size.y;
 };

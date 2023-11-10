@@ -15,30 +15,30 @@ class Field {
 public:
 	//Exposed Constants
 	static const RectArea defaultArea;
-	static const Coord defaultScale;
+	static const Vector2D defaultScale;
 
 	//Constructors
 	Field();
 	Field(Area&);
-	Field(Area&, Coord);
+	Field(Area&, Vector2D);
 
 	//Getters
 	BoundingBox getBoundingBox() const;
-	Coord getScale() const;
+	Vector2D getScale() const;
 
 	//Setters
-	void setScale(Coord);
+	void setScale(Vector2D);
 
 	//Queries
-	bool contains(Coord) const;
+	bool contains(Vector2D) const;
 
 	//Operations
-	Coord transform(Coord) const;
+	Vector2D transform(Vector2D) const;
 
 private:
 	const Area &area;
 
-	Coord scale;
+	Vector2D scale;
 };
 
 #endif

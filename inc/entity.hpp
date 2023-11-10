@@ -10,25 +10,23 @@
 #include <vector>
 #include <iostream>
 
-#include <functional>
 #include <unordered_map>
+#include <set>
 
-#include "area.hpp"
-#include "field.hpp"
 #include "pos.hpp"
 
-#include "model.hpp"
+#include "update.hpp"
 
-#include "render.hpp"
+#include "component.hpp"
 
 /*	Types		*/
-class EntityManager;
+/*
 class Entity;
 
 struct EntityData {
 	int id;
 	int state;
-	const char* name;
+	std::string name;
 };
 
 struct EntityAction {
@@ -38,134 +36,142 @@ struct EntityAction {
 };
 
 typedef std::function<int(Entity*, EntityAction)> EntityActionHandler;
+//std::unordered_map<int, EntityActionHandler> handlers; //Map example for handlers
+*/
 
-//Singleton type
-struct EntityType {
-	int id;
-	const char* name;
-	std::unordered_map<int, EntityActionHandler> handlers;
 
-	EntityType(int id, const char *name) {
-		this->id = id;
-		this->name = name;
-
-		this->handlers = std::unordered_map<int, EntityActionHandler>();
-	};
-};
-
-class Entity : public ModelRenderer {
+/*
+ * Reduce Entity to basic info (pos, name, etc.)
+ * Allow collision, physics, model, etc. to be attached
+ */
+class Entity : public Update {
 public:
-	friend class EntityManager;
-
 	//Constants
-	const static Coord origin;
-	const static char dName[];
-	const static BasicModel defaultModel;
+	const static Vector2D origin;
+	const static std::string defaultName;
+	static class Level *const defaultLevel;
 
 	//Constructors
-	Entity(Coord=Coord(), EntityType* =nullptr, const char* =Entity::dName, const Model* =&Entity::defaultModel);
+	Entity(std::string=Entity::defaultName, class Level* = Entity::defaultLevel, Vector2D=Entity::origin);
+	Entity(std::string, Vector2D, class Level* = Entity::defaultLevel);
+	virtual ~Entity();
 
-	//Setters
-	void setData(EntityData);
+	// No copy constructor/assignment operator
+	Entity(const Entity&) = delete;
+	Entity operator=(const Entity&) = delete;
 
-	//Getters
-	EntityData getData() const;
+	//Update
+	void update(float);
 
 	//Action
-	int sendAction(Entity*, EntityAction);
-	int receiveAction(EntityAction);
+	//int sendAction(Entity*, EntityAction);
+	//int receiveAction(EntityAction);
 
-	virtual bool move(Coord);
+	//Components
+	void attachComponent(ComponentBase*);
+	void detachComponent(ComponentBase*);
 
-	virtual bool moveInto(Entity*);
+	template<typename T> T* getComponent();
+	template<typename T> std::unordered_set<T*> getComponents();
 
-	//IModelable interface
-	Coord getPos() const;
-	Coord getLastPos();
-	bool isDirty();
+	template<typename T, class... Args> T* createComponent(Args...);
+	template<typename T> void destroyComponent(T*);
 
 
 	friend std::ostream& operator<<(std::ostream& out, const Entity& entity) {
-		out << entity.data.name;
-		if(entity.model && &out == &std::cout) {
-			out << "(";
-			entity.model->draw(Renderer::getCursorPos());
-			out << ")";
-		};
-		out << " id=" << (int)entity.data.id;
-		out << " type=" << (int)entity.type->id;
+		out << entity.name;
+		out << " id=" << (int)entity.id;
+		//out << " type=" << (int)entity.type->id;
 		out << " at" << entity.pos;
-		if(entity.manager) out << " managed by " << entity.manager;
 		return out;
 	};
+
+
+	Vector2D pos;
+	std::string name;
+
+	class Level *level;
 
 private:
 	static int gID;
 
-	Coord pos;
-	Coord lastPos;
+	int id;
+	int state;
 
-	Model* model;
-
-	EntityData data;
-	EntityType *type;
-
-	EntityManager *manager = nullptr;
+	std::unordered_map<int, std::unordered_set<ComponentBase*>> components;
 
 	bool dirty = false;
 };
 
-class EntityManager : public Renderer {
-public:
-	//Constructors
-	EntityManager();
-	EntityManager(Field*);
 
-	virtual ~EntityManager();
 
-	//Get information
-	Entity* getEntityAt(Coord) const;
-	std::vector<Entity*> getEntities() const;
 
-	//Renderer
-	void draw() const;
-	void redraw() const;
-	void clear() const;
+/********** TEMPLATE METHODS **********/
 
-	void setBackground(std::function<void(BoundingBox)>);
+template<typename T>
+T* Entity::getComponent() {
+	int componentID = Component<T>::getComponentID();
 
-	//Add/remove from list
-	bool registerEntity(Entity*);
-	bool unregisterEntity(Entity*);
+	if(this->components.count(componentID) == 0)
+		return nullptr;
 
-	//Take action
-	bool moveEntity(Entity*, Coord);
+	std::unordered_set<ComponentBase*> &components = this->components[componentID];
 
-	//Query
-	bool inBounds(Coord) const;
-	bool canPlaceAt(Coord) const;
-	unsigned int findEntity(Entity*) const;
+	if(components.size() == 0)
+		return nullptr;
 
-	friend std::ostream& operator<<(std::ostream& out, const EntityManager& manager) {
-		out << "EntityManager with ";
-		if(manager.field) out << "field(" << manager.field << ")and ";
-		unsigned int nEnt = manager.entities.size();
-		out << nEnt << " registered entities";
-		
-		if(nEnt == 0) return out;
+	return dynamic_cast<T*>(*components.begin());
+};
 
-		out << "{" << *manager.entities[0];
-		for(unsigned int i = 1; i < nEnt; ++i)
-			out << ", " << *manager.entities[i];
-		out << "}";
+template<typename T>
+std::unordered_set<T*> Entity::getComponents() {
+	int componentID = Component<T>::getComponentID();
 
-		return out;
-	};
+	if(this->components.count(componentID)) {
+		std::unordered_set<T*> typeSet;
 
-private:
+		for(ComponentBase *base : this->components[componentID]) typeSet.insert((T*)base);
 
-	Field* field;
-	std::vector<Entity*> entities;
+		return typeSet;
+	} else
+		return std::unordered_set<T*>();
+};
+
+
+/*
+ * Creates and attaches a component
+ */
+template<typename T, class... Args>
+T* Entity::createComponent(Args... args) {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID) == 0)
+		this->components.emplace(componentID, std::unordered_set<ComponentBase*>());
+
+	T* v = new T(this, args...);
+
+	this->components[componentID].insert(v);
+
+	return v;
+};
+
+/*
+ * Destroys an attached component
+ */
+template<typename T>
+void Entity::destroyComponent(T *component) {
+	int componentID = Component<T>::getComponentID();
+
+	if(this->components.count(componentID) == 0) return;
+
+	typename decltype(this->components)::iterator iter = this->components[componentID].find(component);
+
+	//Ensure that the component is attached to this entity
+	if(iter == this->components.end()) return;
+
+	delete *iter;
+
+	this->components.erase(component);
 };
 
 #endif

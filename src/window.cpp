@@ -4,236 +4,171 @@
  * Holds scene and entities; renders the screen
  */
 
-#include "render.hpp"
-
 #include "window.hpp"
+
+#include "render.hpp"
 #include "model.hpp"
 
+#include "components/model.hpp"
+
+#include "level.hpp"
+#include "entity.hpp"
 #include "log.hpp"
+
 #include "engine.hpp"
 
-BasicModel Window::defaultBorder{'#', TermColor::GRAY};
-BasicModel Window::defaultBackground{' ', TermColor::BG_BLACK};
+Level *Window::defaultLevel = &Engine::level;
+std::string Window::defaultName = "Game Engine 0.1";
 
-Window::Window(RectArea area, Coord scale, BasicModel *border, BasicModel *background) : border(border), background(background) {
-	this->area = area;
+Window __attribute__((init_priority(175))) Engine::window{};
+
+Window::Window(Level *level, std::string name, Vector2D scale) {
+	this->level = level;
 	this->scale = scale;
 
-	this->windowBB = this->area.getBoundingBox() * this->scale;
+	if(!Engine::instance.good()) {
+		Engine::log.log("SDL not initialized", LogLevel::Fatal, "Window");
+		return;
+	};
 
-	this->Renderer::setBackground(std::bind(Window::drawBackground, this, std::placeholders::_1));
+	this->window = SDL_CreateWindow(
+		name.c_str(),
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		640, 480,
+		0
+	);
+
+	if(!this->window) {
+		Engine::log.log("Failed to create window", LogLevel::Error, "Window");
+		return;
+	};
+
+	this->renderer = SDL_CreateRenderer(this->window, -1, 0);
+
+	if(!this->renderer) {
+		Engine::log.log("Failed to create renderer", LogLevel::Error, "Window");
+		return;
+	};
+
+	Engine::log.log("Created window", LogLevel::Debug, "Window");
+};
+
+Window::~Window() {
+	SDL_DestroyRenderer(this->renderer);
+	SDL_DestroyWindow(this->window);
 };
 
 
 /*
  * Get window size
  */
-Coord Window::size() const {
-	return this->area.getBoundingBox().high;
+Vector2D Window::size() const {
+	SDL_Point size;
+
+	SDL_GetWindowSize(this->window, &size.x, &size.y);
+
+	return Vector2D(size.x, size.y);
 };
 
 /*
  * Get window scale
  */
-Coord Window::getScale() const {
+Vector2D Window::getScale() const {
 	return this->scale;
 };
 
 /*
- * Get border model
+ * Get SDL Window
  */
-BasicModel* Window::getBorderModel() const {
-	return this->border;
+SDL_Window* Window::getWindow() const {
+	return this->window;
 };
 
 /*
- * Get background model
+ * Get SDL Renderer
  */
-BasicModel* Window::getBackgroundModel() const {
-	return this->background;
-};
-
-void Window::setMsg(const char *msg) {
-	this->msg = msg;
+SDL_Renderer* Window::getRenderer() const {
+	return this->renderer;
 };
 
 
 /*
  * Changes the size of the window
  *
- * Takes Coord with new width and height
+ * Takes Vector2D with new width and height
  */
-void Window::resize(Coord size) {
-	this->area = RectArea(Coord(0,0), size);
-
-	this->windowBB = this->area.getBoundingBox() * this->scale;
+void Window::resize(Vector2D size) {
+	SDL_SetWindowSize(this->window, (int)size.x, (int)size.y);
 };
 
 /*
  * Changes the scaling of the window
  */
-void Window::setScale(Coord scale) {
+void Window::setScale(Vector2D scale) {
 	this->scale = scale;
-
-	this->windowBB = this->area.getBoundingBox() * this->scale;
-};
-
-
-/*
- * Changes model for the border
- */
-void Window::setBorderModel(BasicModel *border) {
-	this->border = border;
-};
-
-/*
- * Changes model for the background
- */
-void Window::setBackgroundModel(BasicModel *background) {
-	this->background = background;
-};
-
-
-/*
- * Adds a renderer to the window
- */
-void Window::addRenderer(Renderer *renderer) {
-	renderer->setBackground(this->bgFunc);
-
-	this->models.insert(renderer);
-};
-
-/*
- * Removes a renderer from the window
- */
-void Window::removeRenderer(Renderer *renderer) {
-	this->models.erase(renderer);
-};
-
-/*
- * Adds all renderers in a vector
- */
-void Window::addRenderers(std::vector<Renderer*> &renderers) {
-	for(Renderer *renderer : renderers) {
-		renderer->setBackground(this->bgFunc);
-
-		this->models.insert(renderer);
-	};
 };
 
 
 /*
  * Draw entire window
+ *
+ * TODO: Create a camera class for this
+ * TODO: Draw by layer
  */
 void Window::draw() const {
 	if(!this->visible) return;
 
-	Engine::log.log("Drawing window");
+	Engine::log.log("Drawing window", LogLevel::Debug, "Window");
 
-	this->drawBackground(this->windowBB);
+	int screenFlip;
+	SDL_GetWindowSize(this->window, 0, &screenFlip);
 
-	//IModelables (Entities)
-	for(const Renderer *m : this->models) {
-		m->draw();
+	//Clear the screen
+	SDL_RenderClear(this->renderer);
+
+	//Draw the background
+	//this->drawBackground(this->windowBB);
+
+	//Draw all entities with a model
+	for(Entity *entity : this->level->findEntitiesWithComponent<ModelComponent>()) {
+		//TODO: Add culling for offscreen entities
+		Model *m = entity->getComponent<ModelComponent>()->getModel();
+		Vector2D pos = entity->pos - m->getOrigin();
+
+		SDL_Texture *tex = m->getTexture()->getTexture();
+
+		SDL_Rect to = {.x=(int)pos.x, .y=(int)pos.y};
+		SDL_QueryTexture(tex, 0, 0, &to.w, &to.h);
+
+		// Flip vertical origin and window coordinates
+		to.y += to.h;
+		to.y = screenFlip - to.y;
+
+		//TODO: Add better scaling
+		to *= this->scale;
+
+		SDL_RenderCopy(this->renderer, tex, 0, &to);
 	};
 
-
-	//Info
-	Renderer::resetTermColor();
-	Renderer::setCursorPos(Coord(0, this->size().y+1));
-
-	std::cout << this->size() << std::endl;
-
-	Renderer::setTermColor(TermColor::LIGHT_BLUE);
-	if(this->msg) std::cout << this->msg << std::endl;
-	Renderer::resetTermColor();
-};
-
-/*
- * Draw changes within window
- */
-void Window::redraw() const {
-	if(!this->visible) return;
-
-	Engine::log.log("Redrawing window");
-
-	//IModelables (Entities)
-	for(const Renderer *m : this->models) {
-		m->redraw();
-	};
-
-
-	//Info
-	Renderer::resetTermColor();
-	Renderer::setCursorPos(Coord(0, this->size().y+1));
-
-	std::cout << this->size() << std::endl;
-
-	Renderer::setTermColor(TermColor::LIGHT_BLUE);
-	if(this->msg) std::cout << this->msg << std::endl;
-	Renderer::resetTermColor();
+	SDL_RenderPresent(this->renderer);
 };
 
 /*
  * Clear the window
  */
 void Window::clear() const {
-	this->bgFunc(this->windowBB);
-};
-
-
-/*
- * Returns the background drawing function
- */
-std::function<void(BoundingBox)> Window::getBackground() const {
-	return this->bgFunc;
+	SDL_RenderClear(this->renderer);
 };
 
 
 /*
  * Sets whether the window is shown
- *
- * TODO: Clear window area
  */
 void Window::show(bool visible) {
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO cInfo;
-
-	GetConsoleCursorInfo(hOut, &cInfo);
-
-	if(!this->visible && visible) {
-		//Disable cursor
-		cInfo.bVisible = false;
-		SetConsoleCursorInfo(hOut, &cInfo);
-	} else if(this->visible && !visible) {
-		//Enable cursor
-		cInfo.bVisible = true;
-		SetConsoleCursorInfo(hOut, &cInfo);
-	};
+	if(visible)
+		SDL_ShowWindow(this->window);
+	else
+		SDL_HideWindow(this->window);
 
 	this->visible = visible;
 };
-
-
-void Window::drawBackground(BoundingBox bb) const {
-	Renderer::resetTermColor();
-
-	for(short i = bb.low.x; i <= bb.high.x; ++i) {
-		for(short j = bb.low.y; j <= bb.high.y; ++j) {
-			Coord currentPos = { .x=i, .y=j };
-			Renderer::setCursorPos(currentPos);
-
-			if(
-				i == this->windowBB.low.x ||
-				i == this->windowBB.high.x ||
-				j == this->windowBB.low.y ||
-				j == this->windowBB.high.y
-			) {
-				this->border->draw(currentPos);
-			} else {
-				this->background->draw(currentPos);
-			};
-		};
-	};
-};
-

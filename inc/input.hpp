@@ -7,132 +7,89 @@
 #ifndef _INPUT_HPP_
 #define _INPUT_HPP_
 
-#include "entity.hpp"
-
 #include "events.hpp"
 #include "log.hpp"
+
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
 
 #include <functional>
 #include <unordered_map>
 
-#include <thread>
-
-#include <string>
-
-typedef std::function<void(Entity*, int)> Action;
-//typedef void(*Action)(Entity*, int);
-
-extern Action MoveAction;
-
-extern const std::unordered_map<int, Action> defaultMap;
-
-//Special key code
-const int sKey = (224<<8);
-
+/*
+ * Handles passing input to the program
+ *
+ * Allows using event-based input or polling
+ */
 class Input {
 public:
-	enum Key : int {
-		W = 17,
-		A = 30,
-		S = 31,
-		D = 32,
-		Up = 72,
-		Left = 75,
-		Down = 80,
-		Right = 77,
-		Interrupt = 70,
-		Escape = 1,
-		Null = 0
-	};
-
-	static int getInputKey();
-	static int getInputScan();
-	static int getKeyboardLayout();
-
-	Input();
-	Input(std::unordered_map<int, Action>);
-
+	using Handler = std::function<void(SDL_KeyboardEvent*)>;
+public:
+	Input(bool = false);
 	~Input();
 
-	bool spawnThread();
-	bool runThread(bool);
+	//Set handler for a key
+	Input& setHandler(SDL_Scancode, Handler);
 
-	const Action getAction(int) const;
-	bool callAction(Entity*, int) const;
+	//Get the state of the key from the scancode/keycode
+	//TODO: Add explicit key tracking/untracking
+	bool pressed(SDL_Scancode);
+	bool pressed(SDL_Keycode);
 
-	void addActionMapping(int, Action);
-	void removeActionMapping(int);
+	SDL_Keymod getModifiers() const;
 
 private:
 	static Log log;
-	void threadHandler();
 
-	std::unordered_map<int, Action> actionMap;
+	static int listener(void*, SDL_Event*);
 
-	std::thread *thread = nullptr;
+	bool isPressed(SDL_Scancode) const;
 
-	int timeout = 200;
-	bool active = false;
+	std::unordered_map<SDL_Scancode, bool> keys;
+	std::unordered_map<SDL_Scancode, Input::Handler> handlers;
 
-	HANDLE intrHandle;
+	SDL_Keymod modifiers;
 };
 
-struct InputEvent : Event {
-	Input::Key key;
 
-	InputEvent(Input::Key key) : Event() {
-		this->key = key;
-	};
+//struct ActionEvent : Event {
+//	Action action;
+//	int input;
+//
+//	ActionEvent(Action action, int input) : Event() {
+//		this->action = action;
+//		this->input = input;
+//	};
+//
+//	virtual int getHash() {
+//		return Event_MgetHash(ActionEvent);
+//	};
+//
+//	virtual std::string getInfo() {
+//		char info[100];
+//		void(**act)(Entity*,int) = this->action.target<void(*)(Entity*,int)>();
+//		sprintf(info, "ActionEvent{action=%p;input=%d}", *act, this->input);
+//		return std::string(info);
+//	};
+//};
 
-	virtual int getHash() {
-		return Event_MgetHash(InputEvent);
-	};
-
-	virtual std::string getInfo() {
-		char info[100];
-		sprintf(info, "InputEvent{key=%d}", this->key);
-		return std::string(info);
-	};
-};
-
-struct ActionEvent : Event {
-	Action action;
-	int input;
-
-	ActionEvent(Action action, int input) : Event() {
-		this->action = action;
-		this->input = input;
-	};
-
-	virtual int getHash() {
-		return Event_MgetHash(ActionEvent);
-	};
-
-	virtual std::string getInfo() {
-		char info[100];
-		void(**act)(Entity*,int) = this->action.target<void(*)(Entity*,int)>();
-		sprintf(info, "ActionEvent{action=%p;input=%d}", *act, this->input);
-		return std::string(info);
-	};
-};
-
-struct QuitEvent : Event {
-	Input *input;
-
-	QuitEvent(Input *input) : Event() {
-		this->input = input;
-	};
-
-	virtual int getHash() {
-		return Event_MgetHash(QuitEvent);
-	};
-
-	virtual std::string getInfo() {
-		char info[100];
-		sprintf(info, "QuitEvent{input=%p}", this->input);
-		return std::string(info);
-	};
-};
+//struct QuitEvent : Event {
+//	Input *input;
+//
+//	QuitEvent(Input *input) : Event() {
+//		this->input = input;
+//	};
+//
+//	virtual int getHash() {
+//		return Event_MgetHash(QuitEvent);
+//	};
+//
+//	virtual std::string getInfo() {
+//		char info[100];
+//		sprintf(info, "QuitEvent{input=%p}", this->input);
+//		return std::string(info);
+//	};
+//};
 
 //TODO?: Create async handler for input with new event system
 

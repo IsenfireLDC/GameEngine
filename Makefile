@@ -1,42 +1,103 @@
-# Makefile for TerminalEngine
-#
+# Makefile for GameEngine
+NAME=GameEngine
 
-OUT_DIR=bin/
-SRC_DIR=src/
-INC_DIR=inc/
+STATIC_LIBS=
+SHARED_LIBS=mingw32 SDL2main SDL2 image
+
+# Project directories
+SRCDIR=src
+INCDIR=inc
+OBJDIR=bin
+
+# Custom library directories
+SHLIBSDIR=$(CUSTOM_LIBS_DIR)
+
+SHLIBDIR=$(SHLIBSDIR)/shared
+SHARCDIR=$(SHLIBSDIR)/static
+SHINCDIR=$(SHLIBSDIR)/headers
+
+# Build files
+SRCS=$(foreach dir,$(shell find $(SRCDIR) -type d),$(wildcard $(dir)/*.cpp))
+OBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
+SHOBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
+DEPS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
+
+# Output files
+SHLIB=$(OBJDIR)/lib$(NAME).dll
+STLIB=$(OBJDIR)/lib$(NAME).a
+EXEC=$(NAME).exe
+
+DIRS=$(SRCDIR)/ $(OBJDIR)/ $(INCDIR)/
 
 DEBUG=-ggdb -g3
-LIBS=-pthread
+LIBS=-lpthread
 
-FLAGS=-Wall -I$(INC_DIR)
-#FLAGS+=-std=c++2a
-#FLAGS+=$(DEBUG)
-FLAGS+=$(LIBS)
+# Add custom libraries
+# Static libraries
+OBJS+=$(foreach lname,$(STATIC_LIBS),$(shell find $(SHARCDIR) -iname "lib$(lname).a"))
+# Shared libraries
+LIBS+=$(foreach lname,$(SHARED_LIBS),-l$(lname))
 
-OBJECTS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.o, $(wildcard $(SRC_DIR)*.cpp))
-DEPENDS=$(patsubst $(SRC_DIR)%.cpp, $(OUT_DIR)%.d, $(wildcard $(SRC_DIR)*.cpp))
-OUTFILE=./TerminalEngine.exe
+FLAGS=-Wall -I$(INCDIR) -I$(SHINCDIR) -L$(SHARCDIR) -L$(SHLIBDIR)
+FLAGS+=-Dmain=SDL_main
 
-all: $(OUTFILE)
+#FLAGS+=$(shell sdl2-config --cflags)
+#LIBS+=$(shell sdl2-config --libs)
 
-debug: FLAGS += $(DEBUG)
+FLAGS+=$(LIBS) -mwindows
+
+
+
+all: exec
+
+libs: shlib stlib
+
+# Makefile rules
+debug: FLAGS+=$(DEBUG)
 debug: all
 
--include $(DEPENDS)
+exec: $(EXEC)
 
-$(OUTFILE): $(OBJECTS)
-	g++ $(OBJECTS) $(FLAGS) -o $(OUTFILE)
+shlib: $(SHLIB)
 
-$(OUT_DIR)%.o : $(SRC_DIR)%.cpp
+stlib: $(STLIB)
+
+dirs: $(DIRS)
+
+-include $(DEPS)
+
+$(EXEC): $(OBJS)
+	g++ $^ $(FLAGS) -o $(EXEC)
+
+
+$(OBJDIR)/lib%.a: $(filter-out $(OBJDIR)/main.o, $(OBJS))
+	ar rcs $@ $^
+
+$(OBJDIR)/lib%.dll: $(filter-out $(OBJDIR)/main.so, $(SHOBJS))
+	g++ $^ -shared $(FLAGS) -o $@
+
+
+$(OBJDIR)/%.so : $(SRCDIR)/%.cpp
+	g++ -MMD -MP -fpic $(FLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	g++ -MMD -MP $(FLAGS) -c $< -o $@
 
 
-# Clean objects, dependencies, and executable
+%/:
+	mkdir -p $@
+
+update: shlib stlib
+	cp $(SHLIB) $(SHLIBDIR)/
+	cp $(STLIB) $(SHARCDIR)/
+	cp -r $(INCDIR)
+
 clean:
-	rm $(OBJECTS) $(DEPENDS) $(OUTFILE)
+	rm -f $(OBJS) $(SHOBJS) $(DEPS) $(SHLIB) $(STLIB) $(EXEC)
 
 
+#Run program using winpty
+run: $(EXEC)
+	@winpty ./$(EXEC)
 
-#Section to run program using winpty
-run:
-	@winpty $(OUTFILE)
+.PHONY: all libs debug exec shlib stlib dirs update clean run

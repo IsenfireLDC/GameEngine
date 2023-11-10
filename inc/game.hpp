@@ -6,11 +6,8 @@
 #define _GAME_HPP_
 
 #include "utils.hpp"
-#include "tick.hpp"
 
-#include <chrono>
-#include <ratio>
-#include <unordered_set>
+#include "update.hpp"
 
 #include "engine_types.hpp"
 
@@ -20,19 +17,25 @@ public:
 
 	~Game();
 
-	void setFPS(int);
-	int getFPS() const;
-
-	void add(ITick*);
-	void remove(ITick*);
-
 	void run(bool);
 
-	TickHandler* handler();
+	//TickHandler* handler();
+
+	//template<typename T>
+	//void registerEventHandler(int, std::function<void(T*)>);
 
 private:
+	void handler();
+
+	bool running;
+	bool joining;
+
 	int fps;
-	TickHandler tickHandler;
+
+	UpdateController<Update> updateController;
+	//TaskScheduler<> scheduler;
+
+	//std::unordered_map<int, EventHandler> handlers;
 };
 
 #endif

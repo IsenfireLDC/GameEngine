@@ -9,8 +9,16 @@
 
 //includes
 #include "render.hpp"
+#include "render/static_texture.hpp"
+#include "model.hpp"
 #include "window.hpp"
+
 #include "entity.hpp"
+#include "components/model.hpp"
+#include "components/basic_movement.hpp"
+#include "components/collision.hpp"
+
+#include "level.hpp"
 #include "input.hpp"
 #include "events.hpp"
 #include "log.hpp"
@@ -30,231 +38,106 @@
 
 #include <random>
 
+#include <SDL2/SDL.h>
+
 #include "engine.hpp"
 
 static bool running = true;
-static Entity *primary;
 
 static std::string message;
-/*
-static void aExit(Entity *target, int input) {
-	if(input == Input::Key::Escape) running = false;
-};*/
 
-static void inputHandler(Event *event) {
-	InputEvent *inputEvent = (InputEvent*)event;
-
-	message.append(std::to_string(inputEvent->key)+" ");
-};
-
-static void actionHandler(Event *event) {
-	ActionEvent *actionEvent = (ActionEvent*)event;
-
-	actionEvent->action(primary, actionEvent->input);
-};
-
-static void quitHandler(Event *event) {
-	QuitEvent *quitEvent = (QuitEvent*)event;
-
-	char strbuf[100];
-	sprintf(strbuf, "Received QuitEvent from %p\n", quitEvent->input);
-	Engine::log.log(strbuf, LogLevel::Info, "Main");
-	quitEvent->input->runThread(false);
-
-	running = false;
-};
-
-static int exHandler(Entity *target, EntityAction action) {
-	EntityData d = action.sender->getData();
-	d.state += 1;
-	action.sender->setData(d);
-
-	d = target->getData();
-	d.state += 2;
-	target->setData(d);
-
-	return 0;
-};
-
-
-struct Ticker : ITick {
-	std::function<void(void)> tf;
-
-	void tick(Engine::Units::Time t) {
-		tf();
-	};
-};
-
-
-
-
-std::random_device rd;
-std::default_random_engine gen;
-std::uniform_int_distribution<int> randMove(0, 3);
-int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
-
-void getKBCodes() {
-	int kb_code = 0;
-
-	std::cout << "Hit a key" << std::endl;
-
-	while(true) {
-		kb_code = Input::getInputKey();
-
-		if(kb_code != 0) std::cout << kb_code << std::endl;
-
-		if(kb_code == 27) break;
-
-		Sleep(100);
-	}
-};
+//std::random_device rd;
+//std::default_random_engine gen;
+//std::uniform_int_distribution<int> randMove(0, 3);
+//int inputs[4] = {Input::Key::W, Input::Key::A, Input::Key::S, Input::Key::D};
 
 int gameTest() {
+	//Engine::log.setMinLevel(LogLevel::Debug);
+	Engine::log.setMinLevel(LogLevel::Info);
+
 	Engine::log.log("-------------------- Log Start --------------------");
-	gen.seed(rd());
+	//gen.seed(rd());
+
+	if(!Engine::instance.good()) return 1;
 
 	//Create player
-	const char nEntType[20] = "Entity";
-	EntityType tEntity = EntityType(0, nEntType);
-	tEntity.handlers[1] = exHandler;
-	const char nPlayer[20] = "Player";
-	Entity player = Entity(Entity::origin, &tEntity, nPlayer);
-	BasicModel mPlayer = BasicModel('~', TermColor::LIME);
-	player.setModel(&mPlayer);
+	Entity player{"Player"};
 
-	//Set player as primary
-	primary = &player;
+	//TODO: This is kind of wordy; maybe try to streamline?
+	StaticTexture playerTexture{"assets/player.tga"};
+	Model playerModel{&playerTexture};
+	player.createComponent<ModelComponent>(&playerModel);
+	player.createComponent<BasicMovementComponent>(120.f);
+
+	int w, h;
+	SDL_QueryTexture(playerTexture.getTexture(), 0, 0, &w, &h);
+	RectCollisionComponent *rcc = player.createComponent<RectCollisionComponent>(Vector2D(w, h));
+
+	//Set player entity as the player
+	Engine::player = &player;
 
 	//Create non-player
-	const char nNPC[20] = "NPC";
-	Entity npc = Entity({3,4}, &tEntity, nNPC);
-	BasicModel mNPC = BasicModel('!', TermColor::LIGHT_BLUE | TermColor::BG_GRAY);
-	npc.setModel(&mNPC);
+	Entity npc{"NPC", {3,4}};
 
-	//Create field
-	RectArea fieldArea{Coord(), Coord(25, 20)};
-	Field field = Field(fieldArea, Coord(2,1));
+	StaticTexture npcTexture{"assets/npc.tga"};
+	Model npcModel{&npcTexture};
+	npc.createComponent<ModelComponent>(&npcModel);
 
-	//Create player manager
-	EntityManager manager = EntityManager(&field);
+	SDL_QueryTexture(npcTexture.getTexture(), 0, 0, &w, &h);
+	npc.createComponent<RectCollisionComponent>(Vector2D(w, h));
 
-	//Create window
-	//std::vector<const ModelRenderer*> renderers = manager.getRenderers();
-	//const std::vector<IModelable*> *modelable = reinterpret_cast<const std::vector<IModelable*>*>(manager.getEntitiesList());
-	//Window window = Window(&field, modelable);
 
-	RectArea windowArea = RectArea(Coord(0,0), Coord(25, 20));
-	Window window = Window(windowArea, Coord(2,1));
+	UpdateController<Update> controller{};
+	UpdateController<FixedUpdate> fixedController{};
 
-	window.addRenderer(&manager);
-
-	//Create input
-	Input input = Input();
 	//Action ExitAction = aExit;
 	//input.addActionMapping(Input::Key::Escape, ExitAction);
 
-	//Add player to manager
-	manager.registerEntity(&player);
-	manager.registerEntity(&npc);
-
 	//Render window
-	window.show(true);
-	window.draw();
-
-	//Test log
-	Log testLog{"Test", "./logs/test.log"};
-	LogLevel testLogLevel = LogLevel::Debug;
-	testLog.log("Testing nested log", LogLevel::Info, "Main");
-	testLog << "Testing log insertion operator for message";
-	Log::Entry testLogEntry = Log::makeEntry("BaseEntry", testLogLevel, "Main");
-	testLog << Log::makeEntry(testLogEntry, "Test log insertion operator for Entry");
-	Engine::log.log("Initialization complete", LogLevel::Info, "Main");
-
-	//Print out manager
-	std::stringstream sstr{};
-	sstr << manager;
-	testLog.log(sstr.str(), testLogLevel, "Manager");
+	Engine::window.show(true);
+	Engine::window.draw();
 
 	//Attempt to move player
-	Coord testCoord = {2,5};
-	manager.moveEntity(&player, testCoord);
+	Vector2D testVector2D = {20,80};
+	Engine::player->pos = testVector2D;
 
-
-	if(manager.getEntityAt(testCoord)) {
-		window.setMsg("Moved player succesfully");
-	} else {
-		window.setMsg("Failed to move player");
-	};
-
-	Sleep(1000);
+	SDL_Delay(1000);
 
 	//Render window
-	window.redraw();
+	Engine::window.draw();
+
+	Engine::threadPool.start();
+
+	bool go = true;
+	while(go) {
+		SDL_Event e;
+		while(SDL_PollEvent(&e)) {
+			if(e.type == SDL_QUIT) go = false;
+		};
+
+		fixedController.update(0.018f);
+		controller.update(0.018f);
+
+		if(rcc->isCollidingWith(&npc)) Engine::log.log("BONK");
+
+		Engine::window.draw();
+
+		SDL_Delay(18);
+	};
 
 	//Print out list of entities
-	std::vector<Entity*> playerList = manager.getEntities();
+	std::vector<std::string> playerList = {
+		"Player",
+		"NPC"
+	};
 
-	testLog.log("Printing entities", testLogLevel, "Main");
+	std::stringstream sstr;
+	Engine::log.log("Printing entities", LogLevel::Info, "Main");
 	for(unsigned int i = 0; i < playerList.size(); ++i) {
 		sstr.str("\t");
-		sstr << *playerList[i];
-		testLog.log(sstr.str(), testLogLevel, "Main");
+		sstr << Engine::level.findEntity(playerList[i]);
+		Engine::log.log(sstr.str(), LogLevel::Info, "Main");
 	};
-
-	//Get inputs
-	testLog.log("Spawning thread...", LogLevel::Info, "Main");
-	if(!input.spawnThread()) {
-		testLog.log("Failed, exiting", LogLevel::Fatal, "Main");
-		return 1;
-	};
-
-	//Setup event handling
-	//InputEvent
-	InputEvent ieType = InputEvent(Input::Key::Null);
-	int typeIEID = Engine::eventBus.registerEventType(&ieType);
-	Engine::eventBus.registerEventHandler(typeIEID, &inputHandler);
-	//ActionEvent
-	ActionEvent aeType = ActionEvent(0, 0);
-	int typeAEID = Engine::eventBus.registerEventType(&aeType);
-	Engine::eventBus.registerEventHandler(typeAEID, &actionHandler);
-	//QuitEvent
-	QuitEvent qeType = QuitEvent(0);
-	int typeQEID = Engine::eventBus.registerEventType(&qeType);
-	Engine::eventBus.registerEventHandler(typeQEID, &quitHandler);
-
-	Ticker ticker;
-	ticker.tf = [&window, &input, &npc](){
-		Engine::eventBus.handleEvents();
-
-		window.setMsg(message.c_str());
-
-		input.callAction(&npc, inputs[randMove(gen)]);
-		window.redraw();
-	};
-	Game game;
-	game.add(&ticker);
-	game.run(true);
-
-	//Stall main until the game is done
-	while(running) std::this_thread::yield();
-	game.run(false);
-
-	/*
-	while(running) {
-		//Event* first = Engine::eventBus.getFirstEvent();
-		//const char* info = 0;
-		//if(first) info = first->getInfo().c_str();
-
-		Engine::eventBus.handleEvents();
-		//if(info) window.setMsg(info);
-		window.setMsg(message.c_str());
-
-		input.callAction(&npc, inputs[randMove(gen)]);
-		window.render();
-
-		Sleep(100);
-	};
-	*/
 
 	return 0;
 };
@@ -330,7 +213,7 @@ void threadTest2() {
 	tp1.join();
 };
 
-int main() {
+int main(int argc, char* argv[]) {
 	int ret = 0;
 
 	ret = gameTest();
