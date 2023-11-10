@@ -12,3 +12,6 @@ Session.vim
 
 # Hidden files
 .*
+
+# Debugger files
+gdb.log
