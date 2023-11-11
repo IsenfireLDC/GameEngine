@@ -15,15 +15,20 @@ public:
 	CollisionComponentBase();
 	virtual ~CollisionComponentBase();
 
-	bool isCollidingWith(class Entity*) const;
+	bool isCollidingWith(class Entity*);
 
-	const std::unordered_set<class Entity*>& getCollisions(void) const;
+	const std::unordered_set<class Entity*>& getCollisions(void);
 
 	// Fixed Update
-	virtual void update(float) = 0;
+	void update(float);
 
 protected:
+	virtual void updateCache(void) = 0;
+
 	std::unordered_set<class Entity*> collisions;
+
+private:
+	bool cacheValid; // TODO: Race conditions?
 };
 
 template<typename T>
@@ -45,8 +50,9 @@ public:
 	RectCollisionComponent(class Entity*, Vector2D);
 	~RectCollisionComponent();
 
-	// Fixed Update
-	void update(float);
+protected:
+	// Collisions update
+	void updateCache(void);
 
 private:
 	const RectCollider collider;
