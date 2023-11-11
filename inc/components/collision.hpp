@@ -3,7 +3,7 @@
 
 #include "component.hpp"
 #include "update.hpp"
-#include "pos.hpp"
+#include "vector.hpp"
 #include "collider.hpp"
 
 #include "entity.hpp"

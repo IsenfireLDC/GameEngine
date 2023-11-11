@@ -2,7 +2,7 @@
 
 #include "level.hpp"
 #include "input.hpp"
-#include "pos.hpp"
+#include "vector.hpp"
 #include "entity.hpp"
 
 #include "log.hpp"

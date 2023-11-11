@@ -1,5 +1,5 @@
 /*
- * pos.hpp
+ * vector.hpp
  *
  * Contains Vector2D datatype
  */
@@ -41,17 +41,19 @@ Vector2D operator*(const Vector2D&, const Vector2D&);
 bool operator==(const Vector2D&, const Vector2D&);
 bool operator!=(const Vector2D&, const Vector2D&);
 
-Vector2D operator+=(Vector2D&, const Vector2D&);
-Vector2D operator-=(Vector2D&, const Vector2D&);
-Vector2D operator*=(Vector2D&, const Vector2D&);
+Vector2D& operator+=(Vector2D&, const Vector2D&);
+Vector2D& operator-=(Vector2D&, const Vector2D&);
+Vector2D& operator*=(Vector2D&, const Vector2D&);
 
 Vector2D operator*(const Vector2D&, const float&);
-Vector2D operator*=(Vector2D&, const float&);
+Vector2D& operator*=(Vector2D&, const float&);
+Vector2D operator/(const Vector2D&, const float&);
+Vector2D& operator/=(Vector2D&, const float&);
 
 SDL_Rect operator*(const SDL_Rect&, const Vector2D&);
-SDL_Rect operator*=(SDL_Rect&, const Vector2D&);
+SDL_Rect& operator*=(SDL_Rect&, const Vector2D&);
 SDL_FRect operator*(const SDL_FRect&, const Vector2D&);
-SDL_FRect operator*=(SDL_FRect&, const Vector2D&);
+SDL_FRect& operator*=(SDL_FRect&, const Vector2D&);
 
 
 #endif

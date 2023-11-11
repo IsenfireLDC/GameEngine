@@ -2,7 +2,7 @@
 #define _WINDOW_HPP_
 
 #include "render.hpp"
-#include "pos.hpp"
+#include "vector.hpp"
 
 #include <unordered_set>
 #include <string>

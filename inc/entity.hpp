@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <set>
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 #include "update.hpp"
 
