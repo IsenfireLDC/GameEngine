@@ -27,9 +27,7 @@
 
 #include "threads.hpp"
 
-#include <windows.h>
 #include <iostream>
-#include <conio.h>
 #include <cstdio>
 
 #include <string>
