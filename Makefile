@@ -1,20 +1,38 @@
 # Makefile for GameEngine
 NAME=GameEngine
 
-STATIC_LIBS=
-SHARED_LIBS=mingw32 SDL2main SDL2 image
+STATIC_LIBS:=
+SHARED_LIBS:=SDL2main SDL2 image
 
 # Project directories
-SRCDIR=src
-INCDIR=inc
-OBJDIR=bin
+SRCDIR:=src
+INCDIR:=inc
+OBJDIR:=bin
 
 # Custom library directories
-SHLIBSDIR=$(CUSTOM_LIBS_DIR)
+SHLIBSDIR:=$(CUSTOM_LIBS_DIR)
 
-SHLIBDIR=$(SHLIBSDIR)/shared
-SHARCDIR=$(SHLIBSDIR)/static
-SHINCDIR=$(SHLIBSDIR)/headers
+SHLIBDIR:=$(SHLIBSDIR)/shared
+SHARCDIR:=$(SHLIBSDIR)/static
+SHINCDIR:=$(SHLIBSDIR)/headers
+
+# Platform settings
+UNAME:=$(shell uname)
+ifeq($(UNAME),Linux)
+EXT.EXEC:=elf
+EXT.DLIB:=so
+EXT.SLIB:=a
+
+PF.FLAGS:=
+else ifeq($(UNAME),Windows)
+SHARED_LIBS:=mingw32 $(SHARED_LIBS)
+
+EXT.EXEC:=exe
+EXT.DLL:=dll
+EXT.SLIB:=a
+
+PF.FLAGS:=-mwindows
+endif
 
 # Build files
 SRCS=$(foreach dir,$(shell find $(SRCDIR) -type d),$(wildcard $(dir)/*.cpp))
@@ -23,14 +41,14 @@ SHOBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
 DEPS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
 
 # Output files
-SHLIB=$(OBJDIR)/lib$(NAME).dll
-STLIB=$(OBJDIR)/lib$(NAME).a
-EXEC=$(NAME).exe
+SHLIB:=$(OBJDIR)/lib$(NAME).$(EXT.DLIB)
+STLIB:=$(OBJDIR)/lib$(NAME).$(EXT.SLIB)
+EXEC:=$(NAME).$(EXT.EXEC)
 
 DIRS=$(SRCDIR)/ $(OBJDIR)/ $(INCDIR)/
 
 DEBUG=-ggdb -g3
-LIBS=-lpthread
+LIBS=
 
 # Add custom libraries
 # Static libraries
@@ -38,13 +56,13 @@ OBJS+=$(foreach lname,$(STATIC_LIBS),$(shell find $(SHARCDIR) -iname "lib$(lname
 # Shared libraries
 LIBS+=$(foreach lname,$(SHARED_LIBS),-l$(lname))
 
-FLAGS=-Wall -I$(INCDIR) -I$(SHINCDIR) -L$(SHARCDIR) -L$(SHLIBDIR)
-FLAGS+=-Dmain=SDL_main
+FLAGS=-Wall -I$(INCDIR) -I$(SHINCDIR) -L$(SHARCDIR) -L$(SHLIBDIR) $(PF.FLAGS) -pthread
+#FLAGS+=-Dmain=SDL_main
 
 #FLAGS+=$(shell sdl2-config --cflags)
 #LIBS+=$(shell sdl2-config --libs)
 
-FLAGS+=$(LIBS) -mwindows
+FLAGS+=$(LIBS)
 
 
 
@@ -70,10 +88,10 @@ $(EXEC): $(OBJS)
 	g++ $^ $(FLAGS) -o $(EXEC)
 
 
-$(OBJDIR)/lib%.a: $(filter-out $(OBJDIR)/main.o, $(OBJS))
+$(OBJDIR)/lib%.$(EXT.SLIB): $(filter-out $(OBJDIR)/main.o, $(OBJS))
 	ar rcs $@ $^
 
-$(OBJDIR)/lib%.dll: $(filter-out $(OBJDIR)/main.so, $(SHOBJS))
+$(OBJDIR)/lib%.$(EXT.DLIB): $(filter-out $(OBJDIR)/main.so, $(SHOBJS))
 	g++ $^ -shared $(FLAGS) -o $@
 
 
