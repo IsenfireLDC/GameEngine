@@ -1,6 +1,7 @@
 # Build files
 bin/
 *.exe
+*.elf
 
 # Don't need to push logs
 logs/
