@@ -18,13 +18,14 @@ SHINCDIR:=$(SHLIBSDIR)/headers
 
 # Platform settings
 UNAME:=$(shell uname)
-ifeq($(UNAME),Linux)
+
+ifeq ($(UNAME),Linux)
 EXT.EXEC:=elf
 EXT.DLIB:=so
 EXT.SLIB:=a
 
 PF.FLAGS:=
-else ifeq($(UNAME),Windows)
+else ifeq ($(UNAME),Windows)
 SHARED_LIBS:=mingw32 $(SHARED_LIBS)
 
 EXT.EXEC:=exe
