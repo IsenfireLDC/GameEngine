@@ -25,6 +25,7 @@ EXT.DLIB:=so
 EXT.SLIB:=a
 
 PF.FLAGS:=
+PF.RUN=./$(EXEC)
 else ifeq ($(UNAME),Windows)
 SHARED_LIBS:=mingw32 $(SHARED_LIBS)
 
@@ -33,6 +34,7 @@ EXT.DLL:=dll
 EXT.SLIB:=a
 
 PF.FLAGS:=-mwindows
+PF.RUN=winpty ./$(EXEC)
 endif
 
 # Build files
@@ -117,6 +119,6 @@ clean:
 
 #Run program using winpty
 run: $(EXEC)
-	@winpty ./$(EXEC)
+	@$(PF.RUN)
 
 .PHONY: all libs debug exec shlib stlib dirs update clean run
