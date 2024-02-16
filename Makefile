@@ -1,5 +1,5 @@
 # Makefile for GameEngine
-NAME=GameEngine
+NAME:=GameEngine
 
 STATIC_LIBS:=
 SHARED_LIBS:=SDL2main SDL2 image
@@ -36,34 +36,34 @@ PF.FLAGS:=-mwindows
 endif
 
 # Build files
-SRCS=$(foreach dir,$(shell find $(SRCDIR) -type d),$(wildcard $(dir)/*.cpp))
-OBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
-SHOBJS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
-DEPS=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
+SRCS:=$(foreach dir,$(shell find $(SRCDIR) -type d),$(wildcard $(dir)/*.cpp))
+OBJS:=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
+SHOBJS:=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.so,$(SRCS))
+DEPS:=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.d,$(SRCS)) $(LIBDEPS)
 
 # Output files
 SHLIB:=$(OBJDIR)/lib$(NAME).$(EXT.DLIB)
 STLIB:=$(OBJDIR)/lib$(NAME).$(EXT.SLIB)
 EXEC:=$(NAME).$(EXT.EXEC)
 
-DIRS=$(SRCDIR)/ $(OBJDIR)/ $(INCDIR)/
+DIRS:=$(SRCDIR)/ $(OBJDIR)/ $(INCDIR)/
 
-DEBUG=-ggdb -g3
-LIBS=
+DEBUG:=-ggdb -g3
+LIBS:=
 
 # Add custom libraries
 # Static libraries
-OBJS+=$(foreach lname,$(STATIC_LIBS),$(shell find $(SHARCDIR) -iname "lib$(lname).a"))
+OBJS:=$(OBJS) $(foreach lname,$(STATIC_LIBS),$(shell find $(SHARCDIR) -iname "lib$(lname).a"))
 # Shared libraries
-LIBS+=$(foreach lname,$(SHARED_LIBS),-l$(lname))
+LIBS:=$(LIBS) $(foreach lname,$(SHARED_LIBS),-l$(lname))
 
-FLAGS=-Wall -I$(INCDIR) -I$(SHINCDIR) -L$(SHARCDIR) -L$(SHLIBDIR) $(PF.FLAGS) -pthread
+FLAGS:=-Wall -I$(INCDIR) -I$(SHINCDIR) -L$(SHARCDIR) -L$(SHLIBDIR) $(PF.FLAGS) -pthread
 #FLAGS+=-Dmain=SDL_main
 
 #FLAGS+=$(shell sdl2-config --cflags)
 #LIBS+=$(shell sdl2-config --libs)
 
-FLAGS+=$(LIBS)
+FLAGS:=$(FLAGS) $(LIBS)
 
 
 
@@ -72,7 +72,7 @@ all: exec
 libs: shlib stlib
 
 # Makefile rules
-debug: FLAGS+=$(DEBUG)
+debug: FLAGS:=$(FLAGS) $(DEBUG)
 debug: all
 
 exec: $(EXEC)
