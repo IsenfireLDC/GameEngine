@@ -15,19 +15,23 @@ public:
 	CollisionComponentBase();
 	virtual ~CollisionComponentBase();
 
+	// Single/multi collision check
 	bool isCollidingWith(class Entity*);
-
 	const std::unordered_set<class Entity*>& getCollisions(void);
 
 	// Fixed Update
 	void update(float);
 
 protected:
+	// To be implemented by specific base class, actually calculates the collisions
 	virtual void updateCache(void) = 0;
 
 	std::unordered_set<class Entity*> collisions;
 
 private:
+	// Helper to refresh cache, if necessary
+	inline void ensureValidCache(void);
+
 	bool cacheValid; // TODO: Race conditions?
 };
 
@@ -38,6 +42,7 @@ public:
 	virtual ~CollisionComponent() {};
 
 protected:
+	// Helper for specific base class to calculate collisions using Collider
 	template<typename C>
 	void addCollisions(const Collider*);
 };

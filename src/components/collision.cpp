@@ -6,6 +6,14 @@
 
 #include "engine.hpp"
 
+inline void CollisionComponentBase::ensureValidCache(void) {
+	if(!this->cacheValid) {
+		this->updateCache();
+		this->cacheValid = true;
+	};
+};
+
+
 CollisionComponentBase::CollisionComponentBase() : FixedUpdate(&Engine::level) {
 	this->cacheValid = false;
 };
@@ -14,19 +22,13 @@ CollisionComponentBase::~CollisionComponentBase() {};
 
 
 bool CollisionComponentBase::isCollidingWith(Entity *entity) {
-	if(!cacheValid) {
-		this->updateCache();
-		this->cacheValid = true;
-	};
+	ensureValidCache();
 
 	return this->collisions.count(entity) > 0;
 };
 
 const std::unordered_set<Entity*>& CollisionComponentBase::getCollisions(void) {
-	if(!cacheValid) {
-		this->updateCache();
-		this->cacheValid = true;
-	};
+	ensureValidCache();
 
 	return this->collisions;
 };
