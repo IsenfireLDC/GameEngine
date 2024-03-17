@@ -9,6 +9,7 @@
 #include "entity.hpp"
 
 #include <unordered_set>
+#include <mutex>
 
 class CollisionComponentBase : public FixedUpdate {
 public:
@@ -32,7 +33,8 @@ private:
 	// Helper to refresh cache, if necessary
 	inline void ensureValidCache(void);
 
-	bool cacheValid; // TODO: Race conditions?
+	bool cacheValid;
+	std::mutex cacheLock;
 };
 
 template<typename T>

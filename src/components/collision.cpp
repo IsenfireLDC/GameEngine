@@ -8,8 +8,12 @@
 
 inline void CollisionComponentBase::ensureValidCache(void) {
 	if(!this->cacheValid) {
-		this->updateCache();
-		this->cacheValid = true;
+		this->cacheLock.lock();
+		if(!this->cacheValid) {
+			this->updateCache();
+			this->cacheValid = true;
+		};
+		this->cacheLock.unlock();
 	};
 };
 
