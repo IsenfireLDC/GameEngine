@@ -133,11 +133,11 @@ void Window::draw() const {
 	for(Entity *entity : this->level->findEntitiesWithComponent<ModelComponent>()) {
 		//TODO: Add culling for offscreen entities
 		Model *m = entity->getComponent<ModelComponent>()->getModel();
-		Vector2D pos = entity->pos - m->getOrigin();
+		Vector2D position = entity->position - m->getOrigin();
 
 		SDL_Texture *tex = m->getTexture()->getTexture();
 
-		SDL_Rect to = {.x=(int)pos.x, .y=(int)pos.y};
+		SDL_Rect to = {.x=(int)position.x, .y=(int)position.y};
 		SDL_QueryTexture(tex, 0, 0, &to.w, &to.h);
 
 		// Flip vertical origin and window coordinates

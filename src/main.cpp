@@ -97,7 +97,7 @@ int gameTest() {
 
 	//Attempt to move player
 	Vector2D testVector2D = {20,80};
-	Engine::player->pos = testVector2D;
+	Engine::player->position = testVector2D;
 
 	SDL_Delay(1000);
 

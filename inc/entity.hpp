@@ -82,12 +82,12 @@ public:
 		out << entity.name;
 		out << " id=" << (int)entity.id;
 		//out << " type=" << (int)entity.type->id;
-		out << " at" << entity.pos;
+		out << " at" << entity.position;
 		return out;
 	};
 
 
-	Vector2D pos;
+	Vector2D position;
 	std::string name;
 
 	class Level *level;

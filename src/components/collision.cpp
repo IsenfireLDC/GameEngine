@@ -46,7 +46,7 @@ void CollisionComponentBase::update(float delta) {
 
 
 RectCollisionComponent::RectCollisionComponent(Entity *entity, Vector2D size) : CollisionComponent(entity),
-	collider(&entity->pos, size) {};
+	collider(&entity->position, size) {};
 
 RectCollisionComponent::~RectCollisionComponent() {};
 

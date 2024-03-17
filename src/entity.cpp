@@ -29,15 +29,15 @@ Entity *Engine::player = nullptr;
 /*
  * Constructor for new entity
  *
- * Vector2D pos		: Position struct
+ * Vector2D position		: Position struct
  * char type		: Type id
  * const char *name	: Entity name
  */
-Entity::Entity(std::string name, Level *level, Vector2D pos) : Update(level), name(name) {
+Entity::Entity(std::string name, Level *level, Vector2D position) : Update(level), name(name) {
 	level->addEntity(this);
 	this->level = level;
 
-	this->pos = pos;
+	this->position = position;
 
 	this->id = Utils::nextID(&Entity::gID);
 	this->state = 0;
@@ -47,7 +47,7 @@ Entity::Entity(std::string name, Level *level, Vector2D pos) : Update(level), na
 /*
  * Constructor overload with different argument order
  */
-Entity::Entity(std::string name, Vector2D pos, Level *level) : Entity(name, level, pos) {};
+Entity::Entity(std::string name, Vector2D position, Level *level) : Entity(name, level, position) {};
 
 
 Entity::~Entity() {
