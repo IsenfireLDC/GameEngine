@@ -181,7 +181,7 @@ void TickHandler::scheduleTask(TickHandler *parent) {
 	
 			n.second.started = true;
 	
-			parent->threadPool->add(std::bind(n.first->tick, n.first, passed));
+			parent->threadPool->add(std::bind(&ITick::tick, n.first, passed));
 		};
 	
 		parent->lastTick = tp;

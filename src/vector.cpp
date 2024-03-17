@@ -80,7 +80,7 @@ SDL_Rect operator*(const SDL_Rect& r, const Vector2D& c) {
 	return rect;
 };
 
-SDL_Rect operator*=(SDL_Rect& r, const Vector2D& c) {
+SDL_Rect& operator*=(SDL_Rect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	r.x = (int)(r.x * c.x);
 	r.y = (int)(r.y * c.y);
@@ -102,7 +102,7 @@ SDL_FRect operator*(const SDL_FRect& r, const Vector2D& c) {
 	return rect;
 };
 
-SDL_FRect operator*=(SDL_FRect& r, const Vector2D& c) {
+SDL_FRect& operator*=(SDL_FRect& r, const Vector2D& c) {
 	//Rudimentary scaling
 	r.x = r.x * c.x;
 	r.y = r.y * c.y;

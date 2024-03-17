@@ -32,7 +32,7 @@ void Game::run(bool run) {
 
 		this->running = true;
 
-		Engine::threadPool.add(std::bind(Game::handler, this));
+		Engine::threadPool.add(std::bind(&Game::handler, this));
 	} else
 		this->joining = true;
 };
@@ -62,7 +62,7 @@ void Game::handler() {
 
 	//Reschedule task
 	if(!this->joining)
-		Engine::threadPool.add(std::bind(Game::handler, this));
+		Engine::threadPool.add(std::bind(&Game::handler, this));
 		//this->scheduler.scheduleIn(
 		//	this->schedulingTask,
 		//	this->tickPeriod
