@@ -1,9 +1,12 @@
 #include "components/rigidbody.hpp"
 
 #include "entity.hpp"
-#include "collider.hpp"
+#include "components/collision.hpp"
 
-RigidbodyComponent::RigidbodyComponent(Entity *parent, Collider *collider) : Component(parent), collider(collider) {};
+#include "level.hpp"
+#include "engine.hpp"
+
+RigidbodyComponent::RigidbodyComponent(Entity *parent, CollisionComponentBase *collisionComponent) : Component(parent), FixedUpdate(&Engine::level), collisionComponent(collisionComponent) {};
 RigidbodyComponent::~RigidbodyComponent() {};
 
 // TODO: Add 'continuous' collision checks
@@ -19,15 +22,12 @@ void RigidbodyComponent::push(const Vector2D &force) {
 
 void RigidbodyComponent::update(float delta) {
 	// Attempt to move
-	this->parent->position = this->nextPosition + this->velocity * delta;
+	this->entity->position = this->nextPosition + this->velocity * delta;
 
-	// TODO: Using `Collider`, not `CollisionComponent`.  Oops
-	// Which one should be used?
-	//
 	// Check for collisions
-	const std::unordered_set<Entity*>& collisions = this->collider->getCollisions();
+	const std::unordered_set<Entity*>& collisions = this->collisionComponent->getCollisions();
 
 	// Reset position on collision
-	if(!collisions.empty()) this->parent->position = this->position;
+	if(!collisions.empty()) this->entity->position = this->position;
 	else this->position = this->nextPosition;
 };

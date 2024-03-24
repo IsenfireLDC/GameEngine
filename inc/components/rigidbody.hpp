@@ -6,7 +6,7 @@
 #include "vector.hpp"
 
 class Entity;
-class Collider;
+class CollisionComponentBase;
 
 /*
  * TODO: Separate into physics and component classes?
@@ -17,7 +17,7 @@ class Collider;
  */
 class RigidbodyComponent : public Component<RigidbodyComponent>, public FixedUpdate {
 public:
-	RigidbodyComponent(Entity*, const Collider*);
+	RigidbodyComponent(Entity*, CollisionComponentBase*);
 	~RigidbodyComponent();
 
 	void move(const Vector2D&);
@@ -26,7 +26,7 @@ public:
 	// [FixedUpdate]
 	void update(float);
 
-	const Collider *collider; //TODO: private?
+	CollisionComponentBase *collisionComponent; //TODO: private?
 	float mass;
 
 	Vector2D velocity;
