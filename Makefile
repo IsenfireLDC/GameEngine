@@ -2,7 +2,7 @@
 NAME=GameEngine
 
 STATIC_LIBS:=
-SHARED_LIBS:=SDL2main SDL2 image
+SHARED_LIBS:=SDL2 image
 
 # Project directories
 SRCDIR:=src
