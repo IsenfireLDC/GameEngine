@@ -7,7 +7,7 @@
 #ifndef _AREA_HPP_
 #define _AREA_HPP_
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 
 struct BoundingBox {

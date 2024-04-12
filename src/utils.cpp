@@ -6,9 +6,12 @@
 
 #include "utils.hpp"
 
-//#include <sys/stat.h>
 //#include <direct.h> //Thanks, windows
+#ifdef _WIN32
 #include <fileapi.h>
+#else
+#include <sys/stat.h>
+#endif
 
 /*
  * Spawns a thread to run the callback function at regular intervals
@@ -42,7 +45,11 @@ void create_directories(std::string path) {
 
 	while(pos != std::string::npos) {
 		pos = path.find("/", pos+1);
+#ifdef _WIN32
 		CreateDirectoryA(path.substr(0, pos).c_str(), nullptr);
+#else
+		mkdir(path.substr(0, pos).c_str(), 0x0777);
+#endif
 	};
 };
 

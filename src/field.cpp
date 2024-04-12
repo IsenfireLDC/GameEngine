@@ -6,7 +6,7 @@
 
 #include "field.hpp"
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 const RectArea Field::defaultArea = RectArea();
 const Vector2D Field::defaultScale = Vector2D(2,1);

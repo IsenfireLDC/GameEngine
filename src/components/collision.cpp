@@ -6,27 +6,52 @@
 
 #include "engine.hpp"
 
-CollisionComponentBase::CollisionComponentBase() : FixedUpdate(&Engine::level) {};
+inline void CollisionComponentBase::ensureValidCache(void) {
+	if(!this->cacheValid) {
+		this->cacheLock.lock();
+		if(!this->cacheValid) {
+			this->updateCache();
+			this->cacheValid = true;
+		};
+		this->cacheLock.unlock();
+	};
+};
+
+
+CollisionComponentBase::CollisionComponentBase() : FixedUpdate(&Engine::level) {
+	this->cacheValid = false;
+};
 
 CollisionComponentBase::~CollisionComponentBase() {};
 
 
-bool CollisionComponentBase::isCollidingWith(Entity *entity) const {
+bool CollisionComponentBase::isCollidingWith(Entity *entity) {
+	ensureValidCache();
+
 	return this->collisions.count(entity) > 0;
 };
 
-const std::unordered_set<Entity*>& CollisionComponentBase::getCollisions(void) const {
+const std::unordered_set<Entity*>& CollisionComponentBase::getCollisions(void) {
+	ensureValidCache();
+
 	return this->collisions;
+};
+
+void CollisionComponentBase::update(float delta) {
+	(void)delta; //Unused
+
+	// Require a cache update for this physics tick
+	this->cacheValid = false;
 };
 
 
 RectCollisionComponent::RectCollisionComponent(Entity *entity, Vector2D size) : CollisionComponent(entity),
-	collider(&entity->pos, size) {};
+	collider(&entity->position, size) {};
 
 RectCollisionComponent::~RectCollisionComponent() {};
 
 
-void RectCollisionComponent::update(float delta) {
+void RectCollisionComponent::updateCache(void) {
 	this->collisions.clear();
 
 	this->addCollisions<RectCollisionComponent>(&this->collider);

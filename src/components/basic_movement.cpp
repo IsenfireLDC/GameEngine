@@ -2,7 +2,7 @@
 
 #include "level.hpp"
 #include "input.hpp"
-#include "pos.hpp"
+#include "vector.hpp"
 #include "entity.hpp"
 
 #include "log.hpp"
@@ -41,7 +41,7 @@ void BasicMovementComponent::update(float delta) {
 	if(input.pressed(SDL_SCANCODE_D))
 		move += Vector2D(1, 0);
 
-	this->entity->pos += move * this->speed * delta;
+	this->entity->position += move * this->speed * delta;
 };
 
 
@@ -51,14 +51,14 @@ void BasicMovementComponent::update(float delta) {
 /*
  * Moves entity, checking for collision if registered to manager
  */
-//bool Entity::move(Vector2D pos) {
+//bool Entity::move(Vector2D position) {
 //	Engine::log.log("Attempting to move entity");
 //
-//	//Check if entity at pos
+//	//Check if entity at position
 //	Entity* other = nullptr;
 //	if(this->manager) {
-//		if(!this->manager->inBounds(pos)) return false;
-//		other = this->manager->getEntityAt(pos);
+//		if(!this->manager->inBounds(position)) return false;
+//		other = this->manager->getEntityAt(position);
 //	};
 //
 //	//Interact with entity
@@ -67,7 +67,7 @@ void BasicMovementComponent::update(float delta) {
 //	//Move entity
 //	if(move) {
 //		Engine::log.log("Moving entity");
-//		this->pos = pos;
+//		this->position = position;
 //	};
 //
 //	this->dirty = move;

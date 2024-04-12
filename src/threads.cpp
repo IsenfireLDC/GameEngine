@@ -46,6 +46,7 @@ ThreadPool::ThreadPool(int threads) {
 
 ThreadPool::~ThreadPool() {
 	this->running = false;
+	this->empty.notify_all();
 };
 
 /*

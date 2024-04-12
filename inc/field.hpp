@@ -8,7 +8,7 @@
 #define _FIELD_HPP_
 
 #include "area.hpp"
-#include "pos.hpp"
+#include "vector.hpp"
 
 
 class Field {

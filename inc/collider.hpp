@@ -1,7 +1,7 @@
 #ifndef _COLLIDER_HPP_
 #define _COLLIDER_HPP_
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 #include <unordered_set>
 
