@@ -1,4 +1,4 @@
-#include "collider.hpp"
+#include "physics/collider.hpp"
 
 #include <unordered_set>
 
