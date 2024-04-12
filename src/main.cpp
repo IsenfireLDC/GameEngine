@@ -17,6 +17,8 @@
 #include "components/model.hpp"
 #include "components/basic_movement.hpp"
 #include "components/collision.hpp"
+#include "components/rigidbody.hpp"
+#include "components/movement.hpp"
 
 #include "level.hpp"
 #include "input.hpp"
@@ -64,18 +66,19 @@ int gameTest() {
 	//TODO: This is kind of wordy; maybe try to streamline?
 	StaticTexture playerTexture{"assets/player.tga"};
 	Model playerModel{&playerTexture};
-	player.createComponent<ModelComponent>(&playerModel);
-	player.createComponent<BasicMovementComponent>(120.f);
 
 	int w, h;
 	SDL_QueryTexture(playerTexture.getTexture(), 0, 0, &w, &h);
 	RectCollisionComponent *rcc = player.createComponent<RectCollisionComponent>(Vector2D(w, h));
+	player.createComponent<ModelComponent>(&playerModel);
+	RigidbodyComponent *rb = player.createComponent<RigidbodyComponent>(rcc);
+	player.createComponent<MovementComponent>(120.f, rb);
 
 	//Set player entity as the player
 	Engine::player = &player;
 
 	//Create non-player
-	Entity npc{"NPC", {3,4}};
+	Entity npc{"NPC", {100,40}};
 
 	StaticTexture npcTexture{"assets/npc.tga"};
 	Model npcModel{&npcTexture};
@@ -116,7 +119,7 @@ int gameTest() {
 		fixedController.update(0.018f);
 		controller.update(0.018f);
 
-		if(rcc->isCollidingWith(&npc)) Engine::log.log("BONK");
+		//if(rcc->isCollidingWith(&npc)) Engine::log.log("BONK");
 
 		Engine::window.draw();
 
