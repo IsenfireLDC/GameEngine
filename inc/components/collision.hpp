@@ -74,6 +74,8 @@ template<typename C>
 void CollisionComponent<T>::addCollisions(const Collider *collider) {
 	// Not sure why 'template' is necessary here, but it is
 	for(Entity *entity : this->entity->level->template findEntitiesWithComponent<C>()) {
+		if(entity == this->entity) continue;
+
 		for(C *other : entity->getComponents<C>()) {
 			if(collider->isCollidingWith(&other->collider)) this->collisions.insert(entity);
 		};
